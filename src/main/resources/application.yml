@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/hospital_appointment_db
+    username: "postgres"
+    password: "root"
+    driver-class-name: "org.postgresql.Driver"
+
+  sql:
+    init:
+      mode: always
+hospital:
+  hours:
+    start: "08:00"
+    finish: "20:00"
+    minutes-range: 60
+
