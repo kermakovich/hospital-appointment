@@ -1,3 +1,7 @@
+SELECT 'CREATE DATABASE hospital_appointment_db'
+WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'hospital_appointment_db');
+SEt schema 'public';
+
 CREATE TABLE IF NOT EXISTS user_info (
     id bigserial PRIMARY KEY,
     name varchar(35) NOT NULL,
@@ -40,6 +44,7 @@ CREATE TABLE IF NOT EXISTS patient_cards (
 CREATE TABLE IF NOT EXISTS reviews (
     id bigserial PRIMARY KEY,
     id_doctor bigint references doctors(user_id),
+    id_patient bigint references patients(user_id),
     description varchar(500)
 );
 
@@ -56,4 +61,3 @@ CREATE TABLE IF NOT EXISTS appointments (
     id_card bigint references patient_cards(patient_id) NOT NULL,
     date_time_start timestamp without time zone NOT NULL
 );
-

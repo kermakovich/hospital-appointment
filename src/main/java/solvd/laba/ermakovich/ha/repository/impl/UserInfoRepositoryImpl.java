@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import solvd.laba.ermakovich.ha.domain.UserInfo;
 import solvd.laba.ermakovich.ha.repository.UserRepository;
+import solvd.laba.ermakovich.ha.repository.mapper.UsersInfoMapper;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -44,18 +45,9 @@ public class UserInfoRepositoryImpl implements UserRepository {
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement(GET_BY_EMAIL)) {
             ps.setString(1, email);
-
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    UserInfo userInfo = new UserInfo();
-                    userInfo.setId(rs.getLong(1));
-                    userInfo.setName(rs.getString(2));
-                    userInfo.setSurname(rs.getString(3));
-                    userInfo.setFatherhood(rs.getString(4));
-                    userInfo.setBirthday(rs.getDate(5).toLocalDate());
-                    userInfo.setEmail(rs.getString(6));
-                    userInfo.setPassword(rs.getString(7));
-                return Optional.of(userInfo);
+                    return Optional.of(UsersInfoMapper.map(rs));
                 }
                 else return Optional.empty();
             }

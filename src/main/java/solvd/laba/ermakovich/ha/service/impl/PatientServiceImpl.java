@@ -27,7 +27,10 @@ public class PatientServiceImpl implements PatientService {
     public Patient save(Patient patient) {
         UserInfo userInfo = userInfoMapper.mapToUserInfo(patient);
         userInfoService.save(userInfo);
-        addressService.save(patient.getAddress());
+        addressService.find(patient.getAddress())
+                .ifPresentOrElse(
+                        patient::setAddress,
+                        ()-> addressService.save(patient.getAddress()));
 
         patient.setId(userInfo.getId());
         patientRepository.save(patient);
