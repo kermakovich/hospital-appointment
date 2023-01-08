@@ -19,7 +19,7 @@ import java.util.List;
 public class AppointmentRepositoryImpl implements AppointmentRepository {
     private static final String GET_TIME_SLOTS_BY_DOCTOR_AND_DATE = "SELECT date_time_start::time FROM appointments WHERE id_doctor=? and date_time_start::date=?";
     private static final String SAVE = "INSERT INTO appointments (id_doctor, id_card, date_time_start) VALUES (?,?,?)";
-    private static final String GET_ID_BY_DOCTOR_ID_AND_TIME = "SELECT id FROM appointments WHERE id_doctor=? and date_time_start=?";
+    private static final String CHECK_IF_EXISTS_BY_DOCTOR_ID_AND_DATE_TIME = "SELECT id FROM appointments WHERE id_doctor=? and date_time_start=?";
     private static final String GET_FUTURE_BY_PATIENT_ID = """
             SELECT ap.id, ap.date_time_start, d.id as "doctor_id", d.name as "doctor_name", d.surname as "doctor_surname",\s
             			d.fatherhood as "doctor_fatherhood", d.birthday as "doctor_birthday",\s
@@ -42,8 +42,31 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
             			left join addresses on addresses.id = patients.id_address
             			WHERE pat.id=? and ap.date_time_start > now()
             """;
+    private static final String GET_ALL_BY_PATIENT_ID_AND_DOCTOR_ID = """
+            SELECT ap.id, ap.date_time_start, d.id as "doctor_id", d.name as "doctor_name", d.surname as "doctor_surname",\s
+            			d.fatherhood as "doctor_fatherhood", d.birthday as "doctor_birthday",\s
+                        d.email as "doctor_email", d.password as "doctor_password",
+            			doctors.department as "doctor_department", doctors.specialization as "doctor_specialization",
+            			cards.number as "card_number", cards.reg_date as "reg_date_card",
+            			pat.id as "patient_id",
+            			pat.name as "patient_name", pat.surname as "patient_surname",\s
+            			pat.fatherhood as "patient_fatherhood", pat.birthday as "patient_birthday",\s
+                        pat.email as "patient_email", pat.password as "patient_password",
+            			addresses.id as "patient_address_id", addresses.city as "patient_address_city",
+            			addresses.street as "patient_address_street", addresses.house as "patient_address_house",
+            			addresses.flat as "patient_address_flat"
+                        from appointments ap
+            			LEFT JOIN doctors on id_doctor = doctors.user_id\s
+            			left join patients on id_card = patients.user_id
+            			left join patient_cards cards on cards.patient_id = id_card\s
+            			join user_info d on  d.id=doctors.user_id
+            			join user_info pat on pat.id = patients.user_id\s
+            			left join addresses on addresses.id = patients.id_address
+            			WHERE pat.id=? and d.id=? and ap.date_time_start < now()
+            			ORDER BY ap.date_time_start
+            """;
     private static final String DELETE = "DELETE FROM appointments WHERE id=?";
-    private static final String GET_BY_ID = "SELECT id, id_doctor, id_card FROM appointments WHERE id=?";
+    private static final String CHECK_IF_EXISTS_BY_ID = "SELECT id FROM appointments WHERE id=?";
 
     private final DataSource dataSource;
     @Override
@@ -86,7 +109,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     @Override
     public boolean existsByDoctorIdAndTime(Appointment appointment) {
         try (Connection con = dataSource.getConnection();
-             PreparedStatement ps = con.prepareStatement(GET_ID_BY_DOCTOR_ID_AND_TIME)) {
+             PreparedStatement ps = con.prepareStatement(CHECK_IF_EXISTS_BY_DOCTOR_ID_AND_DATE_TIME)) {
             ps.setLong(1, appointment.getDoctor().getId());
             ps.setTimestamp(2, Timestamp.valueOf(appointment.getStart()));
             try (ResultSet rs = ps.executeQuery()) {
@@ -124,12 +147,25 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     @Override
     public boolean existsById(long appointmentId) {
         try (Connection con = dataSource.getConnection();
-             PreparedStatement ps = con.prepareStatement(GET_BY_ID)) {
+             PreparedStatement ps = con.prepareStatement(CHECK_IF_EXISTS_BY_ID)) {
             ps.setLong(1, appointmentId);
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.next();
             }
         } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<Appointment> getAllByPatientIdAndDoctorId(long patientId, long doctorId) {
+        try (Connection con = dataSource.getConnection();
+             PreparedStatement ps = con.prepareStatement(GET_ALL_BY_PATIENT_ID_AND_DOCTOR_ID)) {
+            ps.setLong(1, patientId);
+            ps.setLong(2, doctorId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return AppointmentMapper.map(rs);
+            }} catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }

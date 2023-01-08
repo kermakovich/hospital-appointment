@@ -15,4 +15,6 @@ public interface DoctorService {
     List<Doctor> getAllByDepartmentAndSpecialization(Department department, Specialization specialization);
 
     AvailibleSlots getSchedule(long id, LocalDate date);
+
+    boolean existsById(long id);
 }

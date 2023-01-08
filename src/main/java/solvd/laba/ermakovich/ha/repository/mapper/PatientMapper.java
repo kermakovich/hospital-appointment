@@ -6,7 +6,7 @@ import solvd.laba.ermakovich.ha.domain.Patient;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class PatientMapper {
+public abstract class PatientMapper {
     public static Patient map(ResultSet rs) {
         try {
             Patient patient = new Patient();

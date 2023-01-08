@@ -10,4 +10,6 @@ public interface DoctorRepository {
 
     void save(Doctor doctor);
     List<Doctor> getAllByDepartmentAndSpecialization(Department department, Specialization specialization);
+
+    boolean existsById(long id);
 }

@@ -15,4 +15,6 @@ public interface AppointmentService {
     List<Appointment> getAllFutureByPatientId(long patientId);
 
     void delete(long appointmentId);
+
+    List<Appointment> getAllByPatientIdAndDoctorId(long patientId, long doctorId);
 }

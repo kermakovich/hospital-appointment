@@ -34,4 +34,9 @@ public class PatientServiceImpl implements PatientService {
         patientCardService.saveByPatientId(patient.getId());
         return patient;
     }
+
+    @Override
+    public boolean existsById(long id) {
+        return patientRepository.existsById(id);
+    }
 }

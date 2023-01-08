@@ -3,6 +3,7 @@ package solvd.laba.ermakovich.ha.web.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import solvd.laba.ermakovich.ha.domain.Appointment;
 import solvd.laba.ermakovich.ha.service.AppointmentService;
@@ -22,21 +23,23 @@ public class AppointmentController {
      private final AppointmentMapper appointmentMapper;
 
     @PostMapping("/{patientId}/appointments")
-    public AppointmentDto save(@PathVariable long patientId, @Valid @RequestBody AppointmentDto appointmentDto) {
+    public ResponseEntity<AppointmentDto> save(@PathVariable long patientId, @Valid @RequestBody AppointmentDto appointmentDto) {
         //TODO ask dto and about url
         appointmentDto.setPatientCardDto(new PatientCardDto());
         appointmentDto.getPatientCardDto().setPatient(new PatientDto());
         appointmentDto.getPatientCardDto().getPatient().setId(patientId);
         Appointment appointment = appointmentMapper.dtoToEntity(appointmentDto);
         appointmentService.save(appointment);
-        return appointmentMapper.entityToDto(appointment);
+        appointmentDto = appointmentMapper.entityToDto(appointment);
+        return new ResponseEntity<>(appointmentDto, HttpStatus.CREATED);
     }
 
     @GetMapping("/{patientId}/appointments")
-    public List<AppointmentDto> getFuture(@PathVariable long patientId) {
+    public ResponseEntity<List<AppointmentDto>> getFuture(@PathVariable long patientId) {
         //TODO ask dto and about url
         List<Appointment> futureAppointments = appointmentService.getAllFutureByPatientId(patientId);
-        return appointmentMapper.entityToDto(futureAppointments);
+        List<AppointmentDto> appointmentDtoList = appointmentMapper.entityToDto(futureAppointments);
+        return new ResponseEntity<>(appointmentDtoList, HttpStatus.OK);
     }
 
     /**

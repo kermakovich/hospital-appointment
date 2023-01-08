@@ -6,4 +6,5 @@ public interface PatientRepository {
 
     void save(Patient patient);
 
+    boolean existsById(long id);
 }

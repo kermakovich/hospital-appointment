@@ -59,4 +59,9 @@ public class DoctorServiceImpl implements DoctorService {
         return new AvailibleSlots(id, date, starts);
     }
 
+    @Override
+    public boolean existsById(long id) {
+        return doctorRepository.existsById(id);
+    }
+
 }

@@ -12,6 +12,8 @@ import java.sql.*;
 @RequiredArgsConstructor
 public class PatientRepositoryImpl implements PatientRepository {
     private static final String SAVE_PATIENT = "INSERT INTO patients (user_id, id_address) VALUES (?,?)";
+    private static final String CHECK_IF_EXISTS_BY_ID ="SELECT user_id, id_address FROM patients WHERE user_id = ?";
+
     private final DataSource dataSource;
 
     @Override
@@ -32,5 +34,16 @@ public class PatientRepositoryImpl implements PatientRepository {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public boolean existsById(long id) {
+        try (Connection con = dataSource.getConnection();
+             PreparedStatement ps = con.prepareStatement(CHECK_IF_EXISTS_BY_ID)) {
+            ps.setLong(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }} catch (SQLException e) {
+            throw new RuntimeException(e);
+        }      }
 
 }

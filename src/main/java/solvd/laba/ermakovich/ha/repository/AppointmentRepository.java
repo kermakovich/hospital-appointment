@@ -19,4 +19,6 @@ public interface AppointmentRepository {
     void delete(long appointmentId);
 
     boolean existsById(long appointmentId);
+
+    List<Appointment> getAllByPatientIdAndDoctorId(long patientId, long doctorId);
 }

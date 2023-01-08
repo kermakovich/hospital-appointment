@@ -20,7 +20,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1/doctors")
+@RequestMapping("api/v1")
 @RequiredArgsConstructor
 public class DoctorController {
 
@@ -36,7 +36,7 @@ public class DoctorController {
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{department}/{specialization}")
+    @GetMapping("/doctors/{department}/{specialization}")
     //TODO ask url
     public ResponseEntity<List<DoctorDto>> getAll(@PathVariable Department department,
                                                   @PathVariable Specialization specialization) {
@@ -46,7 +46,7 @@ public class DoctorController {
     }
 
 
-    @GetMapping("/{id}/schedule")
+    @GetMapping("/doctors/{id}/schedule")
     public ResponseEntity<AvailibleSlotsDto> getAvailibleSlots(@PathVariable long id,
                                                                @RequestParam("date")
                                                                @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date) {

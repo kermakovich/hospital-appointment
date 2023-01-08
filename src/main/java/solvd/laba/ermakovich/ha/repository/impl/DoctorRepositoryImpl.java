@@ -16,10 +16,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DoctorRepositoryImpl implements DoctorRepository {
     private static final String SAVE = "INSERT INTO doctors (user_id, department, specialization) VALUES (?,?,?)";
-    private static final String SELECT_BY_DEPARTMENT = """
+    private static final String SELECT_BY_DEPARTMENT_AND_SPECIALIZATION = """
             SELECT user_id, name, surname, fatherhood, birthday, email, password, department, specialization 
             FROM doctors
-            LEFT JOIN user_info on user_id = id WHERE department = ?""";
+            LEFT JOIN user_info on user_id = id WHERE department = ? and specialization=?""";
+    private static final String CHECK_IF_EXISTS_BY_ID = "SELECT user_id FROM doctors WHERE user_id = ?";
 
     private final DataSource dataSource;
 
@@ -44,11 +45,23 @@ public class DoctorRepositoryImpl implements DoctorRepository {
     @Override
     public List<Doctor> getAllByDepartmentAndSpecialization(Department department, Specialization specialization) {
         try (Connection con = dataSource.getConnection();
-             PreparedStatement ps = con.prepareStatement(SELECT_BY_DEPARTMENT)) {
+             PreparedStatement ps = con.prepareStatement(SELECT_BY_DEPARTMENT_AND_SPECIALIZATION)) {
             ps.setString(1, department.toString());
-
+            ps.setString(2, specialization.toString());
             try (ResultSet rs = ps.executeQuery()) {
                 return DoctorMapper.mapList(rs);
+            }} catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public boolean existsById(long id) {
+        try (Connection con = dataSource.getConnection();
+             PreparedStatement ps = con.prepareStatement(CHECK_IF_EXISTS_BY_ID)) {
+            ps.setLong(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
             }} catch (SQLException e) {
             throw new RuntimeException(e);
         }

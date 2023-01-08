@@ -5,7 +5,7 @@ import solvd.laba.ermakovich.ha.domain.Address;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class AddressMapper {
+public abstract class AddressMapper {
 
     public static Address map(ResultSet rs) {
         try {
