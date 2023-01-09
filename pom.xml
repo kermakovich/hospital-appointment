@@ -10,7 +10,7 @@
 	<description>first task for solvd laba</description>
 
 	<properties>
-		<java.version>19</java.version>
+		<java.version>17</java.version>
 		<springboot.version>3.0.1</springboot.version>
 		<lombok.version>1.18.24</lombok.version>
 		<postgres.version>42.5.1</postgres.version>

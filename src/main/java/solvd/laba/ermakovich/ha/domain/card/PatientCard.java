@@ -15,6 +15,7 @@ import java.util.UUID;
 @Setter
 public class PatientCard {
 
+    long id;
     private Patient patient;
     private UUID number;
     private LocalDate registryDate;

@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import solvd.laba.ermakovich.ha.domain.Address;
 import solvd.laba.ermakovich.ha.repository.AddressRepository;
+import solvd.laba.ermakovich.ha.repository.config.DataSourceConfig;
 import solvd.laba.ermakovich.ha.repository.mapper.AddressMapper;
 
-import javax.sql.DataSource;
 import java.sql.*;
 import java.util.Optional;
 
@@ -21,34 +21,37 @@ public class AddressRepositoryImpl implements AddressRepository {
     FROM addresses
     WHERE city =? and street=? and house=? and flat=?
     """;
-    private final DataSource dataSource;
+    private final DataSourceConfig dataSource;
 
     @Override
     public void save(Address address) {
 
-        try (Connection con = dataSource.getConnection();
-             PreparedStatement ps = con.prepareStatement(SAVE_ADDRESS, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setString(1, address.getCity());
-            ps.setString(2, address.getStreet());
-            ps.setInt(3, address.getHouse());
-            ps.setInt(4, address.getFlat());
-            ps.execute();
+        try {
+            Connection con = dataSource.getConnection();
+            try (PreparedStatement ps = con.prepareStatement(SAVE_ADDRESS, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setString(1, address.getCity());
+                ps.setString(2, address.getStreet());
+                ps.setInt(3, address.getHouse());
+                ps.setInt(4, address.getFlat());
+                ps.execute();
 
-            try(ResultSet rs = ps.getGeneratedKeys()) {
-            long generatedKey = 0L;
-            if (rs.next()) {
-                generatedKey = rs.getLong(1);
+                try(ResultSet rs = ps.getGeneratedKeys()) {
+                long generatedKey = 0L;
+                if (rs.next()) {
+                    generatedKey = rs.getLong(1);
+                }
+                address.setId(generatedKey);
+                }
             }
-            address.setId(generatedKey);
-        }} catch (SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
     public Optional<Address> find(Address address) {
-        try (Connection con = dataSource.getConnection();
-             PreparedStatement ps = con.prepareStatement(GET)) {
+       try{ Connection con = dataSource.getConnection();
+             PreparedStatement ps = con.prepareStatement(GET);
             ps.setString(1, address.getCity());
             ps.setString(2, address.getStreet());
             ps.setInt(3, address.getHouse());

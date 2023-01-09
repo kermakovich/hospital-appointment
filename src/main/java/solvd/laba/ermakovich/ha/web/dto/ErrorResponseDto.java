@@ -7,6 +7,5 @@ import lombok.Data;
 @Data
 public class ErrorResponseDto {
     private String message;
-    private int statusCode;
 
 }

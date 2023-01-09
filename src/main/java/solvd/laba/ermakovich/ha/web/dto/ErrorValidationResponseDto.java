@@ -3,12 +3,11 @@ package solvd.laba.ermakovich.ha.web.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.Map;
+import java.util.List;
 
 @AllArgsConstructor
 @Data
 public class ErrorValidationResponseDto {
 
-    private Map<String, String> errors;
-    private int statusCode;
+    private List<String> errors;
 }

@@ -7,11 +7,10 @@ import solvd.laba.ermakovich.ha.domain.UserInfo;
 import solvd.laba.ermakovich.ha.domain.doctor.AvailibleSlots;
 import solvd.laba.ermakovich.ha.domain.doctor.Doctor;
 import solvd.laba.ermakovich.ha.domain.doctor.Specialization;
-import solvd.laba.ermakovich.ha.domain.exception.ResourceNotFoundException;
 import solvd.laba.ermakovich.ha.domain.hospital.Department;
 import solvd.laba.ermakovich.ha.domain.hospital.OpeningHours;
-import solvd.laba.ermakovich.ha.repository.mapper.UserInfoMapper;
 import solvd.laba.ermakovich.ha.repository.DoctorRepository;
+import solvd.laba.ermakovich.ha.repository.mapper.UserInfoMapper;
 import solvd.laba.ermakovich.ha.service.AppointmentService;
 import solvd.laba.ermakovich.ha.service.DoctorService;
 import solvd.laba.ermakovich.ha.service.UserInfoService;
@@ -50,17 +49,16 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     public AvailibleSlots getSchedule(long id, LocalDate date) {
-        if (!existsById(id)) {
-            throw new ResourceNotFoundException(entityName, id);
-        }
         int steps = (int) openingHours.start.until(openingHours.finish, ChronoUnit.HOURS);
-        List<LocalTime> starts = new java.util.ArrayList<>(IntStream.rangeClosed(0, steps - 1)
+        List<LocalTime> startTimeSlots = new java.util.ArrayList<>(
+                IntStream
+                .rangeClosed(0, steps - 1)
                 .mapToObj(n -> openingHours.start
                         .plus(openingHours.minutesRange * n, ChronoUnit.MINUTES))
                 .toList());
         List<LocalTime> timeList = appointmentService.getTimeSlotsByDoctorIdAndDate(id, date);
-        starts.removeAll(timeList);
-        return new AvailibleSlots(id, date, starts);
+        startTimeSlots.removeAll(timeList);
+        return new AvailibleSlots(id, date, startTimeSlots);
     }
 
     @Override

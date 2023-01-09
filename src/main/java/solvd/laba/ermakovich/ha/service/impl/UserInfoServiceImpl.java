@@ -3,7 +3,7 @@ package solvd.laba.ermakovich.ha.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import solvd.laba.ermakovich.ha.domain.UserInfo;
-import solvd.laba.ermakovich.ha.domain.exception.EmailAlreadyExistsException;
+import solvd.laba.ermakovich.ha.domain.exception.EntityAlreadyExistsException;
 import solvd.laba.ermakovich.ha.repository.UserRepository;
 import solvd.laba.ermakovich.ha.service.UserInfoService;
 
@@ -18,7 +18,9 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Override
     public UserInfo save(UserInfo userInfo) {
         findByEmail(userInfo.getEmail())
-                .ifPresent((user) -> {throw new EmailAlreadyExistsException(userInfo.getEmail());});
+                .ifPresent((user) ->
+                {throw new EntityAlreadyExistsException(" User with this email: "
+                                                            + userInfo.getEmail() + " already exist");});
         userRepository.save(userInfo);
         return userInfo;
     }

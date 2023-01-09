@@ -1,12 +1,14 @@
 package solvd.laba.ermakovich.ha.repository.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Repository;
 import solvd.laba.ermakovich.ha.domain.Appointment;
+import solvd.laba.ermakovich.ha.domain.card.PatientCard;
 import solvd.laba.ermakovich.ha.repository.AppointmentRepository;
+import solvd.laba.ermakovich.ha.repository.config.DataSourceConfig;
 import solvd.laba.ermakovich.ha.repository.mapper.AppointmentMapper;
 
-import javax.sql.DataSource;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -17,152 +19,162 @@ import java.util.List;
 @Repository
 @RequiredArgsConstructor
 public class AppointmentRepositoryImpl implements AppointmentRepository {
+
     private static final String GET_TIME_SLOTS_BY_DOCTOR_AND_DATE = "SELECT date_time_start::time FROM appointments WHERE id_doctor=? and date_time_start::date=?";
     private static final String SAVE = "INSERT INTO appointments (id_doctor, id_card, date_time_start) VALUES (?,?,?)";
     private static final String CHECK_IF_EXISTS_BY_DOCTOR_ID_AND_DATE_TIME = "SELECT id FROM appointments WHERE id_doctor=? and date_time_start=?";
 
-    private static final String GET_INFO = """
-            SELECT ap.id, ap.date_time_start, d.id as "doctor_id", d.name as "doctor_name", d.surname as "doctor_surname",\s
-            			d.fatherhood as "doctor_fatherhood", d.birthday as "doctor_birthday",
-                        d.email as "doctor_email", d.password as "doctor_password",
-            			doctors.department as "doctor_department", doctors.specialization as "doctor_specialization",
-            			cards.number as "card_number", cards.reg_date as "reg_date_card",
+    private static final String GET_INFO_FOR_DOCTOR = """
+            SELECT ap.id, ap.date_time_start,
             			pat.id as "patient_id",
             			pat.name as "patient_name", pat.surname as "patient_surname",
             			pat.fatherhood as "patient_fatherhood", pat.birthday as "patient_birthday",
-                        pat.email as "patient_email", pat.password as "patient_password",
-            			addresses.id as "patient_address_id", addresses.city as "patient_address_city",
-            			addresses.street as "patient_address_street", addresses.house as "patient_address_house",
-            			addresses.flat as "patient_address_flat"
+                        pat.email as "patient_email", cards.number as "card_number", 
+                        cards.reg_date as "reg_date_card", cards.patient_id as "patient_card_id"
+                        from appointments ap
+                        left join patient_cards cards on id_card = cards.patient_id
+            			left join patients on id_card = patients.user_id
+            			join user_info pat on pat.id = patients.user_id
+            			WHERE pat.id=? and ap.date_time_start > now()
+            """;
+    private static final String GET_INFO_FOR_PATIENT = """
+            SELECT ap.id, ap.date_time_start, ap.id_card as "patient_id",
+                        d.id as "doctor_id", d.name as "doctor_name", d.surname as "doctor_surname",
+            			d.fatherhood as "doctor_fatherhood", d.birthday as "doctor_birthday",
+                        d.email as "doctor_email", doctors.department as "doctor_department",
+                        doctors.specialization as "doctor_specialization"
                         from appointments ap
             			LEFT JOIN doctors on id_doctor = doctors.user_id
-            			left join patients on id_card = patients.user_id
-            			left join patient_cards cards on cards.patient_id = id_card
             			join user_info d on  d.id=doctors.user_id
-            			join user_info pat on pat.id = patients.user_id
-            			left join addresses on addresses.id = patients.id_address
+            			WHERE ap.id_card=? and ap.date_time_start > now()
             """;
-    private static final String WHERE_BY_PATIENT_ID_AND_DOCTOR_ID_AND_BEFORE_NOW = """
-            WHERE pat.id=? and d.id=? and ap.date_time_start < now()
-            ORDER BY ap.date_time_start
-            """;
-    private static final String WHERE_BY_PATIENT_ID_AND_TIME_AFTER_NOW = "WHERE pat.id=? and ap.date_time_start > now()";
     private static final String DELETE = "DELETE FROM appointments WHERE id=?";
     private static final String CHECK_IF_EXISTS_BY_ID = "SELECT id FROM appointments WHERE id=?";
-    private static final String WHERE_BY_DOCTOR_ID_AND_TIME_AFTER_NOW = "WHERE d.id=? and ap.date_time_start > now()";
+    private static final String CHECK_IF_EXISTS_BY_PATIENT_ID_AND_DOCTOR_ID = "SELECT id FROM appointments WHERE id_card=? and id_doctor=?";
 
-    private final DataSource dataSource;
+    private final DataSourceConfig dataSource;
+
     @Override
+    @SneakyThrows
     public List<LocalTime> getTimeSlotsByDoctorIdAndDate(long id, LocalDate date) {
         List<LocalTime> timeSlots = new ArrayList<>();
-        try (Connection con = dataSource.getConnection();
-             PreparedStatement ps = con.prepareStatement(GET_TIME_SLOTS_BY_DOCTOR_AND_DATE)) {
+        Connection con = dataSource.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(GET_TIME_SLOTS_BY_DOCTOR_AND_DATE)) {
             ps.setLong(1, id);
             ps.setDate(2, Date.valueOf(date));
-
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     timeSlots.add(rs.getObject(1, LocalTime.class));
                 }
                 return timeSlots;
-            }} catch (SQLException e) {
-            throw new RuntimeException(e);
+            }
         }
-
     }
 
     @Override
-    public void save(Appointment appointment) {
-        try (Connection con = dataSource.getConnection();
-             PreparedStatement ps = con.prepareStatement(SAVE, Statement.RETURN_GENERATED_KEYS)) {
+    @SneakyThrows
+    public void save(long patientId, Appointment appointment) {
+        Connection con = dataSource.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(SAVE, Statement.RETURN_GENERATED_KEYS)) {
             ps.setLong(1, appointment.getDoctor().getId());
-            ps.setLong(2, appointment.getPatientCard().getPatient().getId());
+            ps.setLong(2, patientId);
             ps.setTimestamp(3, Timestamp.valueOf(appointment.getStart()));
             ps.execute();
-
-            try(ResultSet rs = ps.getGeneratedKeys()) {
+            try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
                     appointment.setId(rs.getLong(1));
+                    //TODO ask все равно некрасиво
+                    PatientCard patientCard = new PatientCard();
+                    patientCard.setId(patientId);
+                    appointment.setPatientCard(patientCard);
                 }
-            }} catch (SQLException e) {
-            throw new RuntimeException(e);
+            }
         }
     }
 
     @Override
+    @SneakyThrows
     public boolean existsByDoctorIdAndTime(Appointment appointment) {
-        try (Connection con = dataSource.getConnection();
-             PreparedStatement ps = con.prepareStatement(CHECK_IF_EXISTS_BY_DOCTOR_ID_AND_DATE_TIME)) {
+        Connection con = dataSource.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(CHECK_IF_EXISTS_BY_DOCTOR_ID_AND_DATE_TIME)) {
             ps.setLong(1, appointment.getDoctor().getId());
             ps.setTimestamp(2, Timestamp.valueOf(appointment.getStart()));
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.next();
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
     }
 
     @Override
+    @SneakyThrows
     public List<Appointment> getAllFutureByPatientId(long patientId) {
-        try (Connection con = dataSource.getConnection();
-             PreparedStatement ps = con.prepareStatement(GET_INFO + WHERE_BY_PATIENT_ID_AND_TIME_AFTER_NOW)) {
+        Connection con = dataSource.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(GET_INFO_FOR_PATIENT)) {
             ps.setLong(1, patientId);
             try (ResultSet rs = ps.executeQuery()) {
-                return AppointmentMapper.map(rs);
-            }} catch (SQLException e) {
-            throw new RuntimeException(e);
+                return AppointmentMapper.mapListForPatient(rs);
+            }
         }
     }
 
     @Override
+    @SneakyThrows
     public void delete(long appointmentId) {
-        try (Connection con = dataSource.getConnection();
-             PreparedStatement ps = con.prepareStatement(DELETE)) {
+        Connection con = dataSource.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(DELETE)) {
             ps.setLong(1, appointmentId);
-    //TODO ask if i need to check
             ps.executeUpdate();
-            } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
     }
 
     @Override
+    @SneakyThrows
     public boolean existsById(long appointmentId) {
-        try (Connection con = dataSource.getConnection();
-             PreparedStatement ps = con.prepareStatement(CHECK_IF_EXISTS_BY_ID)) {
+        Connection con = dataSource.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(CHECK_IF_EXISTS_BY_ID)) {
             ps.setLong(1, appointmentId);
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.next();
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        }
+    }
+
+//    @Override
+//    @SneakyThrows
+//    public List<Appointment> getAllByPatientIdAndDoctorId(long patientId, long doctorId) {
+//        Connection con = dataSource.getConnection();
+//        try (PreparedStatement ps = con.prepareStatement(GET_INFO +
+//                WHERE_BY_PATIENT_ID_AND_DOCTOR_ID_AND_BEFORE_NOW)) {
+//            ps.setLong(1, patientId);
+//            ps.setLong(2, doctorId);
+//            try (ResultSet rs = ps.executeQuery()) {
+//                return AppointmentMapper.map(rs);
+//            }
+//        }
+//    }
+
+    @Override
+    @SneakyThrows
+    public List<Appointment> getAllFutureByDoctorId(long doctorId) {
+        Connection con = dataSource.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(GET_INFO_FOR_DOCTOR)) {
+            ps.setLong(1, doctorId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return AppointmentMapper.mapListForDoctor(rs);
+            }
         }
     }
 
     @Override
-    public List<Appointment> getAllByPatientIdAndDoctorId(long patientId, long doctorId) {
-        try (Connection con = dataSource.getConnection();
-             PreparedStatement ps = con.prepareStatement(GET_INFO +
-                                                            WHERE_BY_PATIENT_ID_AND_DOCTOR_ID_AND_BEFORE_NOW)) {
+    @SneakyThrows
+    public boolean existsPastByPatientIdAndDoctorId(long patientId, long doctorId) {
+        Connection con = dataSource.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(CHECK_IF_EXISTS_BY_PATIENT_ID_AND_DOCTOR_ID)) {
             ps.setLong(1, patientId);
             ps.setLong(2, doctorId);
             try (ResultSet rs = ps.executeQuery()) {
-                return AppointmentMapper.map(rs);
-            }} catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public List<Appointment> getAllFutureByDoctorId(long doctorId) {
-        try (Connection con = dataSource.getConnection();
-             PreparedStatement ps = con.prepareStatement(GET_INFO + WHERE_BY_DOCTOR_ID_AND_TIME_AFTER_NOW)) {
-            ps.setLong(1, doctorId);
-            try (ResultSet rs = ps.executeQuery()) {
-                return AppointmentMapper.map(rs);
-            }} catch (SQLException e) {
-            throw new RuntimeException(e);
+                return rs.next();
+            }
         }
     }
 }

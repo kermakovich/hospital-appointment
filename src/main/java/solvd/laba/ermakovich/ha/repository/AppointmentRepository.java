@@ -10,7 +10,7 @@ public interface AppointmentRepository {
 
     List<LocalTime> getTimeSlotsByDoctorIdAndDate(long id, LocalDate date);
 
-    void save(Appointment appointment);
+    void save(long patientId, Appointment appointment);
 
     boolean existsByDoctorIdAndTime(Appointment appointment);
 
@@ -20,7 +20,9 @@ public interface AppointmentRepository {
 
     boolean existsById(long appointmentId);
 
-    List<Appointment> getAllByPatientIdAndDoctorId(long patientId, long doctorId);
+    //List<Appointment> getAllByPatientIdAndDoctorId(long patientId, long doctorId);
 
     List<Appointment> getAllFutureByDoctorId(long doctorId);
+
+    boolean existsPastByPatientIdAndDoctorId(long patientId, long doctorId);
 }

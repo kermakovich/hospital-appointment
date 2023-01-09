@@ -4,9 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import solvd.laba.ermakovich.ha.domain.Appointment;
-import solvd.laba.ermakovich.ha.domain.exception.AppointmentIsBusyException;
-import solvd.laba.ermakovich.ha.domain.exception.ResourceNotFoundException;
-import solvd.laba.ermakovich.ha.domain.exception.WrongAppointmentTimeException;
+import solvd.laba.ermakovich.ha.domain.exception.IllegalOperationException;
 import solvd.laba.ermakovich.ha.domain.hospital.OpeningHours;
 import solvd.laba.ermakovich.ha.repository.AppointmentRepository;
 import solvd.laba.ermakovich.ha.service.AppointmentService;
@@ -29,14 +27,15 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     @Transactional
-    public Appointment save(Appointment appointment) {
+    public Appointment save(long patientId, Appointment appointment) {
         if (!openingHours.isWithinOpenHours(appointment.getStart().toLocalTime())) {
-            throw new WrongAppointmentTimeException(appointment.getStart());
+            throw new IllegalOperationException("Hospital is closed at this time: "
+                                                    + appointment.getStart().toString());
         }
         if (appointmentRepository.existsByDoctorIdAndTime(appointment)) {
-            throw new AppointmentIsBusyException(appointment);
+            throw new IllegalOperationException( "Appointment is taken (date : "+appointment.getStart()+" )");
         }
-        appointmentRepository.save(appointment);
+        appointmentRepository.save(patientId, appointment);
         return appointment;
     }
 
@@ -51,19 +50,21 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public void delete(long appointmentId) {
-        if (!appointmentRepository.existsById(appointmentId)) {
-            throw new ResourceNotFoundException(entityName, appointmentId);
-        }
         appointmentRepository.delete(appointmentId);
     }
 
-    @Override
-    public List<Appointment> getAllByPatientIdAndDoctorId(long patientId, long doctorId) {
-        return appointmentRepository.getAllByPatientIdAndDoctorId(patientId, doctorId);
-    }
+//    @Override
+//    public List<Appointment> getAllByPatientIdAndDoctorId(long patientId, long doctorId) {
+//        return appointmentRepository.getAllByPatientIdAndDoctorId(patientId, doctorId);
+//    }
 
     @Override
     public List<Appointment> getAllFutureByDoctorId(long doctorId) {
         return appointmentRepository.getAllFutureByDoctorId(doctorId);
+    }
+
+    @Override
+    public boolean existsPastByPatientIdAndDoctorId(long patientId, long doctorId) {
+        return appointmentRepository.existsPastByPatientIdAndDoctorId(patientId, doctorId);
     }
 }

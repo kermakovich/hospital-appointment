@@ -1,42 +1,45 @@
 package solvd.laba.ermakovich.ha.repository.mapper;
 
+import lombok.SneakyThrows;
 import solvd.laba.ermakovich.ha.domain.Patient;
 import solvd.laba.ermakovich.ha.domain.Review;
-import solvd.laba.ermakovich.ha.domain.doctor.Doctor;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class ReviewMapper {
 
-    public static List<Review> mapList(ResultSet rs) {
+    @SneakyThrows
+    public static List<Review> mapListForDoctor(ResultSet rs) {
         List<Review> reviews = new ArrayList<>();
-        try {
-            while (rs.next()) {
-                reviews.add(map(rs));
-            }
-            return reviews;
+        while (rs.next()) {
+            reviews.add(mapForDoctor(rs));
         }
-        catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        return reviews;
     }
 
-    public static Review map(ResultSet rs) {
-        try {
-            Review review = new Review();
-            review.setId(rs.getLong("review_id"));
-            review.setDescription(rs.getString("review_description"));
-            Doctor doctor = DoctorMapper.map(rs);
-            review.setDoctor(doctor);
-            Patient patient = PatientMapper.map(rs);
-            review.setPatient(patient);
-            return review;
-        }
-        catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    @SneakyThrows
+    public static Review mapForDoctor(ResultSet rs) {
+        Review review = new Review();
+        review.setId(rs.getLong("review_id"));
+        review.setDescription(rs.getString("review_description"));
+        review.setDoctor(DoctorMapper.mapId(rs));
+        Patient patient = PatientMapper.mapNameAndId(rs);
+        review.setPatient(patient);
+        return review;
     }
+
+    @SneakyThrows
+    public static Review map(ResultSet rs) {
+        Review review = new Review();
+        review.setId(rs.getLong("review_id"));
+        review.setDescription(rs.getString("review_description"));
+        review.setDoctor(DoctorMapper.map(rs));
+        Patient patient = PatientMapper.mapNameAndId(rs);
+        review.setPatient(patient);
+        return review;
+    }
+
+
 }

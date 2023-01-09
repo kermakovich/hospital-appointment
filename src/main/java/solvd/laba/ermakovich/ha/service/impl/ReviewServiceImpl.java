@@ -3,16 +3,16 @@ package solvd.laba.ermakovich.ha.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import solvd.laba.ermakovich.ha.domain.Appointment;
 import solvd.laba.ermakovich.ha.domain.Review;
-import solvd.laba.ermakovich.ha.domain.exception.*;
+import solvd.laba.ermakovich.ha.domain.exception.IllegalOperationException;
+import solvd.laba.ermakovich.ha.domain.exception.ResourceNotFoundException;
+import solvd.laba.ermakovich.ha.domain.exception.EntityAlreadyExistsException;
 import solvd.laba.ermakovich.ha.repository.ReviewRepository;
 import solvd.laba.ermakovich.ha.service.AppointmentService;
 import solvd.laba.ermakovich.ha.service.DoctorService;
 import solvd.laba.ermakovich.ha.service.PatientService;
 import solvd.laba.ermakovich.ha.service.ReviewService;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -26,62 +26,48 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional
     public void save(Review review) {
-        boolean isSaved = false;
         long doctorId = review.getDoctor().getId();
         long patientId = review.getPatient().getId();
-        if (!doctorService.existsById(doctorId)) {
-            throw new ResourceNotFoundException(doctorService.entityName, doctorId);
-        }
-        if (!patientService.existsById(patientId)) {
-            throw new ResourceNotFoundException(patientService.entityName, patientId);
-        }
+
         if (reviewRepository.existsByDoctorIdAndPatientId(doctorId, patientId)) {
-                throw new ReviewAlreadyExistsException(doctorId, patientId);
+                throw new EntityAlreadyExistsException("Review with patient (id: " +
+                        patientId + ") and doctor (id: " + doctorId + ") already exists");
         }
-        var appointments = appointmentService.getAllByPatientIdAndDoctorId(review.getPatient().getId(),
-                                                                            review.getDoctor().getId());
-        for (Appointment appointment : appointments) {
-            if (appointment.getStart().isBefore(LocalDateTime.now())) {
-                reviewRepository.save(review);
-                isSaved = true;
-                break;
-            }
-        }
-        if (!isSaved) {
-            throw new PatientNotHaveDoneAppointmentException(review.getPatient().getId(), review.getDoctor().getId());
+        boolean patientHasPastAppointment = appointmentService.existsPastByPatientIdAndDoctorId(
+                                                                            patientId,
+                                                                            doctorId);
+        if (patientHasPastAppointment) {
+            reviewRepository.save(review);
+        } else {
+            throw new IllegalOperationException("Patient (id : " + patientId
+                                                + " ) has not been treated with doctor (id: "
+                                                + doctorId + " )");
         }
     }
 
     @Override
     public List<Review> getAllByDoctorId(long doctorId) {
-        if (!doctorService.existsById(doctorId)) {
-            throw new ResourceNotFoundException(doctorService.entityName, doctorId);
-        }
         return reviewRepository.getAllByDoctorId(doctorId);
     }
 
     @Override
     @Transactional
     public void delete(long reviewId) {
-        if (!reviewRepository.existsById(reviewId)) {
-            throw new ResourceNotFoundException(entityName, reviewId);
-        }
         reviewRepository.delete(reviewId);
     }
 
     @Override
     @Transactional
     public Review update(Review review) {
-        //TODO ask about exception
-        if (!reviewRepository.existsById(review.getId())) {
-            throw new ResourceNotFoundException(entityName, review.getId());
-        }
-        reviewRepository.update(review);
-        return getById(review.getId());
+        Review oldReview = getById(review.getId());
+        oldReview.setDescription(review.getDescription());
+        reviewRepository.update(oldReview);
+        return review;
     }
 
     @Override
     public Review getById(long reviewId) {
-        return reviewRepository.getById(reviewId).orElseThrow(() -> new ResourceNotFoundException(entityName, reviewId));
+        return reviewRepository.getById(reviewId)
+                        .orElseThrow(() -> new ResourceNotFoundException(entityName, reviewId));
     }
 }

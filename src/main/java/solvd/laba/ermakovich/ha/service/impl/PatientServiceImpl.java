@@ -3,10 +3,11 @@ package solvd.laba.ermakovich.ha.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 import solvd.laba.ermakovich.ha.domain.Patient;
 import solvd.laba.ermakovich.ha.domain.UserInfo;
-import solvd.laba.ermakovich.ha.repository.mapper.UserInfoMapper;
 import solvd.laba.ermakovich.ha.repository.PatientRepository;
+import solvd.laba.ermakovich.ha.repository.mapper.UserInfoMapper;
 import solvd.laba.ermakovich.ha.service.AddressService;
 import solvd.laba.ermakovich.ha.service.PatientCardService;
 import solvd.laba.ermakovich.ha.service.PatientService;
@@ -21,6 +22,7 @@ public class PatientServiceImpl implements PatientService {
     private final PatientCardService patientCardService;
     private final PatientRepository patientRepository;
     private final UserInfoMapper userInfoMapper;
+    private final TransactionTemplate transactionTemplate;
 
     @Override
     @Transactional
@@ -30,7 +32,7 @@ public class PatientServiceImpl implements PatientService {
         addressService.find(patient.getAddress())
                 .ifPresentOrElse(
                         patient::setAddress,
-                        ()-> addressService.save(patient.getAddress()));
+                        () -> addressService.save(patient.getAddress()));
         patient.setId(userInfo.getId());
         patientRepository.save(patient);
         patientCardService.saveByPatientId(patient.getId());
