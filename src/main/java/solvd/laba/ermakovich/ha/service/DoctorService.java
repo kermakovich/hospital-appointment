@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface DoctorService {
 
+    String entityName = "doctor";
+
     Doctor save(Doctor doctor);
 
     List<Doctor> getAllByDepartmentAndSpecialization(Department department, Specialization specialization);

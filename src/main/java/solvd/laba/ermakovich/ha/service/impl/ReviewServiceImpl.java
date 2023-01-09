@@ -30,10 +30,10 @@ public class ReviewServiceImpl implements ReviewService {
         long doctorId = review.getDoctor().getId();
         long patientId = review.getPatient().getId();
         if (!doctorService.existsById(doctorId)) {
-            throw new DoctorNotFoundException(doctorId);
+            throw new ResourceNotFoundException(doctorService.entityName, doctorId);
         }
         if (!patientService.existsById(patientId)) {
-            throw new PatientNotFoundException(patientId);
+            throw new ResourceNotFoundException(patientService.entityName, patientId);
         }
         if (reviewRepository.existsByDoctorIdAndPatientId(doctorId, patientId)) {
                 throw new ReviewAlreadyExistsException(doctorId, patientId);
@@ -55,7 +55,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public List<Review> getAllByDoctorId(long doctorId) {
         if (!doctorService.existsById(doctorId)) {
-            throw new DoctorNotFoundException(doctorId);
+            throw new ResourceNotFoundException(doctorService.entityName, doctorId);
         }
         return reviewRepository.getAllByDoctorId(doctorId);
     }
@@ -64,7 +64,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional
     public void delete(long reviewId) {
         if (!reviewRepository.existsById(reviewId)) {
-            throw new ReviewNotFoundException(reviewId);
+            throw new ResourceNotFoundException(entityName, reviewId);
         }
         reviewRepository.delete(reviewId);
     }
@@ -74,15 +74,14 @@ public class ReviewServiceImpl implements ReviewService {
     public Review update(Review review) {
         //TODO ask about exception
         if (!reviewRepository.existsById(review.getId())) {
-            throw new ReviewNotFoundException(review.getId());
+            throw new ResourceNotFoundException(entityName, review.getId());
         }
         reviewRepository.update(review);
-        return reviewRepository.getById(review.getId())
-                .orElseThrow(() -> new ReviewNotFoundException(review.getId()));
+        return getById(review.getId());
     }
 
     @Override
     public Review getById(long reviewId) {
-        return reviewRepository.getById(reviewId).orElseThrow(() -> new ReviewNotFoundException(reviewId));
+        return reviewRepository.getById(reviewId).orElseThrow(() -> new ResourceNotFoundException(entityName, reviewId));
     }
 }

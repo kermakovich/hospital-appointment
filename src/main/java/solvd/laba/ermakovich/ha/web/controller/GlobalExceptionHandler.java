@@ -16,8 +16,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({AppointmentNotFoundException.class, DoctorNotFoundException.class,
-                        ReviewNotFoundException.class, PatientNotFoundException.class})
+    @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponseDto handleEntityNotFoundException(RuntimeException ex) {
         return new ErrorResponseDto(ex.getMessage(), HttpStatus.NOT_FOUND.value());

@@ -4,10 +4,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import solvd.laba.ermakovich.ha.domain.Review;
 import solvd.laba.ermakovich.ha.service.ReviewService;
 import solvd.laba.ermakovich.ha.web.dto.ReviewDto;
+import solvd.laba.ermakovich.ha.web.dto.group.onCreateReview;
 import solvd.laba.ermakovich.ha.web.mapper.ReviewMapper;
 
 import java.util.List;
@@ -20,7 +22,7 @@ public class ReviewController {
     private final ReviewMapper reviewMapper;
 
     @PostMapping("/reviews")
-    public ResponseEntity<ReviewDto> save(@Valid @RequestBody ReviewDto reviewDto) {
+    public ResponseEntity<ReviewDto> save(@RequestBody @Validated(onCreateReview.class) ReviewDto reviewDto) {
         Review review = reviewMapper.dtoToEntity(reviewDto);
         reviewService.save(review);
         reviewDto = reviewMapper.entityToDto(review);
@@ -40,8 +42,8 @@ public class ReviewController {
         reviewService.delete(reviewId);
     }
 
-    @PutMapping("/reviews/{reviewId}")
-    public ResponseEntity<ReviewDto> update(@RequestBody ReviewDto reviewDto, @PathVariable long reviewId) {
+    @PatchMapping("/reviews/{reviewId}")
+    public ResponseEntity<ReviewDto> update(@RequestBody @Valid ReviewDto reviewDto, @PathVariable long reviewId) {
         Review review = reviewMapper.dtoToEntity(reviewDto);
         review.setId(reviewId);
         review = reviewService.update(review);

@@ -17,7 +17,8 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public UserInfo save(UserInfo userInfo) {
-        findByEmail(userInfo.getEmail()).ifPresent((user) -> {throw new EmailAlreadyExistsException(userInfo.getEmail());});
+        findByEmail(userInfo.getEmail())
+                .ifPresent((user) -> {throw new EmailAlreadyExistsException(userInfo.getEmail());});
         userRepository.save(userInfo);
         return userInfo;
     }

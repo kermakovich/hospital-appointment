@@ -21,4 +21,6 @@ public interface AppointmentRepository {
     boolean existsById(long appointmentId);
 
     List<Appointment> getAllByPatientIdAndDoctorId(long patientId, long doctorId);
+
+    List<Appointment> getAllFutureByDoctorId(long doctorId);
 }

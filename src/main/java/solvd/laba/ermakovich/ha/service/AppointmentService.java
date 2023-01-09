@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface AppointmentService {
 
+    String entityName = "appointment";
+
     List<LocalTime> getTimeSlotsByDoctorIdAndDate(long id, LocalDate date);
 
     Appointment save(Appointment appointment);
@@ -17,4 +19,6 @@ public interface AppointmentService {
     void delete(long appointmentId);
 
     List<Appointment> getAllByPatientIdAndDoctorId(long patientId, long doctorId);
+
+    List<Appointment> getAllFutureByDoctorId(long doctorId);
 }

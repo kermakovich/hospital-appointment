@@ -31,7 +31,6 @@ public class PatientServiceImpl implements PatientService {
                 .ifPresentOrElse(
                         patient::setAddress,
                         ()-> addressService.save(patient.getAddress()));
-
         patient.setId(userInfo.getId());
         patientRepository.save(patient);
         patientCardService.saveByPatientId(patient.getId());

@@ -23,23 +23,23 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
     private static final String GET_INFO = """
             SELECT ap.id, ap.date_time_start, d.id as "doctor_id", d.name as "doctor_name", d.surname as "doctor_surname",\s
-            			d.fatherhood as "doctor_fatherhood", d.birthday as "doctor_birthday",\s
+            			d.fatherhood as "doctor_fatherhood", d.birthday as "doctor_birthday",
                         d.email as "doctor_email", d.password as "doctor_password",
             			doctors.department as "doctor_department", doctors.specialization as "doctor_specialization",
             			cards.number as "card_number", cards.reg_date as "reg_date_card",
             			pat.id as "patient_id",
-            			pat.name as "patient_name", pat.surname as "patient_surname",\s
-            			pat.fatherhood as "patient_fatherhood", pat.birthday as "patient_birthday",\s
+            			pat.name as "patient_name", pat.surname as "patient_surname",
+            			pat.fatherhood as "patient_fatherhood", pat.birthday as "patient_birthday",
                         pat.email as "patient_email", pat.password as "patient_password",
             			addresses.id as "patient_address_id", addresses.city as "patient_address_city",
             			addresses.street as "patient_address_street", addresses.house as "patient_address_house",
             			addresses.flat as "patient_address_flat"
                         from appointments ap
-            			LEFT JOIN doctors on id_doctor = doctors.user_id\s
+            			LEFT JOIN doctors on id_doctor = doctors.user_id
             			left join patients on id_card = patients.user_id
-            			left join patient_cards cards on cards.patient_id = id_card\s
+            			left join patient_cards cards on cards.patient_id = id_card
             			join user_info d on  d.id=doctors.user_id
-            			join user_info pat on pat.id = patients.user_id\s
+            			join user_info pat on pat.id = patients.user_id
             			left join addresses on addresses.id = patients.id_address
             """;
     private static final String WHERE_BY_PATIENT_ID_AND_DOCTOR_ID_AND_BEFORE_NOW = """
@@ -49,6 +49,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     private static final String WHERE_BY_PATIENT_ID_AND_TIME_AFTER_NOW = "WHERE pat.id=? and ap.date_time_start > now()";
     private static final String DELETE = "DELETE FROM appointments WHERE id=?";
     private static final String CHECK_IF_EXISTS_BY_ID = "SELECT id FROM appointments WHERE id=?";
+    private static final String WHERE_BY_DOCTOR_ID_AND_TIME_AFTER_NOW = "WHERE d.id=? and ap.date_time_start > now()";
 
     private final DataSource dataSource;
     @Override
@@ -146,6 +147,18 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
                                                             WHERE_BY_PATIENT_ID_AND_DOCTOR_ID_AND_BEFORE_NOW)) {
             ps.setLong(1, patientId);
             ps.setLong(2, doctorId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return AppointmentMapper.map(rs);
+            }} catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<Appointment> getAllFutureByDoctorId(long doctorId) {
+        try (Connection con = dataSource.getConnection();
+             PreparedStatement ps = con.prepareStatement(GET_INFO + WHERE_BY_DOCTOR_ID_AND_TIME_AFTER_NOW)) {
+            ps.setLong(1, doctorId);
             try (ResultSet rs = ps.executeQuery()) {
                 return AppointmentMapper.map(rs);
             }} catch (SQLException e) {

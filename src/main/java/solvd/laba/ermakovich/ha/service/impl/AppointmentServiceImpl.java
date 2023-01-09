@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import solvd.laba.ermakovich.ha.domain.Appointment;
 import solvd.laba.ermakovich.ha.domain.exception.AppointmentIsBusyException;
-import solvd.laba.ermakovich.ha.domain.exception.AppointmentNotFoundException;
+import solvd.laba.ermakovich.ha.domain.exception.ResourceNotFoundException;
 import solvd.laba.ermakovich.ha.domain.exception.WrongAppointmentTimeException;
 import solvd.laba.ermakovich.ha.domain.hospital.OpeningHours;
 import solvd.laba.ermakovich.ha.repository.AppointmentRepository;
@@ -52,7 +52,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     public void delete(long appointmentId) {
         if (!appointmentRepository.existsById(appointmentId)) {
-            throw new AppointmentNotFoundException(appointmentId);
+            throw new ResourceNotFoundException(entityName, appointmentId);
         }
         appointmentRepository.delete(appointmentId);
     }
@@ -60,5 +60,10 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     public List<Appointment> getAllByPatientIdAndDoctorId(long patientId, long doctorId) {
         return appointmentRepository.getAllByPatientIdAndDoctorId(patientId, doctorId);
+    }
+
+    @Override
+    public List<Appointment> getAllFutureByDoctorId(long doctorId) {
+        return appointmentRepository.getAllFutureByDoctorId(doctorId);
     }
 }

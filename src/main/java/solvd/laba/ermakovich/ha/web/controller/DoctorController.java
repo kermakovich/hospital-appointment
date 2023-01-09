@@ -1,10 +1,11 @@
 package solvd.laba.ermakovich.ha.web.controller;
 
-import jakarta.validation.Valid;
+import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import solvd.laba.ermakovich.ha.domain.doctor.AvailibleSlots;
 import solvd.laba.ermakovich.ha.domain.doctor.Doctor;
@@ -13,6 +14,7 @@ import solvd.laba.ermakovich.ha.domain.hospital.Department;
 import solvd.laba.ermakovich.ha.service.DoctorService;
 import solvd.laba.ermakovich.ha.web.dto.AvailibleSlotsDto;
 import solvd.laba.ermakovich.ha.web.dto.DoctorDto;
+import solvd.laba.ermakovich.ha.web.dto.group.onCreate;
 import solvd.laba.ermakovich.ha.web.mapper.AvailibleSlotsMapper;
 import solvd.laba.ermakovich.ha.web.mapper.DoctorMapper;
 
@@ -28,8 +30,9 @@ public class DoctorController {
     private final DoctorMapper doctorMapper;
     private final AvailibleSlotsMapper availibleSlotsMapper;
 
-    @PostMapping
-    public ResponseEntity<DoctorDto> save(@Valid @RequestBody DoctorDto doctorDto) {
+    @PostMapping("/doctors")
+    public ResponseEntity<DoctorDto> save(@Validated({onCreate.class, Default.class})
+                                              @RequestBody DoctorDto doctorDto) {
         Doctor doctor = doctorMapper.dtoToEntity(doctorDto);
         doctorService.save(doctor);
         DoctorDto dto = doctorMapper.entityToDto(doctor);
