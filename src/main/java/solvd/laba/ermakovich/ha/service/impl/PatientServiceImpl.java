@@ -3,7 +3,6 @@ package solvd.laba.ermakovich.ha.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionTemplate;
 import solvd.laba.ermakovich.ha.domain.Patient;
 import solvd.laba.ermakovich.ha.domain.UserInfo;
 import solvd.laba.ermakovich.ha.repository.PatientRepository;
@@ -22,7 +21,6 @@ public class PatientServiceImpl implements PatientService {
     private final PatientCardService patientCardService;
     private final PatientRepository patientRepository;
     private final UserInfoMapper userInfoMapper;
-    private final TransactionTemplate transactionTemplate;
 
     @Override
     @Transactional
@@ -40,6 +38,7 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean existsById(long id) {
         return patientRepository.existsById(id);
     }

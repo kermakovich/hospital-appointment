@@ -2,6 +2,7 @@ package solvd.laba.ermakovich.ha.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import solvd.laba.ermakovich.ha.domain.UserInfo;
 import solvd.laba.ermakovich.ha.domain.exception.EntityAlreadyExistsException;
 import solvd.laba.ermakovich.ha.repository.UserRepository;
@@ -16,6 +17,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     private final UserRepository userRepository;
 
     @Override
+    @Transactional
     public UserInfo save(UserInfo userInfo) {
         findByEmail(userInfo.getEmail())
                 .ifPresent((user) ->
@@ -26,6 +28,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<UserInfo> findByEmail(String email){
         return userRepository.findByEmail(email);
     }

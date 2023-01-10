@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import solvd.laba.ermakovich.ha.web.dto.group.onCreate;
 import solvd.laba.ermakovich.ha.web.dto.group.onCreateAppointment;
 import solvd.laba.ermakovich.ha.web.dto.group.onCreateReview;
@@ -12,7 +13,8 @@ import solvd.laba.ermakovich.ha.web.dto.group.onCreateReview;
 import java.time.LocalDate;
 
 
-@Data
+@Getter
+@Setter
 public abstract class UserInfoDto {
     @NotNull(groups = {onCreateAppointment.class, onCreateReview.class},
             message = "user id can not be null")

@@ -8,11 +8,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import solvd.laba.ermakovich.ha.domain.doctor.AvailibleSlots;
 import solvd.laba.ermakovich.ha.domain.doctor.Doctor;
-import solvd.laba.ermakovich.ha.domain.doctor.Specialization;
-import solvd.laba.ermakovich.ha.domain.hospital.Department;
 import solvd.laba.ermakovich.ha.service.DoctorService;
-import solvd.laba.ermakovich.ha.web.dto.AvailibleSlotsDto;
+import solvd.laba.ermakovich.ha.web.dto.AvailableSlotsDto;
 import solvd.laba.ermakovich.ha.web.dto.DoctorDto;
+import solvd.laba.ermakovich.ha.domain.SearchCriteria;
 import solvd.laba.ermakovich.ha.web.dto.group.onCreate;
 import solvd.laba.ermakovich.ha.web.mapper.AvailibleSlotsMapper;
 import solvd.laba.ermakovich.ha.web.mapper.DoctorMapper;
@@ -38,17 +37,16 @@ public class DoctorController {
         return doctorMapper.entityToDto(doctor);
     }
 
-    //TODO make searchDto
+
     @GetMapping
-    public List<DoctorDto> getAll(@RequestParam Department department,
-                                  @RequestParam Specialization specialization) {
-        List<Doctor> doctors = doctorService.getAllByDepartmentAndSpecialization(department, specialization);
+    public List<DoctorDto> getAll(SearchCriteria searchCriteriaDto) {
+        List<Doctor> doctors = doctorService.getAllBySearchCriteria(searchCriteriaDto);
         return doctorMapper.entityToDto(doctors);
     }
 
 
     @GetMapping("/{id}/schedule")
-    public AvailibleSlotsDto getAvailableSlots(@PathVariable long id, @RequestParam
+    public AvailableSlotsDto getAvailableSlots(@PathVariable long id, @RequestParam
                                                                         @DateTimeFormat(pattern = "dd-MM-yyyy")
                                                                         LocalDate date) {
         AvailibleSlots availableSlots = doctorService.getSchedule(id, date);

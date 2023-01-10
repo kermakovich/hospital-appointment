@@ -3,11 +3,10 @@ package solvd.laba.ermakovich.ha.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import solvd.laba.ermakovich.ha.domain.SearchCriteria;
 import solvd.laba.ermakovich.ha.domain.UserInfo;
 import solvd.laba.ermakovich.ha.domain.doctor.AvailibleSlots;
 import solvd.laba.ermakovich.ha.domain.doctor.Doctor;
-import solvd.laba.ermakovich.ha.domain.doctor.Specialization;
-import solvd.laba.ermakovich.ha.domain.hospital.Department;
 import solvd.laba.ermakovich.ha.domain.hospital.OpeningHours;
 import solvd.laba.ermakovich.ha.repository.DoctorRepository;
 import solvd.laba.ermakovich.ha.repository.mapper.UserInfoMapper;
@@ -42,12 +41,9 @@ public class DoctorServiceImpl implements DoctorService {
         return doctor;
     }
 
-    @Override
-    public List<Doctor> getAllByDepartmentAndSpecialization(Department department, Specialization specialization) {
-        return doctorRepository.getAllByDepartmentAndSpecialization(department, specialization);
-    }
 
     @Override
+    @Transactional(readOnly = true)
     public AvailibleSlots getSchedule(long id, LocalDate date) {
         int steps = (int) openingHours.start.until(openingHours.finish, ChronoUnit.HOURS);
         List<LocalTime> startTimeSlots = new java.util.ArrayList<>(
@@ -62,8 +58,14 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean existsById(long id) {
         return doctorRepository.existsById(id);
+    }
+
+    @Override
+    public List<Doctor> getAllBySearchCriteria(SearchCriteria searchCriteria) {
+        return doctorRepository.getAllBySearchCriteria(searchCriteria);
     }
 
 }

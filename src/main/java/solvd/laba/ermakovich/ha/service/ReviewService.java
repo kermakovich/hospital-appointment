@@ -6,8 +6,6 @@ import java.util.List;
 
 public interface ReviewService {
 
-    String entityName = "review";
-
     void save(Review review);
 
     List<Review> getAllByDoctorId(long doctorId);

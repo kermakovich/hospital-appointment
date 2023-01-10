@@ -44,69 +44,55 @@ public class ReviewRepositoryImpl implements ReviewRepository {
     private final DataSourceConfig dataSource;
 
     @Override
+    @SneakyThrows
     public void save(Review review) {
-        try {
-            Connection con = dataSource.getConnection();
-            try (PreparedStatement ps = con.prepareStatement(SAVE, Statement.RETURN_GENERATED_KEYS)) {
-                ps.setLong(1, review.getDoctor().getId());
-                ps.setLong(2, review.getPatient().getId());
-                ps.setString(3, review.getDescription());
-                ps.execute();
-
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (rs.next()) {
-                        review.setId(rs.getLong(1));
-                    }
+        Connection con = dataSource.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(SAVE, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setLong(1, review.getDoctor().getId());
+            ps.setLong(2, review.getPatient().getId());ps.setString(3, review.getDescription());
+            ps.execute();
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    review.setId(rs.getLong(1));
                 }
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
     }
 
     @Override
+    @SneakyThrows
     public boolean existsByDoctorIdAndPatientId(long doctorId, long patientId) {
-        try {
-            Connection con = dataSource.getConnection();
-            try (PreparedStatement ps = con.prepareStatement(GET_ID_BY_DOCTOR_ID_AND_PATIENT_ID)) {
-                ps.setLong(1, doctorId);
-                ps.setLong(2, patientId);
-                try (ResultSet rs = ps.executeQuery()) {
-                    return rs.next();
-                }
+        Connection con = dataSource.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(GET_ID_BY_DOCTOR_ID_AND_PATIENT_ID)) {
+            ps.setLong(1, doctorId);
+            ps.setLong(2, patientId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
     }
 
     @Override
+    @SneakyThrows
     public boolean existsById(long reviewId) {
-        try {
-            Connection con = dataSource.getConnection();
-            try (PreparedStatement ps = con.prepareStatement(CHECK_IF_EXISTS_BY_ID)) {
-                ps.setLong(1, reviewId);
-                try (ResultSet rs = ps.executeQuery()) {
-                    return rs.next();
-                }
+        Connection con = dataSource.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(CHECK_IF_EXISTS_BY_ID)) {
+            ps.setLong(1, reviewId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
     }
 
 
     @Override
+    @SneakyThrows
     public void delete(long reviewId) {
-        try {
-            Connection con = dataSource.getConnection();
-            try (PreparedStatement ps = con.prepareStatement(DELETE)) {
-                ps.setLong(1, reviewId);
-                //TODO ask if i need to check
-                ps.executeUpdate();
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        Connection con = dataSource.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(DELETE)) {
+            ps.setLong(1, reviewId);
+            //TODO ask if i need to check
+            ps.executeUpdate();
         }
     }
 
@@ -130,7 +116,9 @@ public class ReviewRepositoryImpl implements ReviewRepository {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return Optional.of(ReviewMapper.map(rs));
-                } else return Optional.empty();
+                } else {
+                    return Optional.empty();
+                }
             }
         }
     }

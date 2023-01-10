@@ -4,13 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import solvd.laba.ermakovich.ha.domain.Review;
+import solvd.laba.ermakovich.ha.domain.exception.EntityAlreadyExistsException;
 import solvd.laba.ermakovich.ha.domain.exception.IllegalOperationException;
 import solvd.laba.ermakovich.ha.domain.exception.ResourceNotFoundException;
-import solvd.laba.ermakovich.ha.domain.exception.EntityAlreadyExistsException;
 import solvd.laba.ermakovich.ha.repository.ReviewRepository;
 import solvd.laba.ermakovich.ha.service.AppointmentService;
-import solvd.laba.ermakovich.ha.service.DoctorService;
-import solvd.laba.ermakovich.ha.service.PatientService;
 import solvd.laba.ermakovich.ha.service.ReviewService;
 
 import java.util.List;
@@ -18,9 +16,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
-    private final DoctorService doctorService;
     private final AppointmentService appointmentService;
-    private final PatientService patientService;
     private final ReviewRepository reviewRepository;
 
     @Override
@@ -46,6 +42,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Review> getAllByDoctorId(long doctorId) {
         return reviewRepository.getAllByDoctorId(doctorId);
     }
@@ -66,8 +63,9 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Review getById(long reviewId) {
         return reviewRepository.getById(reviewId)
-                        .orElseThrow(() -> new ResourceNotFoundException(entityName, reviewId));
+                        .orElseThrow(() -> new ResourceNotFoundException("review", reviewId));
     }
 }

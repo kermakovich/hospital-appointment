@@ -35,7 +35,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
                         left join patient_cards cards on id_card = cards.patient_id
             			left join patients on id_card = patients.user_id
             			join user_info pat on pat.id = patients.user_id
-            			WHERE pat.id=? and ap.date_time_start > now()
+            			WHERE ap.id_doctor=? and ap.date_time_start > now()
             """;
     private static final String GET_INFO_FOR_PATIENT = """
             SELECT ap.id, ap.date_time_start, ap.id_card as "patient_id",

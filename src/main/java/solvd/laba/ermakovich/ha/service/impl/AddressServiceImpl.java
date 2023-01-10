@@ -23,6 +23,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Address> find(Address address) {
         return addressRepository.find(address);
     }

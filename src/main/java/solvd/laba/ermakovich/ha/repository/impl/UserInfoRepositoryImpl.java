@@ -49,7 +49,9 @@ public class UserInfoRepositoryImpl implements UserRepository {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return Optional.of(UsersInfoMapper.map(rs));
-                } else return Optional.empty();
+                } else {
+                    return Optional.empty();
+                }
             }
         }
     }

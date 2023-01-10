@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface AppointmentService {
 
-    String entityName = "appointment";
-
     List<LocalTime> getTimeSlotsByDoctorIdAndDate(long id, LocalDate date);
 
     Appointment save(long patientId, Appointment appointment);
