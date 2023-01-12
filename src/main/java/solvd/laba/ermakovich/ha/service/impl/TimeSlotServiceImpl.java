@@ -2,6 +2,7 @@ package solvd.laba.ermakovich.ha.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import solvd.laba.ermakovich.ha.domain.doctor.AvailableSlots;
 import solvd.laba.ermakovich.ha.domain.exception.ResourceDoesNotExistException;
 import solvd.laba.ermakovich.ha.domain.hospital.OpeningHours;
@@ -24,6 +25,7 @@ public class TimeSlotServiceImpl implements TimeSlotService {
     private final AppointmentService appointmentService;
 
     @Override
+    @Transactional(readOnly = true)
     public AvailableSlots getSchedule(long id, LocalDate date) {
         if (!doctorService.existsById(id)) {
             throw new ResourceDoesNotExistException("doctor", id);
@@ -39,5 +41,5 @@ public class TimeSlotServiceImpl implements TimeSlotService {
         startTimeSlots.removeAll(timeList);
         return new AvailableSlots(id, date, startTimeSlots);
     }
-    
+
 }

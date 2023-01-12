@@ -8,8 +8,6 @@ import solvd.laba.ermakovich.ha.domain.exception.ResourceAlreadyExistsException;
 import solvd.laba.ermakovich.ha.repository.UserRepository;
 import solvd.laba.ermakovich.ha.service.UserInfoService;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class UserInfoServiceImpl implements UserInfoService {
@@ -19,18 +17,12 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Override
     @Transactional
     public UserInfo save(UserInfo userInfo) {
-        findByEmail(userInfo.getEmail())
+        userRepository.findByEmail(userInfo.getEmail())
                 .ifPresent((user) ->
                 {throw new ResourceAlreadyExistsException(" User with this email: "
                                                             + userInfo.getEmail() + " already exist");});
         userRepository.save(userInfo);
         return userInfo;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Optional<UserInfo> findByEmail(String email){
-        return userRepository.findByEmail(email);
     }
 
 }
