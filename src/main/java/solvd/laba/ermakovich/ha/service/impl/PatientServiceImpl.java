@@ -3,6 +3,7 @@ package solvd.laba.ermakovich.ha.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import solvd.laba.ermakovich.ha.domain.Address;
 import solvd.laba.ermakovich.ha.domain.Patient;
 import solvd.laba.ermakovich.ha.domain.UserInfo;
 import solvd.laba.ermakovich.ha.repository.PatientRepository;
@@ -28,7 +29,8 @@ public class PatientServiceImpl implements PatientService {
     public Patient save(Patient patient) {
         UserInfo userInfo = userInfoMapper.mapToUserInfo(patient);
         userInfoService.save(userInfo);
-        addressService.save(patient.getAddress());
+        Address address = addressService.save(patient.getAddress());
+        patient.setAddress(address);
         patient.setId(userInfo.getId());
         patientRepository.save(patient);
         patientCardService.saveByPatientId(patient.getId());
