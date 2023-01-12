@@ -9,6 +9,8 @@ import solvd.laba.ermakovich.ha.domain.exception.IllegalOperationException;
 import solvd.laba.ermakovich.ha.domain.exception.ResourceNotFoundException;
 import solvd.laba.ermakovich.ha.repository.ReviewRepository;
 import solvd.laba.ermakovich.ha.service.AppointmentService;
+import solvd.laba.ermakovich.ha.service.DoctorService;
+import solvd.laba.ermakovich.ha.service.PatientService;
 import solvd.laba.ermakovich.ha.service.ReviewService;
 
 import java.util.List;
@@ -16,8 +18,11 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
+
     private final AppointmentService appointmentService;
     private final ReviewRepository reviewRepository;
+    private final DoctorService doctorService;
+    private final PatientService patientService;
 
     @Override
     @Transactional
@@ -55,11 +60,11 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional
-    public Review update(Review review) {
-        Review oldReview = getById(review.getId());
+    public Review update(long reviewId, Review review) {
+        Review oldReview = getById(reviewId);
         oldReview.setDescription(review.getDescription());
         reviewRepository.update(oldReview);
-        return review;
+        return oldReview;
     }
 
     @Override
@@ -68,4 +73,5 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewRepository.getById(reviewId)
                         .orElseThrow(() -> new ResourceNotFoundException("review", reviewId));
     }
+
 }

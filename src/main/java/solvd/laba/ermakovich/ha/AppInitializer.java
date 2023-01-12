@@ -9,7 +9,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @ConfigurationPropertiesScan
 @EnableTransactionManagement
 public class AppInitializer {
+
 	public static void main(String[] args) {
 		SpringApplication.run(AppInitializer.class, args);
 	}
+
 }

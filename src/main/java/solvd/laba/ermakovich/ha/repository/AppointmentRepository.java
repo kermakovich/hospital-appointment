@@ -14,15 +14,15 @@ public interface AppointmentRepository {
 
     boolean existsByDoctorIdAndTime(Appointment appointment);
 
-    List<Appointment> getAllFutureByPatientId(long patientId);
-
     void delete(long appointmentId);
 
     boolean existsById(long appointmentId);
 
-    //List<Appointment> getAllByPatientIdAndDoctorId(long patientId, long doctorId);
-
-    List<Appointment> getAllFutureByDoctorId(long doctorId);
-
     boolean existsPastByPatientIdAndDoctorId(long patientId, long doctorId);
+
+    List<Appointment> getAllByDoctorIdAndDate(long doctorId, LocalDate date);
+
+    List<Appointment> getAllByPatientIdAndDate(long patientId, LocalDate date);
+
+    boolean existsByPatientIdAndTime(long patientId, Appointment appointment);
 }

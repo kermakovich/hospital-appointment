@@ -32,4 +32,5 @@ public class UserInfoServiceImpl implements UserInfoService {
     public Optional<UserInfo> findByEmail(String email){
         return userRepository.findByEmail(email);
     }
+
 }

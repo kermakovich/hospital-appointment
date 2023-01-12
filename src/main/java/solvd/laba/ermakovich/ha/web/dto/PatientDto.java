@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PatientDto extends UserInfoDto {
+
     @Valid
     private AddressDto addressDto;
 

@@ -1,6 +1,6 @@
-SELECT 'CREATE DATABASE hospital_appointment_db'
-WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'hospital_appointment_db');
-SEt schema 'public';
+create schema if not exists hospital;
+set schema 'hospital';
+
 
 CREATE TABLE IF NOT EXISTS user_info (
     id bigserial PRIMARY KEY,
@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS user_info (
 CREATE TABLE IF NOT EXISTS doctors (
     user_id bigint PRIMARY KEY references user_info(id),
     department varchar(50) NOT NULL,
-    specialization varchar(50) NOT NULL
+    specialization varchar(50) NOT NULL,
+    cabinet smallint
 );
 
 
@@ -46,13 +47,6 @@ CREATE TABLE IF NOT EXISTS reviews (
     id_doctor bigint references doctors(user_id),
     id_patient bigint references patients(user_id),
     description varchar(500)
-);
-
-CREATE TABLE IF NOT EXISTS card_entries (
-    id bigserial PRIMARY KEY,
-    id_card bigint references patient_cards(patient_id),
-    diagnose varchar(100),
-    treatment varchar
 );
 
 CREATE TABLE IF NOT EXISTS appointments (

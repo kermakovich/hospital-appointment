@@ -1,6 +1,5 @@
 package solvd.laba.ermakovich.ha.web.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Future;
@@ -15,12 +14,17 @@ import java.time.LocalDateTime;
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AppointmentDto {
-    private long id;
-    @NotNull(groups = onCreateAppointment.class)
+
+    private Long id;
+
+    @NotNull( groups = onCreateAppointment.class, message = "doctor can`t be null")
     @Valid
     private DoctorDto doctorDto;
+
     private PatientCardDto patientCardDto;
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
+
+    @NotNull(groups = onCreateAppointment.class, message = "start time can`t be null")
     @Future(message = "appointment start time can`t be in the past")
     private LocalDateTime start;
+
 }

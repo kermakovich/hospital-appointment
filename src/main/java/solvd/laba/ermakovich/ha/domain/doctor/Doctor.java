@@ -5,10 +5,12 @@ import solvd.laba.ermakovich.ha.domain.UserInfo;
 import solvd.laba.ermakovich.ha.domain.hospital.Department;
 
 
-@Data
+@Getter
+@Setter
 public class Doctor extends UserInfo {
 
     private Department department;
     private Specialization specialization;
+    private Integer cabinet;
 
 }

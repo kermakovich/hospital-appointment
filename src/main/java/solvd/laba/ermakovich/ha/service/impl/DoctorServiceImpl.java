@@ -5,8 +5,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import solvd.laba.ermakovich.ha.domain.SearchCriteria;
 import solvd.laba.ermakovich.ha.domain.UserInfo;
-import solvd.laba.ermakovich.ha.domain.doctor.AvailibleSlots;
+import solvd.laba.ermakovich.ha.domain.doctor.AvailableSlots;
 import solvd.laba.ermakovich.ha.domain.doctor.Doctor;
+import solvd.laba.ermakovich.ha.domain.exception.ResourceNotFoundException;
 import solvd.laba.ermakovich.ha.domain.hospital.OpeningHours;
 import solvd.laba.ermakovich.ha.repository.DoctorRepository;
 import solvd.laba.ermakovich.ha.repository.mapper.UserInfoMapper;
@@ -30,7 +31,6 @@ public class DoctorServiceImpl implements DoctorService {
     private final UserInfoMapper userInfoMapper;
     private final OpeningHours openingHours;
 
-
     @Override
     @Transactional
     public Doctor save(Doctor doctor) {
@@ -41,10 +41,12 @@ public class DoctorServiceImpl implements DoctorService {
         return doctor;
     }
 
-
     @Override
     @Transactional(readOnly = true)
-    public AvailibleSlots getSchedule(long id, LocalDate date) {
+    public AvailableSlots getSchedule(long id, LocalDate date) {
+        if (!doctorRepository.existsById(id)) {
+            throw new ResourceNotFoundException("doctor", id);
+        }
         int steps = (int) openingHours.start.until(openingHours.finish, ChronoUnit.HOURS);
         List<LocalTime> startTimeSlots = new java.util.ArrayList<>(
                 IntStream
@@ -54,7 +56,7 @@ public class DoctorServiceImpl implements DoctorService {
                 .toList());
         List<LocalTime> timeList = appointmentService.getTimeSlotsByDoctorIdAndDate(id, date);
         startTimeSlots.removeAll(timeList);
-        return new AvailibleSlots(id, date, startTimeSlots);
+        return new AvailableSlots(id, date, startTimeSlots);
     }
 
     @Override

@@ -1,5 +1,3 @@
 package solvd.laba.ermakovich.ha.web.dto.group;
 
-public interface onCreateReview {
-
-}
+public interface onCreateReview { }

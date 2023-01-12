@@ -50,35 +50,34 @@ public class AppointmentServiceImpl implements AppointmentService {
         if (appointmentRepository.existsByDoctorIdAndTime(appointment)) {
             throw new IllegalOperationException( "Appointment is taken (date : " + appointment.getStart() + " )");
         }
+        if (appointmentRepository.existsByPatientIdAndTime(patientId, appointment)) {
+            throw new IllegalOperationException( "Patient already has another appointment ( date : " + appointment.getStart() + " )");
+        }
+
         appointmentRepository.save(patientId, appointment);
         return appointment;
     }
 
-    /**
-     * @param patientId patient id.
-     * @return all future appointments for particular patient.
-     */
     @Override
-    @Transactional(readOnly = true)
-    public List<Appointment> getAllFutureByPatientId(long patientId) {
-        return appointmentRepository.getAllFutureByPatientId(patientId);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public void delete(long appointmentId) {
         appointmentRepository.delete(appointmentId);
     }
 
-//    @Override
-//    public List<Appointment> getAllByPatientIdAndDoctorId(long patientId, long doctorId) {
-//        return appointmentRepository.getAllByPatientIdAndDoctorId(patientId, doctorId);
-//    }
-
     @Override
     @Transactional(readOnly = true)
+    public List<Appointment> getAllByDoctorIdAndDate(long doctorId, LocalDate date) {
+        return appointmentRepository.getAllByDoctorIdAndDate(doctorId, date);
+    }
+
+    @Override
     public List<Appointment> getAllFutureByDoctorId(long doctorId) {
-        return appointmentRepository.getAllFutureByDoctorId(doctorId);
+        return getAllByDoctorIdAndDate(doctorId, null);
+    }
+
+    @Override
+    public List<Appointment> getAllFutureByPatientId(long patientId) {
+        return getAllByPatientIdAndDate(patientId, null);
     }
 
     @Override
@@ -86,4 +85,10 @@ public class AppointmentServiceImpl implements AppointmentService {
     public boolean existsPastByPatientIdAndDoctorId(long patientId, long doctorId) {
         return appointmentRepository.existsPastByPatientIdAndDoctorId(patientId, doctorId);
     }
+
+    @Override
+    public List<Appointment> getAllByPatientIdAndDate(long patientId, LocalDate date) {
+        return appointmentRepository.getAllByPatientIdAndDate(patientId, date);
+    }
+
 }

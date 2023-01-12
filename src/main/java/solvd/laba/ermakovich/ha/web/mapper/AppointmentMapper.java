@@ -8,7 +8,7 @@ import solvd.laba.ermakovich.ha.web.dto.AppointmentDto;
 import java.util.List;
 
 @Mapper(componentModel = "spring",
-        uses = {PatientMapper.class, DoctorMapper.class})
+        uses = {PatientCardMapper.class, DoctorMapper.class})
 public interface AppointmentMapper {
 
     @Mapping(target = "doctor", source = "doctorDto")
@@ -22,4 +22,5 @@ public interface AppointmentMapper {
     @Mapping(target = "doctorDto", source = "doctor")
     @Mapping(target = "patientCardDto", source = "patientCard")
     List<AppointmentDto> entityToDto(List<Appointment> appointment);
+
 }

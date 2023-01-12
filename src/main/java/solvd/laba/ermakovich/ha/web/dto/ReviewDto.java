@@ -12,15 +12,20 @@ import solvd.laba.ermakovich.ha.web.dto.group.onCreateReview;
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ReviewDto {
-    private long id;
-    @NotNull(groups = onCreateReview.class, message = "doctorDto can`t be null")
+
+    private Long id;
+
+    @NotNull(groups = onCreateReview.class, message = "can`t be null")
     @Valid
     private DoctorDto doctorDto;
-    @NotNull(groups = onCreateReview.class, message = "patientDto can`t be null")
+
+    @NotNull(groups = onCreateReview.class, message = "can`t be null")
     @Valid
     private PatientDto patientDto;
-    @NotNull(message = "review`s description should not be empty")
-    @NotBlank(message = "description can`t be empty")
+
+    @NotNull(message = "should not be empty")
+    @NotBlank(message = "can`t be empty")
     private String description;
+
 }
 

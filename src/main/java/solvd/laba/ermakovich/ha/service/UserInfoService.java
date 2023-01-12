@@ -9,4 +9,5 @@ public interface UserInfoService {
     UserInfo save(UserInfo userInfo);
 
     Optional<UserInfo> findByEmail(String email);
+
 }

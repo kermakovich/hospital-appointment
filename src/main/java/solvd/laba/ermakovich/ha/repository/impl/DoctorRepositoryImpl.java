@@ -2,6 +2,7 @@ package solvd.laba.ermakovich.ha.repository.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Repository;
 import solvd.laba.ermakovich.ha.domain.SearchCriteria;
 import solvd.laba.ermakovich.ha.domain.doctor.Doctor;
@@ -13,24 +14,24 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
 public class DoctorRepositoryImpl implements DoctorRepository {
 
-    private static final String SAVE = "INSERT INTO doctors (user_id, department, specialization) VALUES (?,?,?)";
-
+    private static final String SAVE = "INSERT INTO doctors (user_id, department, specialization, cabinet) VALUES (?,?,?,?)";
     private static final String SELECT_BY_SEARCH_CRITERIA = """
             SELECT user_id as "doctor_id", name as "doctor_name", 
             surname as "doctor_surname", fatherhood as "doctor_fatherhood", 
             birthday as "doctor_birthday", email as "doctor_email", 
-            department as "doctor_department", specialization as "doctor_specialization"
+            department as "doctor_department", specialization as "doctor_specialization",
+            cabinet as "doctor_cabinet"
             FROM doctors
             LEFT JOIN user_info on user_id = id 
             """;
     private static final String CHECK_IF_EXISTS_BY_ID = "SELECT user_id FROM doctors WHERE user_id = ?";
-
     private final DataSourceConfig dataSource;
 
     @Override
@@ -41,6 +42,7 @@ public class DoctorRepositoryImpl implements DoctorRepository {
             ps.setLong(1, doctor.getId());
             ps.setString(2, doctor.getDepartment().toString());
             ps.setString(3, doctor.getSpecialization().toString());
+            ps.setObject(4, doctor.getCabinet());
             ps.execute();
 
             try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -67,9 +69,8 @@ public class DoctorRepositoryImpl implements DoctorRepository {
     @SneakyThrows
     public List<Doctor> getAllBySearchCriteria(SearchCriteria searchCriteria) {
         Connection con = dataSource.getConnection();
-        StringBuilder queryBuilder = new StringBuilder(SELECT_BY_SEARCH_CRITERIA);
-                queryBuilder.append(buildWhereClauseBySearchCriteria(searchCriteria));
-        try( PreparedStatement ps = con.prepareStatement(queryBuilder.toString())) {
+        try( PreparedStatement ps = con.prepareStatement(SELECT_BY_SEARCH_CRITERIA
+                                                            + buildWhereClauseBySearchCriteria(searchCriteria))) {
             try (ResultSet rs = ps.executeQuery()) {
                 return DoctorMapper.mapList(rs);
             }
@@ -77,17 +78,18 @@ public class DoctorRepositoryImpl implements DoctorRepository {
     }
 
     private String buildWhereClauseBySearchCriteria (SearchCriteria searchCriteria) {
-        StringBuilder whereClause = new StringBuilder("WHERE ");
+        List<String> conditions = new ArrayList<>();
         if (searchCriteria.getDepartment() != null) {
-            whereClause.append("department='")
-                        .append(searchCriteria.getDepartment().toString())
-                        .append("' and ");
+            conditions.add("department='" + searchCriteria.getDepartment() + "'");
         }
         if (searchCriteria.getSpecialization() != null) {
-            whereClause.append("specialization='")
-                        .append(searchCriteria.getSpecialization().toString())
-                        .append("' and ");
+            conditions.add("specialization='" + searchCriteria.getSpecialization() + "'");
         }
-        return whereClause.delete(whereClause.length() - 5, whereClause.length() - 1).toString();
+        if (!conditions.isEmpty()) {
+            return " WHERE " + String.join(" and ", conditions);
+        } else {
+            return Strings.EMPTY;
+        }
     }
+
 }

@@ -4,7 +4,8 @@ import lombok.*;
 
 import java.time.LocalDate;
 
-@Data
+@Setter
+@Getter
 public class UserInfo {
 
     private Long id;

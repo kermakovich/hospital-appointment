@@ -1,15 +1,18 @@
 package solvd.laba.ermakovich.ha.domain;
 
-import lombok.Data;
-import solvd.laba.ermakovich.ha.domain.card.PatientCard;
+import lombok.Getter;
+import lombok.Setter;
 import solvd.laba.ermakovich.ha.domain.doctor.Doctor;
 
 import java.time.LocalDateTime;
 
-@Data
+@Setter
+@Getter
 public class Appointment {
-    private long id;
+
+    private Long id;
     private Doctor doctor;
     private PatientCard patientCard;
     private LocalDateTime start;
+
 }

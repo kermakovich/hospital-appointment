@@ -34,7 +34,7 @@ public class ReviewRepositoryImpl implements ReviewRepository {
             d.id as "doctor_id", d.name as "doctor_name", d.surname as "doctor_surname",
             d.fatherhood as "doctor_fatherhood", d.birthday as "doctor_birthday",
             d.email as "doctor_email", doctors.department as "doctor_department",
-            doctors.specialization as "doctor_specialization"
+            doctors.specialization as "doctor_specialization", doctors.cabinet as "doctor_cabinet"
             from reviews
             join user_info pat on pat.id = reviews.id_patient
             join user_info d on d.id = reviews.id_doctor
@@ -91,7 +91,6 @@ public class ReviewRepositoryImpl implements ReviewRepository {
         Connection con = dataSource.getConnection();
         try (PreparedStatement ps = con.prepareStatement(DELETE)) {
             ps.setLong(1, reviewId);
-            //TODO ask if i need to check
             ps.executeUpdate();
         }
     }
@@ -134,4 +133,5 @@ public class ReviewRepositoryImpl implements ReviewRepository {
             }
         }
     }
+
 }

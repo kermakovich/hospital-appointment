@@ -9,4 +9,5 @@ public interface UserRepository {
     void save(UserInfo userInfo);
 
     Optional<UserInfo> findByEmail(String email);
+
 }

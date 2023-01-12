@@ -17,4 +17,5 @@ public abstract class AddressMapper {
         address.setFlat(rs.getInt("patient_address_flat"));
         return address;
     }
+
 }

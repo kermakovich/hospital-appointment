@@ -12,13 +12,16 @@ public interface AppointmentService {
 
     Appointment save(long patientId, Appointment appointment);
 
-    List<Appointment> getAllFutureByPatientId(long patientId);
-
     void delete(long appointmentId);
 
-    //List<Appointment> getAllByPatientIdAndDoctorId(long patientId, long doctorId);
+    List<Appointment> getAllByDoctorIdAndDate(long doctorId, LocalDate date);
 
     List<Appointment> getAllFutureByDoctorId(long doctorId);
 
+    List<Appointment> getAllFutureByPatientId(long patientId);
+
     boolean existsPastByPatientIdAndDoctorId(long patientId, long doctorId);
+
+    List<Appointment> getAllByPatientIdAndDate(long patientId, LocalDate date);
+
 }

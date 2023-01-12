@@ -1,11 +1,15 @@
 package solvd.laba.ermakovich.ha.domain.hospital;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.time.LocalTime;
 
-@Data
+@Getter
+@Setter
+@RequiredArgsConstructor
 @ConfigurationProperties(prefix = "hospital.hours")
 public class OpeningHours {
 

@@ -17,6 +17,7 @@ import java.util.List;
 @RequestMapping("api/v1")
 @RequiredArgsConstructor
 public class ReviewController {
+
     private final ReviewService reviewService;
     private final ReviewMapper reviewMapper;
 
@@ -40,11 +41,10 @@ public class ReviewController {
         reviewService.delete(reviewId);
     }
 
-    @PatchMapping("/reviews/{reviewId}")
+    @PutMapping("/reviews/{reviewId}")
     public ReviewDto update(@RequestBody @Valid ReviewDto reviewDto, @PathVariable long reviewId) {
         Review review = reviewMapper.dtoToEntity(reviewDto);
-        review.setId(reviewId);
-        review = reviewService.update(review);
+        review = reviewService.update(reviewId, review);
         return reviewMapper.entityToDto(review);
     }
 
@@ -53,4 +53,5 @@ public class ReviewController {
         Review review = reviewService.getById(reviewId);
         return reviewMapper.entityToDto(review);
     }
+
 }

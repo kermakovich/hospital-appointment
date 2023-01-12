@@ -11,6 +11,8 @@ public interface PatientMapper {
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "addressDto", source = "address")
     PatientDto entityToDto(Patient patient);
+
     @Mapping(target = "address", source = "addressDto")
     Patient dtoToEntity(PatientDto patientDto);
+
 }

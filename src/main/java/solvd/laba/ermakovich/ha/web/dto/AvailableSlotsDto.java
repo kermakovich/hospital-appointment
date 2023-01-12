@@ -14,4 +14,5 @@ public class AvailableSlotsDto {
     private Long doctorId;
     private LocalDate date;
     private List<LocalTime> timeList;
+
 }

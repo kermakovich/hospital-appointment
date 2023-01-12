@@ -1,10 +1,9 @@
-package solvd.laba.ermakovich.ha.domain.card;
+package solvd.laba.ermakovich.ha.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import solvd.laba.ermakovich.ha.domain.Patient;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -15,8 +14,9 @@ import java.util.UUID;
 @Setter
 public class PatientCard {
 
-    long id;
+    private Long id;
     private Patient patient;
     private UUID number;
     private LocalDate registryDate;
+
 }

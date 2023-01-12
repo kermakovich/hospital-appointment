@@ -11,6 +11,7 @@ import solvd.laba.ermakovich.ha.web.dto.AppointmentDto;
 import solvd.laba.ermakovich.ha.web.dto.group.onCreateAppointment;
 import solvd.laba.ermakovich.ha.web.mapper.AppointmentMapper;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -32,27 +33,35 @@ public class AppointmentController {
         return appointmentDto;
     }
 
-
-    @GetMapping("/patients/{patientId}/appointments")
+    @GetMapping("/patients/{patientId}/appointments/future")
     public List<AppointmentDto> getFutureByPatient(@PathVariable long patientId) {
         List<Appointment> futureAppointments = appointmentService.getAllFutureByPatientId(patientId);
         return appointmentMapper.entityToDto(futureAppointments);
     }
 
 
-    @GetMapping("/doctors/{doctorId}/appointments")
+    @GetMapping("/doctors/{doctorId}/appointments/future")
     public List<AppointmentDto> getFutureByDoctor(@PathVariable long doctorId) {
         List<Appointment> futureAppointments = appointmentService.getAllFutureByDoctorId(doctorId);
         return appointmentMapper.entityToDto(futureAppointments);
     }
 
-    /**
-     * Patient can delete appointment only from his appointment`s list.(security later)
-     * @param appointmentId appointment`s id to be deleted.
-     */
+    @GetMapping("/patients/{patientId}/appointments")
+    public List<AppointmentDto> getByPatientAndDate(@PathVariable long patientId, @RequestParam LocalDate date) {
+        List<Appointment> futureAppointments = appointmentService.getAllByPatientIdAndDate(patientId, date);
+        return appointmentMapper.entityToDto(futureAppointments);
+    }
+
+    @GetMapping("/doctors/{doctorId}/appointments")
+    public List<AppointmentDto> getOnByDoctorAndDate(@PathVariable long doctorId, @RequestParam LocalDate date) {
+        List<Appointment> futureAppointments = appointmentService.getAllByDoctorIdAndDate(doctorId, date);
+        return appointmentMapper.entityToDto(futureAppointments);
+    }
+
     @DeleteMapping("/appointments/{appointmentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable long appointmentId) {
         appointmentService.delete(appointmentId);
     }
+
 }

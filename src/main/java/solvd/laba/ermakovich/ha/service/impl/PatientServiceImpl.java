@@ -42,4 +42,5 @@ public class PatientServiceImpl implements PatientService {
     public boolean existsById(long id) {
         return patientRepository.existsById(id);
     }
+
 }

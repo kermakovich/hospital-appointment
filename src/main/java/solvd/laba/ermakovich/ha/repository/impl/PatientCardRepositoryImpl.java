@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Repository;
 import solvd.laba.ermakovich.ha.domain.Patient;
-import solvd.laba.ermakovich.ha.domain.card.PatientCard;
+import solvd.laba.ermakovich.ha.domain.PatientCard;
 import solvd.laba.ermakovich.ha.repository.PatientCardRepository;
 import solvd.laba.ermakovich.ha.repository.config.DataSourceConfig;
 
@@ -38,4 +38,5 @@ public class PatientCardRepositoryImpl implements PatientCardRepository {
             }
         }
     }
+
 }

@@ -19,13 +19,12 @@ public class PatientController {
     private final PatientService patientService;
     private final PatientMapper patientMapper;
 
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PatientDto save(@Validated({onCreate.class, Default.class})
-                                               @RequestBody PatientDto patientDto) {
+    public PatientDto save(@Validated({onCreate.class, Default.class}) @RequestBody PatientDto patientDto) {
         Patient patient = patientMapper.dtoToEntity(patientDto);
         patientService.save(patient);
         return patientMapper.entityToDto(patient);
     }
+
 }

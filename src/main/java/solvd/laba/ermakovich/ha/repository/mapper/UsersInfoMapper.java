@@ -19,4 +19,5 @@ public abstract class UsersInfoMapper {
         userInfo.setPassword(rs.getString("password"));
         return userInfo;
     }
+
 }

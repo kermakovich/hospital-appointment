@@ -20,4 +20,5 @@ public interface ReviewRepository {
     Optional<Review> getById(long id);
 
     List<Review> getAllByDoctorId(long doctorId);
+
 }

@@ -1,5 +1,3 @@
 package solvd.laba.ermakovich.ha.web.dto.group;
 
-public interface onCreate {
-
-}
+public interface onCreate { }

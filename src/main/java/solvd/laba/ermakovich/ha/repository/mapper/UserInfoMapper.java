@@ -7,4 +7,5 @@ import solvd.laba.ermakovich.ha.domain.UserInfo;
 public interface UserInfoMapper {
 
     UserInfo mapToUserInfo(UserInfo user);
+
 }

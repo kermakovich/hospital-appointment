@@ -9,4 +9,5 @@ public class SpecializationConverter implements Converter<String, Specialization
     public Specialization convert(String source) {
         return Specialization.valueOf(source.toUpperCase());
     }
+
 }

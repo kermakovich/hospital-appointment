@@ -14,7 +14,6 @@ public abstract class PatientMapper {
         patient.setFatherhood(rs.getString("patient_fatherhood"));
         patient.setBirthday(rs.getDate("patient_birthday").toLocalDate());
         patient.setEmail(rs.getString("patient_email"));
-//        patient.setPassword(rs.getString("patient_password"));
         return patient;
     }
 
@@ -25,4 +24,5 @@ public abstract class PatientMapper {
         patient.setName(rs.getString("patient_name"));
         return patient;
     }
+
 }

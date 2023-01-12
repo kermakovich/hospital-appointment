@@ -13,9 +13,13 @@ import solvd.laba.ermakovich.ha.web.dto.group.onCreate;
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DoctorDto extends UserInfoDto {
-    @NotNull(message = "department can`t be null", groups = onCreate.class)
+
+    @NotNull(message = "can`t be null", groups = onCreate.class)
     private Department department;
-    @NotNull(message = "specialization can`t be null", groups = onCreate.class)
+
+    @NotNull(message = "can`t be null", groups = onCreate.class)
     private Specialization specialization;
+
+    private Integer cabinet;
 
 }

@@ -16,7 +16,7 @@ import java.util.UUID;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PatientCardDto {
 
-    long id;
+    Long id;
     private PatientDto patientDto;
     private UUID number;
     private LocalDate registryDate;

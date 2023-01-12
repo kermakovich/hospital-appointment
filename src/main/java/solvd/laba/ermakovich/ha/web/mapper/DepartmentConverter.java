@@ -9,4 +9,5 @@ public class DepartmentConverter implements Converter<String, Department> {
     public Department convert(String source) {
         return Department.valueOf(source.toUpperCase());
     }
+
 }

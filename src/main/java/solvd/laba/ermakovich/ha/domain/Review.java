@@ -1,11 +1,14 @@
 package solvd.laba.ermakovich.ha.domain;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import solvd.laba.ermakovich.ha.domain.doctor.Doctor;
 
-@Data
+@Setter
+@Getter
 public class Review {
-    private long id;
+
+    private Long id;
     private Doctor doctor;
     private Patient patient;
     private String description;

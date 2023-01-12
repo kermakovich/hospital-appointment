@@ -1,7 +1,7 @@
 package solvd.laba.ermakovich.ha.service;
 
 import solvd.laba.ermakovich.ha.domain.SearchCriteria;
-import solvd.laba.ermakovich.ha.domain.doctor.AvailibleSlots;
+import solvd.laba.ermakovich.ha.domain.doctor.AvailableSlots;
 import solvd.laba.ermakovich.ha.domain.doctor.Doctor;
 
 import java.time.LocalDate;
@@ -11,9 +11,10 @@ public interface DoctorService {
 
     Doctor save(Doctor doctor);
 
-    AvailibleSlots getSchedule(long id, LocalDate date);
+    AvailableSlots getSchedule(long id, LocalDate date);
 
     boolean existsById(long id);
 
     List<Doctor> getAllBySearchCriteria(SearchCriteria searchCriteriaDto);
+
 }

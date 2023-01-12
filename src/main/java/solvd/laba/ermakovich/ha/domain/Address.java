@@ -3,7 +3,8 @@ package solvd.laba.ermakovich.ha.domain;
 import lombok.*;
 
 
-@Data
+@Setter
+@Getter
 public class Address {
 
     private Long id;
@@ -11,4 +12,5 @@ public class Address {
     private String street;
     private Integer house;
     private Integer flat;
+
 }

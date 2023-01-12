@@ -29,7 +29,10 @@ public abstract class DoctorMapper {
         doctor.setFatherhood(rs.getString("doctor_fatherhood"));
         doctor.setBirthday(rs.getDate("doctor_birthday").toLocalDate());
         doctor.setEmail(rs.getString("doctor_email"));
-//        doctor.setPassword(rs.getString("doctor_password"));
+        int cabinet = rs.getInt("doctor_cabinet");
+        if (!rs.wasNull()) {
+            doctor.setCabinet(cabinet);
+        }
         doctor.setDepartment(Department.valueOf(rs.getString("doctor_department").toUpperCase()));
         doctor.setSpecialization(Specialization.valueOf(rs.getString("doctor_specialization").toUpperCase()));
         return doctor;
@@ -41,4 +44,5 @@ public abstract class DoctorMapper {
         doctor.setId(rs.getLong("doctor_id"));
         return doctor;
     }
+
 }

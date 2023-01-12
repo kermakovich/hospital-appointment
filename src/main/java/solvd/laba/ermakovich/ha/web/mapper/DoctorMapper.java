@@ -11,8 +11,10 @@ import java.util.List;
 public interface DoctorMapper {
 
     Doctor dtoToEntity(DoctorDto doctorDto);
+
     @Mapping(target = "password", ignore = true)
     DoctorDto entityToDto(Doctor doctor);
+
     @Mapping(target = "password", ignore = true)
     List<DoctorDto> entityToDto(List<Doctor> doctors);
 

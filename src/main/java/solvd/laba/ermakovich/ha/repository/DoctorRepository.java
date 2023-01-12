@@ -12,4 +12,5 @@ public interface DoctorRepository {
     boolean existsById(long id);
 
     List<Doctor> getAllBySearchCriteria(SearchCriteria searchCriteria);
+
 }
