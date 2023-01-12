@@ -5,21 +5,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import solvd.laba.ermakovich.ha.domain.SearchCriteria;
 import solvd.laba.ermakovich.ha.domain.UserInfo;
-import solvd.laba.ermakovich.ha.domain.doctor.AvailableSlots;
 import solvd.laba.ermakovich.ha.domain.doctor.Doctor;
-import solvd.laba.ermakovich.ha.domain.exception.ResourceNotFoundException;
-import solvd.laba.ermakovich.ha.domain.hospital.OpeningHours;
 import solvd.laba.ermakovich.ha.repository.DoctorRepository;
 import solvd.laba.ermakovich.ha.repository.mapper.UserInfoMapper;
-import solvd.laba.ermakovich.ha.service.AppointmentService;
 import solvd.laba.ermakovich.ha.service.DoctorService;
 import solvd.laba.ermakovich.ha.service.UserInfoService;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -27,9 +19,7 @@ public class DoctorServiceImpl implements DoctorService {
 
     private final DoctorRepository doctorRepository;
     private final UserInfoService userInfoService;
-    private final AppointmentService appointmentService;
     private final UserInfoMapper userInfoMapper;
-    private final OpeningHours openingHours;
 
     @Override
     @Transactional
@@ -39,24 +29,6 @@ public class DoctorServiceImpl implements DoctorService {
         doctor.setId(userInfo.getId());
         doctorRepository.save(doctor);
         return doctor;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public AvailableSlots getSchedule(long id, LocalDate date) {
-        if (!doctorRepository.existsById(id)) {
-            throw new ResourceNotFoundException("doctor", id);
-        }
-        int steps = (int) openingHours.start.until(openingHours.finish, ChronoUnit.HOURS);
-        List<LocalTime> startTimeSlots = new java.util.ArrayList<>(
-                IntStream
-                .rangeClosed(0, steps - 1)
-                .mapToObj(n -> openingHours.start
-                        .plus(openingHours.minutesRange * n, ChronoUnit.MINUTES))
-                .toList());
-        List<LocalTime> timeList = appointmentService.getTimeSlotsByDoctorIdAndDate(id, date);
-        startTimeSlots.removeAll(timeList);
-        return new AvailableSlots(id, date, startTimeSlots);
     }
 
     @Override

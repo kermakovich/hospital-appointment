@@ -13,12 +13,10 @@ public class AddressDto {
 
     private Long id;
 
-    @NotNull(message = "can`t be null")
     @NotBlank(message = "can`t be empty")
     @Size(min = 1, max = 100, message = "can`t be empty")
     private String city;
 
-    @NotNull(message = "can`t be null")
     @NotBlank(message = "can`t be empty")
     @Size(min = 1, max = 150, message = "can`t be empty")
     private String street;

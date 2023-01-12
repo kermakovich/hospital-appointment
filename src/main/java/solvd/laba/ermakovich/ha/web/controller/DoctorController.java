@@ -9,6 +9,7 @@ import solvd.laba.ermakovich.ha.domain.SearchCriteria;
 import solvd.laba.ermakovich.ha.domain.doctor.AvailableSlots;
 import solvd.laba.ermakovich.ha.domain.doctor.Doctor;
 import solvd.laba.ermakovich.ha.service.DoctorService;
+import solvd.laba.ermakovich.ha.service.TimeSlotService;
 import solvd.laba.ermakovich.ha.web.dto.AvailableSlotsDto;
 import solvd.laba.ermakovich.ha.web.dto.DoctorDto;
 import solvd.laba.ermakovich.ha.web.dto.SearchCriteriaDto;
@@ -26,6 +27,7 @@ import java.util.List;
 public class DoctorController {
 
     private final DoctorService doctorService;
+    private final TimeSlotService timeSlotService;
     private final DoctorMapper doctorMapper;
     private final AvailableSlotsMapper availableSlotsMapper;
     private final SearchCriteriaMapper searchCriteriaMapper;
@@ -49,7 +51,7 @@ public class DoctorController {
 
     @GetMapping("/{id}/schedule")
     public AvailableSlotsDto getAvailableSlots(@PathVariable long id, @RequestParam LocalDate date) {
-        AvailableSlots availableSlots = doctorService.getSchedule(id, date);
+        AvailableSlots availableSlots = timeSlotService.getSchedule(id, date);
         return availableSlotsMapper.entityToDto(availableSlots);
     }
 

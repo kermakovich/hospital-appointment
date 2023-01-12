@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import solvd.laba.ermakovich.ha.domain.UserInfo;
-import solvd.laba.ermakovich.ha.domain.exception.EntityAlreadyExistsException;
+import solvd.laba.ermakovich.ha.domain.exception.ResourceAlreadyExistsException;
 import solvd.laba.ermakovich.ha.repository.UserRepository;
 import solvd.laba.ermakovich.ha.service.UserInfoService;
 
@@ -21,7 +21,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     public UserInfo save(UserInfo userInfo) {
         findByEmail(userInfo.getEmail())
                 .ifPresent((user) ->
-                {throw new EntityAlreadyExistsException(" User with this email: "
+                {throw new ResourceAlreadyExistsException(" User with this email: "
                                                             + userInfo.getEmail() + " already exist");});
         userRepository.save(userInfo);
         return userInfo;

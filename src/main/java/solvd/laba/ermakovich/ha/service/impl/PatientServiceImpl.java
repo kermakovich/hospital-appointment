@@ -24,13 +24,11 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     @Transactional
+//TODO create address not fund
     public Patient save(Patient patient) {
         UserInfo userInfo = userInfoMapper.mapToUserInfo(patient);
         userInfoService.save(userInfo);
-        addressService.find(patient.getAddress())
-                .ifPresentOrElse(
-                        patient::setAddress,
-                        () -> addressService.save(patient.getAddress()));
+        addressService.save(patient.getAddress());
         patient.setId(userInfo.getId());
         patientRepository.save(patient);
         patientCardService.saveByPatientId(patient.getId());

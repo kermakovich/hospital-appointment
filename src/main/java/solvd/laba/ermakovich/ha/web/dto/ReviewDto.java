@@ -23,7 +23,6 @@ public class ReviewDto {
     @Valid
     private PatientDto patientDto;
 
-    @NotNull(message = "should not be empty")
     @NotBlank(message = "can`t be empty")
     private String description;
 

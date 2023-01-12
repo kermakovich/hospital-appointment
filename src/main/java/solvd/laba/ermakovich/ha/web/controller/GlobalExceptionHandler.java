@@ -7,9 +7,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import solvd.laba.ermakovich.ha.domain.exception.EntityAlreadyExistsException;
+import solvd.laba.ermakovich.ha.domain.exception.ResourceAlreadyExistsException;
 import solvd.laba.ermakovich.ha.domain.exception.IllegalOperationException;
-import solvd.laba.ermakovich.ha.domain.exception.ResourceNotFoundException;
+import solvd.laba.ermakovich.ha.domain.exception.ResourceDoesNotExistException;
 import solvd.laba.ermakovich.ha.web.dto.ErrorDto;
 
 import java.util.ArrayList;
@@ -18,13 +18,13 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(ResourceNotFoundException.class)
+    @ExceptionHandler(ResourceDoesNotExistException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorDto handleEntityNotFoundException(ResourceNotFoundException ex) {
+    public ErrorDto handleEntityNotFoundException(ResourceDoesNotExistException ex) {
         return new ErrorDto(ex.getMessage());
     }
 
-    @ExceptionHandler({IllegalOperationException.class, EntityAlreadyExistsException.class})
+    @ExceptionHandler({IllegalOperationException.class, ResourceAlreadyExistsException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorDto handleEntityAlreadyExistsException(RuntimeException ex) {
         return new ErrorDto(ex.getMessage());

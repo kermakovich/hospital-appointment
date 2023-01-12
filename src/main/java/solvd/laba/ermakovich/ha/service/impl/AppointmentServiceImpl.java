@@ -1,13 +1,11 @@
 package solvd.laba.ermakovich.ha.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import solvd.laba.ermakovich.ha.domain.Appointment;
 import solvd.laba.ermakovich.ha.domain.exception.IllegalOperationException;
-import solvd.laba.ermakovich.ha.domain.exception.ResourceNotFoundException;
+import solvd.laba.ermakovich.ha.domain.exception.ResourceDoesNotExistException;
 import solvd.laba.ermakovich.ha.domain.hospital.OpeningHours;
 import solvd.laba.ermakovich.ha.repository.AppointmentRepository;
 import solvd.laba.ermakovich.ha.service.AppointmentService;
@@ -24,8 +22,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
     private final OpeningHours openingHours;
-    @Lazy @Autowired
-    private DoctorService doctorService;
+    private final DoctorService doctorService;
     private final PatientService patientService;
 
     @Override
@@ -38,10 +35,10 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Transactional
     public Appointment save(long patientId, Appointment appointment) {
         if (!doctorService.existsById(appointment.getDoctor().getId())) {
-            throw new ResourceNotFoundException("doctor", appointment.getDoctor().getId());
+            throw new ResourceDoesNotExistException("doctor", appointment.getDoctor().getId());
         }
         if (!patientService.existsById(patientId)) {
-            throw new ResourceNotFoundException("patient", patientId);
+            throw new ResourceDoesNotExistException("patient", patientId);
         }
         if (!openingHours.isWithinOpenHours(appointment.getStart().toLocalTime())) {
             throw new IllegalOperationException("Hospital is closed at this time: "
