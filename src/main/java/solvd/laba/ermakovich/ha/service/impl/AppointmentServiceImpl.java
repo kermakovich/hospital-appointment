@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import solvd.laba.ermakovich.ha.domain.Appointment;
+import solvd.laba.ermakovich.ha.domain.AppointmentStatus;
+import solvd.laba.ermakovich.ha.domain.SearchAppointmentCriteria;
 import solvd.laba.ermakovich.ha.domain.exception.IllegalOperationException;
 import solvd.laba.ermakovich.ha.domain.exception.ResourceDoesNotExistException;
 import solvd.laba.ermakovich.ha.domain.hospital.OpeningHours;
@@ -63,29 +65,32 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Appointment> getAllByDoctorIdAndDate(long doctorId, LocalDate date) {
-        return appointmentRepository.getAllByDoctorIdAndDate(doctorId, date);
-    }
-
-    @Override
-    public List<Appointment> getAllFutureByDoctorId(long doctorId) {
-        return getAllByDoctorIdAndDate(doctorId, null);
-    }
-
-    @Override
-    public List<Appointment> getAllFutureByPatientId(long patientId) {
-        return getAllByPatientIdAndDate(patientId, null);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public boolean isExistPastByPatientIdAndDoctorId(long patientId, long doctorId) {
         return appointmentRepository.existsPastByPatientIdAndDoctorId(patientId, doctorId);
     }
 
     @Override
-    public List<Appointment> getAllByPatientIdAndDate(long patientId, LocalDate date) {
-        return appointmentRepository.getAllByPatientIdAndDate(patientId, date);
+    @Transactional(readOnly = true)
+    public List<Appointment> getAllByPatientIdAndCriteria(long patientId, SearchAppointmentCriteria criteria) {
+        if (validSearchCriteria(criteria)) {
+            throw new IllegalOperationException("conflict data with status");
+        }
+        return appointmentRepository.getAllByPatientIdAndCriteria(patientId, criteria);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Appointment> getAllByDoctorIdAndCriteria(long doctorId, SearchAppointmentCriteria criteria) {
+        if (validSearchCriteria(criteria)) {
+            throw new IllegalOperationException("conflict data with status");
+        }
+        return appointmentRepository.getAllByDoctorIdAndCriteria(doctorId, criteria);
+    }
+
+    private boolean validSearchCriteria(SearchAppointmentCriteria criteria) {
+       return criteria.getDate() != null && criteria.getStatus() != null
+                && (criteria.getDate().isBefore(LocalDate.now()) && criteria.getStatus() == AppointmentStatus.FUTURE
+                || criteria.getDate().isAfter(LocalDate.now()) && criteria.getStatus() == AppointmentStatus.DONE);
     }
 
 }

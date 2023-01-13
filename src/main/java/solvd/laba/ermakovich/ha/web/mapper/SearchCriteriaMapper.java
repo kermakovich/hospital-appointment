@@ -1,14 +1,14 @@
 package solvd.laba.ermakovich.ha.web.mapper;
 
 import org.mapstruct.Mapper;
-import solvd.laba.ermakovich.ha.domain.SearchCriteria;
+import solvd.laba.ermakovich.ha.domain.SearchDoctorCriteria;
 import solvd.laba.ermakovich.ha.web.dto.SearchCriteriaDto;
 
 @Mapper(componentModel = "spring")
 public interface SearchCriteriaMapper {
 
-    SearchCriteria dtoToEntity(SearchCriteriaDto searchCriteriaDto);
+    SearchDoctorCriteria dtoToEntity(SearchCriteriaDto searchCriteriaDto);
 
-    SearchCriteriaDto entityToDto(SearchCriteria searchCriteria);
+    SearchCriteriaDto entityToDto(SearchDoctorCriteria searchDoctorCriteria);
 
 }

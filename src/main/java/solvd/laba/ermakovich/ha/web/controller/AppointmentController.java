@@ -6,12 +6,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import solvd.laba.ermakovich.ha.domain.Appointment;
+import solvd.laba.ermakovich.ha.domain.SearchAppointmentCriteria;
 import solvd.laba.ermakovich.ha.service.AppointmentService;
 import solvd.laba.ermakovich.ha.web.dto.AppointmentDto;
+import solvd.laba.ermakovich.ha.web.dto.SearchAppointmentCriteriaDto;
 import solvd.laba.ermakovich.ha.web.dto.group.onCreateAppointment;
 import solvd.laba.ermakovich.ha.web.mapper.AppointmentMapper;
+import solvd.laba.ermakovich.ha.web.mapper.SearchAppointmentCriteriaMapper;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -21,6 +23,7 @@ public class AppointmentController {
 
      private final AppointmentService appointmentService;
      private final AppointmentMapper appointmentMapper;
+     private final SearchAppointmentCriteriaMapper searchCriteriaMapper;
 
     @PostMapping("/patients/{patientId}/appointments")
     @ResponseStatus(HttpStatus.CREATED)
@@ -33,29 +36,18 @@ public class AppointmentController {
         return appointmentDto;
     }
 
-    @GetMapping("/patients/{patientId}/appointments/future")
-    public List<AppointmentDto> getFutureByPatient(@PathVariable long patientId) {
-        List<Appointment> futureAppointments = appointmentService.getAllFutureByPatientId(patientId);
-        return appointmentMapper.entityToDto(futureAppointments);
-    }
-
-
-    @GetMapping("/doctors/{doctorId}/appointments/future")
-    public List<AppointmentDto> getFutureByDoctor(@PathVariable long doctorId) {
-        List<Appointment> futureAppointments = appointmentService.getAllFutureByDoctorId(doctorId);
-        return appointmentMapper.entityToDto(futureAppointments);
-    }
-
     @GetMapping("/patients/{patientId}/appointments")
-    public List<AppointmentDto> getByPatientAndDate(@PathVariable long patientId, @RequestParam LocalDate date) {
-        List<Appointment> futureAppointments = appointmentService.getAllByPatientIdAndDate(patientId, date);
-        return appointmentMapper.entityToDto(futureAppointments);
+    public List<AppointmentDto> getByPatientIdAndCriteria(@PathVariable long patientId, SearchAppointmentCriteriaDto criteriaDto) {
+        SearchAppointmentCriteria criteria = searchCriteriaMapper.dtoToEntity(criteriaDto);
+        List<Appointment> appointments = appointmentService.getAllByPatientIdAndCriteria(patientId, criteria);
+        return appointmentMapper.entityToDto(appointments);
     }
 
     @GetMapping("/doctors/{doctorId}/appointments")
-    public List<AppointmentDto> getOnByDoctorAndDate(@PathVariable long doctorId, @RequestParam LocalDate date) {
-        List<Appointment> futureAppointments = appointmentService.getAllByDoctorIdAndDate(doctorId, date);
-        return appointmentMapper.entityToDto(futureAppointments);
+    public List<AppointmentDto> getByDoctorAndCriteria(@PathVariable long doctorId, SearchAppointmentCriteriaDto criteriaDto) {
+        SearchAppointmentCriteria criteria = searchCriteriaMapper.dtoToEntity(criteriaDto);
+        List<Appointment> appointments = appointmentService.getAllByDoctorIdAndCriteria(doctorId, criteria);
+        return appointmentMapper.entityToDto(appointments);
     }
 
     @DeleteMapping("/appointments/{appointmentId}")

@@ -7,7 +7,7 @@ import solvd.laba.ermakovich.ha.domain.hospital.Department;
 
 @Setter
 @Getter
-public class SearchCriteria {
+public class SearchDoctorCriteria {
 
     private Department department;
     private Specialization specialization;

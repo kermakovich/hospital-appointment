@@ -1,6 +1,7 @@
 package solvd.laba.ermakovich.ha.service;
 
 import solvd.laba.ermakovich.ha.domain.Appointment;
+import solvd.laba.ermakovich.ha.domain.SearchAppointmentCriteria;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -14,14 +15,9 @@ public interface AppointmentService {
 
     void delete(long appointmentId);
 
-    List<Appointment> getAllByDoctorIdAndDate(long doctorId, LocalDate date);
-
-    List<Appointment> getAllFutureByDoctorId(long doctorId);
-
-    List<Appointment> getAllFutureByPatientId(long patientId);
-
     boolean isExistPastByPatientIdAndDoctorId(long patientId, long doctorId);
 
-    List<Appointment> getAllByPatientIdAndDate(long patientId, LocalDate date);
+    List<Appointment> getAllByPatientIdAndCriteria(long patientId, SearchAppointmentCriteria criteria);
 
+    List<Appointment> getAllByDoctorIdAndCriteria(long doctorId, SearchAppointmentCriteria criteria);
 }

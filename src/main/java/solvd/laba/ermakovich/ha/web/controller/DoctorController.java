@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import solvd.laba.ermakovich.ha.domain.SearchCriteria;
+import solvd.laba.ermakovich.ha.domain.SearchDoctorCriteria;
 import solvd.laba.ermakovich.ha.domain.doctor.AvailableSlots;
 import solvd.laba.ermakovich.ha.domain.doctor.Doctor;
 import solvd.laba.ermakovich.ha.service.DoctorService;
@@ -43,7 +43,7 @@ public class DoctorController {
 
     @GetMapping
     public List<DoctorDto> getAll(SearchCriteriaDto searchCriteriaDto) {
-        SearchCriteria criteria = searchCriteriaMapper.dtoToEntity(searchCriteriaDto);
+        SearchDoctorCriteria criteria = searchCriteriaMapper.dtoToEntity(searchCriteriaDto);
         List<Doctor> doctors = doctorService.getAllBySearchCriteria(criteria);
         return doctorMapper.entityToDto(doctors);
     }

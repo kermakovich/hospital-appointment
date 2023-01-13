@@ -1,11 +1,12 @@
 package solvd.laba.ermakovich.ha.repository.impl;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Repository;
 import solvd.laba.ermakovich.ha.domain.Appointment;
 import solvd.laba.ermakovich.ha.domain.PatientCard;
+import solvd.laba.ermakovich.ha.domain.SearchAppointmentCriteria;
 import solvd.laba.ermakovich.ha.repository.AppointmentRepository;
 import solvd.laba.ermakovich.ha.repository.config.DataSourceConfig;
 import solvd.laba.ermakovich.ha.repository.mapper.AppointmentMapper;
@@ -37,7 +38,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
             			join user_info pat on pat.id = patients.user_id
             			WHERE ap.id_doctor=? 
             """;
-    private static final String SET_WHERE_TIME_START = " and ap.date_time_start::date ";
+    private static final String WHERE_DATE_START = "  ap.date_time_start::date ";
     private static final String GET_INFO_FOR_PATIENT = """
             SELECT ap.id, ap.date_time_start, ap.id_card as "patient_id",
                         d.id as "doctor_id", d.name as "doctor_name", d.surname as "doctor_surname",
@@ -144,32 +145,6 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
     @Override
     @SneakyThrows
-    public List<Appointment> getAllByDoctorIdAndDate(long doctorId, LocalDate date) {
-        Connection con = dataSource.getConnection();
-        try (PreparedStatement ps = con.prepareStatement(GET_INFO_FOR_DOCTOR + SET_WHERE_TIME_START
-                                                                + buildWhereClause(date))) {
-            ps.setLong(1, doctorId);
-            try (ResultSet rs = ps.executeQuery()) {
-                return AppointmentMapper.mapListForDoctor(rs);
-            }
-        }
-    }
-
-    @Override
-    @SneakyThrows
-    public List<Appointment> getAllByPatientIdAndDate(long patientId, LocalDate date) {
-        Connection con = dataSource.getConnection();
-        try (PreparedStatement ps = con.prepareStatement(GET_INFO_FOR_PATIENT + SET_WHERE_TIME_START
-                                                                + buildWhereClause(date))) {
-            ps.setLong(1, patientId);
-            try (ResultSet rs = ps.executeQuery()) {
-                return AppointmentMapper.mapListForPatient(rs);
-            }
-        }
-    }
-
-    @Override
-    @SneakyThrows
     public boolean existsByPatientIdAndTime(long patientId, Appointment appointment) {
         Connection con = dataSource.getConnection();
         try (PreparedStatement ps = con.prepareStatement(CHECK_IF_EXISTS_BY_PATIENT_ID_AND_DATE_TIME)) {
@@ -181,16 +156,55 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
         }
     }
 
-    private String buildWhereClause(LocalDate date) {
-        if (date == null) {
-            return CompareOperation.GREATER_THAN.value + "now()";
+    @Override
+    @SneakyThrows
+    public List<Appointment> getAllByPatientIdAndCriteria(long patientId, SearchAppointmentCriteria criteria) {
+        Connection con = dataSource.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(GET_INFO_FOR_PATIENT
+                + buildWhereClause(criteria))) {
+            ps.setLong(1, patientId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return AppointmentMapper.mapListForPatient(rs);
+            }
+        }
+    }
+
+    @Override
+    @SneakyThrows
+    public List<Appointment> getAllByDoctorIdAndCriteria(long doctorId, SearchAppointmentCriteria criteria) {
+        Connection con = dataSource.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(GET_INFO_FOR_DOCTOR
+                + buildWhereClause(criteria))) {
+            ps.setLong(1, doctorId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return AppointmentMapper.mapListForDoctor(rs);
+            }
+        }
+    }
+
+
+    private String buildWhereClause(SearchAppointmentCriteria criteria) {
+        List<String> conditions = new ArrayList<>();
+        if (criteria.getStatus() != null) {
+            String compareOp = switch (criteria.getStatus()) {
+                                    case FUTURE -> CompareOperation.GREATER_OR_EQUAL.value;
+                                    case DONE -> CompareOperation.LESS_OR_EQUAL.value;
+                                };
+            conditions.add(WHERE_DATE_START +  compareOp + "now()");
+        }
+        if (criteria.getDate() != null) {
+            conditions.add(WHERE_DATE_START + CompareOperation.EQUAL.value + "'"
+                                + Date.valueOf(criteria.getDate()) + "'");
+        }
+
+        if (!conditions.isEmpty()) {
+            return " and " + String.join(" and ", conditions);
         } else {
-            return CompareOperation.EQUAL.value + "'" + Date.valueOf(date) + "'";
+            return Strings.EMPTY;
         }
     }
 
     @RequiredArgsConstructor
-    @Getter
     enum CompareOperation {
 
         EQUAL("="),

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Repository;
-import solvd.laba.ermakovich.ha.domain.SearchCriteria;
+import solvd.laba.ermakovich.ha.domain.SearchDoctorCriteria;
 import solvd.laba.ermakovich.ha.domain.doctor.Doctor;
 import solvd.laba.ermakovich.ha.repository.DoctorRepository;
 import solvd.laba.ermakovich.ha.repository.config.DataSourceConfig;
@@ -67,23 +67,23 @@ public class DoctorRepositoryImpl implements DoctorRepository {
 
     @Override
     @SneakyThrows
-    public List<Doctor> getAllBySearchCriteria(SearchCriteria searchCriteria) {
+    public List<Doctor> getAllBySearchCriteria(SearchDoctorCriteria searchDoctorCriteria) {
         Connection con = dataSource.getConnection();
         try( PreparedStatement ps = con.prepareStatement(SELECT_BY_SEARCH_CRITERIA
-                                                            + buildWhereClauseBySearchCriteria(searchCriteria))) {
+                                                            + buildWhereClauseBySearchCriteria(searchDoctorCriteria))) {
             try (ResultSet rs = ps.executeQuery()) {
                 return DoctorMapper.mapList(rs);
             }
         }
     }
 
-    private String buildWhereClauseBySearchCriteria (SearchCriteria searchCriteria) {
+    private String buildWhereClauseBySearchCriteria (SearchDoctorCriteria searchDoctorCriteria) {
         List<String> conditions = new ArrayList<>();
-        if (searchCriteria.getDepartment() != null) {
-            conditions.add("department='" + searchCriteria.getDepartment() + "'");
+        if (searchDoctorCriteria.getDepartment() != null) {
+            conditions.add("department='" + searchDoctorCriteria.getDepartment() + "'");
         }
-        if (searchCriteria.getSpecialization() != null) {
-            conditions.add("specialization='" + searchCriteria.getSpecialization() + "'");
+        if (searchDoctorCriteria.getSpecialization() != null) {
+            conditions.add("specialization='" + searchDoctorCriteria.getSpecialization() + "'");
         }
         if (!conditions.isEmpty()) {
             return " WHERE " + String.join(" and ", conditions);
