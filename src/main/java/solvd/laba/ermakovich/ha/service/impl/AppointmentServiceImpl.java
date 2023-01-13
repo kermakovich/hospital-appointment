@@ -34,10 +34,10 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     @Transactional
     public Appointment save(long patientId, Appointment appointment) {
-        if (!doctorService.existsById(appointment.getDoctor().getId())) {
+        if (!doctorService.isExistById(appointment.getDoctor().getId())) {
             throw new ResourceDoesNotExistException("doctor", appointment.getDoctor().getId());
         }
-        if (!patientService.existsById(patientId)) {
+        if (!patientService.isExistById(patientId)) {
             throw new ResourceDoesNotExistException("patient", patientId);
         }
         if (!openingHours.isWithinOpenHours(appointment.getStart().toLocalTime())) {
@@ -79,7 +79,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     @Transactional(readOnly = true)
-    public boolean existsPastByPatientIdAndDoctorId(long patientId, long doctorId) {
+    public boolean isExistPastByPatientIdAndDoctorId(long patientId, long doctorId) {
         return appointmentRepository.existsPastByPatientIdAndDoctorId(patientId, doctorId);
     }
 

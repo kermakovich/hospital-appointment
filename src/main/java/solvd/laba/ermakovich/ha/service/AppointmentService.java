@@ -20,7 +20,7 @@ public interface AppointmentService {
 
     List<Appointment> getAllFutureByPatientId(long patientId);
 
-    boolean existsPastByPatientIdAndDoctorId(long patientId, long doctorId);
+    boolean isExistPastByPatientIdAndDoctorId(long patientId, long doctorId);
 
     List<Appointment> getAllByPatientIdAndDate(long patientId, LocalDate date);
 

@@ -27,7 +27,7 @@ public class TimeSlotServiceImpl implements TimeSlotService {
     @Override
     @Transactional(readOnly = true)
     public AvailableSlots getSchedule(long id, LocalDate date) {
-        if (!doctorService.existsById(id)) {
+        if (!doctorService.isExistById(id)) {
             throw new ResourceDoesNotExistException("doctor", id);
         }
         int steps = (int) openingHours.start.until(openingHours.finish, ChronoUnit.HOURS);

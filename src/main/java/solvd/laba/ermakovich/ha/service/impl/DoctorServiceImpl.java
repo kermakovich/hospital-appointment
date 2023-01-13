@@ -33,7 +33,7 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     @Transactional(readOnly = true)
-    public boolean existsById(long id) {
+    public boolean isExistById(long id) {
         return doctorRepository.existsById(id);
     }
 

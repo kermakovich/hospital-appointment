@@ -6,6 +6,6 @@ public interface PatientService {
 
     Patient save(Patient patient);
 
-    boolean existsById(long id);
+    boolean isExistById(long id);
 
 }

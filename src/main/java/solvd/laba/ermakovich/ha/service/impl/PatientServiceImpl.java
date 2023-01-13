@@ -25,7 +25,6 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     @Transactional
-//TODO create address not fund
     public Patient save(Patient patient) {
         UserInfo userInfo = userInfoMapper.mapToUserInfo(patient);
         userInfoService.save(userInfo);
@@ -39,7 +38,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     @Transactional(readOnly = true)
-    public boolean existsById(long id) {
+    public boolean isExistById(long id) {
         return patientRepository.existsById(id);
     }
 

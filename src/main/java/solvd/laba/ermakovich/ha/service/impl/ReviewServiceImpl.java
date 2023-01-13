@@ -34,7 +34,7 @@ public class ReviewServiceImpl implements ReviewService {
                 throw new ResourceAlreadyExistsException("Review with patient (id: " +
                         patientId + ") and doctor (id: " + doctorId + ") already exists");
         }
-        boolean patientHasPastAppointment = appointmentService.existsPastByPatientIdAndDoctorId(
+        boolean patientHasPastAppointment = appointmentService.isExistPastByPatientIdAndDoctorId(
                                                                             patientId,
                                                                             doctorId);
         if (patientHasPastAppointment) {

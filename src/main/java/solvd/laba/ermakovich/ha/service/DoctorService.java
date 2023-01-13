@@ -9,7 +9,7 @@ public interface DoctorService {
 
     Doctor save(Doctor doctor);
 
-    boolean existsById(long id);
+    boolean isExistById(long id);
 
     List<Doctor> getAllBySearchCriteria(SearchCriteria searchCriteriaDto);
 

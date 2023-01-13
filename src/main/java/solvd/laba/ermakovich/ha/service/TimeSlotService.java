@@ -8,5 +8,4 @@ public interface TimeSlotService {
 
     AvailableSlots getSchedule(long id, LocalDate date);
 
-
 }
