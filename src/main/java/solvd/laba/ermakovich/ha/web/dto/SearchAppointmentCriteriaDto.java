@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Setter
 public class SearchAppointmentCriteriaDto {
 
-    LocalDate date;
-    AppointmentStatus status;
+    private LocalDate date;
+    private AppointmentStatus status;
 
 }

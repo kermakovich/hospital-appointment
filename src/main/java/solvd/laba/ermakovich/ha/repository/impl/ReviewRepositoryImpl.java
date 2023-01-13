@@ -5,7 +5,7 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Repository;
 import solvd.laba.ermakovich.ha.domain.Review;
 import solvd.laba.ermakovich.ha.repository.ReviewRepository;
-import solvd.laba.ermakovich.ha.repository.config.DataSourceConfig;
+import solvd.laba.ermakovich.ha.repository.DataSourceConfig;
 import solvd.laba.ermakovich.ha.repository.mapper.ReviewMapper;
 
 import java.sql.*;
@@ -61,7 +61,7 @@ public class ReviewRepositoryImpl implements ReviewRepository {
 
     @Override
     @SneakyThrows
-    public boolean existsByDoctorIdAndPatientId(long doctorId, long patientId) {
+    public boolean isExistByDoctorIdAndPatientId(long doctorId, long patientId) {
         Connection con = dataSource.getConnection();
         try (PreparedStatement ps = con.prepareStatement(GET_ID_BY_DOCTOR_ID_AND_PATIENT_ID)) {
             ps.setLong(1, doctorId);
@@ -74,7 +74,7 @@ public class ReviewRepositoryImpl implements ReviewRepository {
 
     @Override
     @SneakyThrows
-    public boolean existsById(long reviewId) {
+    public boolean isExistById(long reviewId) {
         Connection con = dataSource.getConnection();
         try (PreparedStatement ps = con.prepareStatement(CHECK_IF_EXISTS_BY_ID)) {
             ps.setLong(1, reviewId);
@@ -108,7 +108,7 @@ public class ReviewRepositoryImpl implements ReviewRepository {
 
     @Override
     @SneakyThrows
-    public Optional<Review> getById(long id) {
+    public Optional<Review> findById(long id) {
         Connection con = dataSource.getConnection();
         try (PreparedStatement ps = con.prepareStatement(GET_INFO_BY_ID)) {
             ps.setLong(1, id);
@@ -124,7 +124,7 @@ public class ReviewRepositoryImpl implements ReviewRepository {
 
     @Override
     @SneakyThrows
-    public List<Review> getAllByDoctorId(long doctorId) {
+    public List<Review> findAllByDoctorId(long doctorId) {
         Connection con = dataSource.getConnection();
         try (PreparedStatement ps = con.prepareStatement(GET_INFO_BY_DOCTOR_ID)) {
             ps.setLong(1, doctorId);

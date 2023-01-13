@@ -8,7 +8,7 @@ import solvd.laba.ermakovich.ha.domain.Appointment;
 import solvd.laba.ermakovich.ha.domain.PatientCard;
 import solvd.laba.ermakovich.ha.domain.SearchAppointmentCriteria;
 import solvd.laba.ermakovich.ha.repository.AppointmentRepository;
-import solvd.laba.ermakovich.ha.repository.config.DataSourceConfig;
+import solvd.laba.ermakovich.ha.repository.DataSourceConfig;
 import solvd.laba.ermakovich.ha.repository.mapper.AppointmentMapper;
 
 import java.sql.*;
@@ -58,7 +58,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
     @Override
     @SneakyThrows
-    public List<LocalTime> getTimeSlotsByDoctorIdAndDate(long id, LocalDate date) {
+    public List<LocalTime> findTimeSlotsByDoctorIdAndDate(long id, LocalDate date) {
         List<LocalTime> timeSlots = new ArrayList<>();
         Connection con = dataSource.getConnection();
         try (PreparedStatement ps = con.prepareStatement(GET_TIME_SLOTS_BY_DOCTOR_AND_DATE)) {
@@ -75,7 +75,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
     @Override
     @SneakyThrows
-    public void save(long patientId, Appointment appointment) {
+    public void create(long patientId, Appointment appointment) {
         Connection con = dataSource.getConnection();
         try (PreparedStatement ps = con.prepareStatement(SAVE, Statement.RETURN_GENERATED_KEYS)) {
             ps.setLong(1, appointment.getDoctor().getId());
@@ -95,7 +95,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
     @Override
     @SneakyThrows
-    public boolean existsByDoctorIdAndTime(Appointment appointment) {
+    public boolean isExistByDoctorIdAndTime(Appointment appointment) {
         Connection con = dataSource.getConnection();
         try (PreparedStatement ps = con.prepareStatement(CHECK_IF_EXISTS_BY_DOCTOR_ID_AND_DATE_TIME)) {
             ps.setLong(1, appointment.getDoctor().getId());
@@ -118,7 +118,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
     @Override
     @SneakyThrows
-    public boolean existsById(long appointmentId) {
+    public boolean isExistById(long appointmentId) {
         Connection con = dataSource.getConnection();
         try (PreparedStatement ps = con.prepareStatement(CHECK_IF_EXISTS_BY_ID)) {
             ps.setLong(1, appointmentId);
@@ -132,7 +132,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
     @Override
     @SneakyThrows
-    public boolean existsPastByPatientIdAndDoctorId(long patientId, long doctorId) {
+    public boolean isExistPastByPatientIdAndDoctorId(long patientId, long doctorId) {
         Connection con = dataSource.getConnection();
         try (PreparedStatement ps = con.prepareStatement(CHECK_IF_EXISTS_PAST_BY_PATIENT_ID_AND_DOCTOR_ID )) {
             ps.setLong(1, patientId);
@@ -145,7 +145,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
     @Override
     @SneakyThrows
-    public boolean existsByPatientIdAndTime(long patientId, Appointment appointment) {
+    public boolean isExistByPatientIdAndTime(long patientId, Appointment appointment) {
         Connection con = dataSource.getConnection();
         try (PreparedStatement ps = con.prepareStatement(CHECK_IF_EXISTS_BY_PATIENT_ID_AND_DATE_TIME)) {
             ps.setLong(1, patientId);
@@ -158,7 +158,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
     @Override
     @SneakyThrows
-    public List<Appointment> getAllByPatientIdAndCriteria(long patientId, SearchAppointmentCriteria criteria) {
+    public List<Appointment> findAllByPatientIdAndCriteria(long patientId, SearchAppointmentCriteria criteria) {
         Connection con = dataSource.getConnection();
         try (PreparedStatement ps = con.prepareStatement(GET_INFO_FOR_PATIENT
                 + buildWhereClause(criteria))) {
@@ -171,7 +171,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
     @Override
     @SneakyThrows
-    public List<Appointment> getAllByDoctorIdAndCriteria(long doctorId, SearchAppointmentCriteria criteria) {
+    public List<Appointment> findAllByDoctorIdAndCriteria(long doctorId, SearchAppointmentCriteria criteria) {
         Connection con = dataSource.getConnection();
         try (PreparedStatement ps = con.prepareStatement(GET_INFO_FOR_DOCTOR
                 + buildWhereClause(criteria))) {

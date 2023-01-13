@@ -4,6 +4,6 @@ import solvd.laba.ermakovich.ha.domain.Address;
 
 public interface AddressService {
 
-    Address save(Address address);
+    Address create(Address address);
 
 }

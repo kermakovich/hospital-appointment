@@ -30,12 +30,12 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     @Transactional(readOnly = true)
     public List<LocalTime> getTimeSlotsByDoctorIdAndDate(long id, LocalDate date) {
-        return appointmentRepository.getTimeSlotsByDoctorIdAndDate(id, date);
+        return appointmentRepository.findTimeSlotsByDoctorIdAndDate(id, date);
     }
 
     @Override
     @Transactional
-    public Appointment save(long patientId, Appointment appointment) {
+    public Appointment create(long patientId, Appointment appointment) {
         if (!doctorService.isExistById(appointment.getDoctor().getId())) {
             throw new ResourceDoesNotExistException("doctor", appointment.getDoctor().getId());
         }
@@ -46,14 +46,14 @@ public class AppointmentServiceImpl implements AppointmentService {
             throw new IllegalOperationException("Hospital is closed at this time: "
                                                     + appointment.getStart().toString());
         }
-        if (appointmentRepository.existsByDoctorIdAndTime(appointment)) {
+        if (appointmentRepository.isExistByDoctorIdAndTime(appointment)) {
             throw new IllegalOperationException( "Appointment is taken (date : " + appointment.getStart() + " )");
         }
-        if (appointmentRepository.existsByPatientIdAndTime(patientId, appointment)) {
+        if (appointmentRepository.isExistByPatientIdAndTime(patientId, appointment)) {
             throw new IllegalOperationException( "Patient already has another appointment ( date : " + appointment.getStart() + " )");
         }
 
-        appointmentRepository.save(patientId, appointment);
+        appointmentRepository.create(patientId, appointment);
         return appointment;
     }
 
@@ -66,25 +66,25 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     @Transactional(readOnly = true)
     public boolean isExistPastByPatientIdAndDoctorId(long patientId, long doctorId) {
-        return appointmentRepository.existsPastByPatientIdAndDoctorId(patientId, doctorId);
+        return appointmentRepository.isExistPastByPatientIdAndDoctorId(patientId, doctorId);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Appointment> getAllByPatientIdAndCriteria(long patientId, SearchAppointmentCriteria criteria) {
+    public List<Appointment> retrieveAllByPatientIdAndCriteria(long patientId, SearchAppointmentCriteria criteria) {
         if (validSearchCriteria(criteria)) {
             throw new IllegalOperationException("conflict data with status");
         }
-        return appointmentRepository.getAllByPatientIdAndCriteria(patientId, criteria);
+        return appointmentRepository.findAllByPatientIdAndCriteria(patientId, criteria);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Appointment> getAllByDoctorIdAndCriteria(long doctorId, SearchAppointmentCriteria criteria) {
+    public List<Appointment> retrieveAllByDoctorIdAndCriteria(long doctorId, SearchAppointmentCriteria criteria) {
         if (validSearchCriteria(criteria)) {
             throw new IllegalOperationException("conflict data with status");
         }
-        return appointmentRepository.getAllByDoctorIdAndCriteria(doctorId, criteria);
+        return appointmentRepository.findAllByDoctorIdAndCriteria(doctorId, criteria);
     }
 
     private boolean validSearchCriteria(SearchAppointmentCriteria criteria) {

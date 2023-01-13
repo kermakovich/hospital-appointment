@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import solvd.laba.ermakovich.ha.domain.Patient;
 import solvd.laba.ermakovich.ha.domain.PatientCard;
 import solvd.laba.ermakovich.ha.repository.PatientCardRepository;
-import solvd.laba.ermakovich.ha.repository.config.DataSourceConfig;
+import solvd.laba.ermakovich.ha.repository.DataSourceConfig;
 
 import java.sql.*;
 import java.time.LocalDate;

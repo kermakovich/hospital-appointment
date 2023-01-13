@@ -15,7 +15,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     @Transactional
-    public Address save(Address address) {
+    public Address create(Address address) {
         return addressRepository.find(address)
                 .orElseGet(() -> {
                     addressRepository.save(address);

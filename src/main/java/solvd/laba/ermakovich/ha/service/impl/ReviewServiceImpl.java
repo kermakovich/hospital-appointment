@@ -4,13 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import solvd.laba.ermakovich.ha.domain.Review;
-import solvd.laba.ermakovich.ha.domain.exception.ResourceAlreadyExistsException;
 import solvd.laba.ermakovich.ha.domain.exception.IllegalOperationException;
+import solvd.laba.ermakovich.ha.domain.exception.ResourceAlreadyExistsException;
 import solvd.laba.ermakovich.ha.domain.exception.ResourceDoesNotExistException;
 import solvd.laba.ermakovich.ha.repository.ReviewRepository;
 import solvd.laba.ermakovich.ha.service.AppointmentService;
-import solvd.laba.ermakovich.ha.service.DoctorService;
-import solvd.laba.ermakovich.ha.service.PatientService;
 import solvd.laba.ermakovich.ha.service.ReviewService;
 
 import java.util.List;
@@ -21,18 +19,15 @@ public class ReviewServiceImpl implements ReviewService {
 
     private final AppointmentService appointmentService;
     private final ReviewRepository reviewRepository;
-    private final DoctorService doctorService;
-    private final PatientService patientService;
 
     @Override
     @Transactional
-    public void save(Review review) {
+    public void create(Review review) {
         long doctorId = review.getDoctor().getId();
         long patientId = review.getPatient().getId();
 
-        if (reviewRepository.existsByDoctorIdAndPatientId(doctorId, patientId)) {
-                throw new ResourceAlreadyExistsException("Review with patient (id: " +
-                        patientId + ") and doctor (id: " + doctorId + ") already exists");
+        if (reviewRepository.isExistByDoctorIdAndPatientId(doctorId, patientId)) {
+                throw new ResourceAlreadyExistsException("Review with patient (id: " + patientId + ") and doctor (id: " + doctorId + ") already exists");
         }
         boolean patientHasPastAppointment = appointmentService.isExistPastByPatientIdAndDoctorId(
                                                                             patientId,
@@ -40,16 +35,14 @@ public class ReviewServiceImpl implements ReviewService {
         if (patientHasPastAppointment) {
             reviewRepository.save(review);
         } else {
-            throw new IllegalOperationException("Patient (id : " + patientId
-                                                + " ) has not been treated with doctor (id: "
-                                                + doctorId + " )");
+            throw new IllegalOperationException("Patient (id : " + patientId + " ) has not been treated with doctor (id: " + doctorId + " )");
         }
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Review> getAllByDoctorId(long doctorId) {
-        return reviewRepository.getAllByDoctorId(doctorId);
+    public List<Review> retrieveAllByDoctorId(long doctorId) {
+        return reviewRepository.findAllByDoctorId(doctorId);
     }
 
     @Override
@@ -61,7 +54,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional
     public Review update(long reviewId, Review review) {
-        Review oldReview = getById(reviewId);
+        Review oldReview = retrieveById(reviewId);
         oldReview.setDescription(review.getDescription());
         reviewRepository.update(oldReview);
         return oldReview;
@@ -69,8 +62,8 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional(readOnly = true)
-    public Review getById(long reviewId) {
-        return reviewRepository.getById(reviewId)
+    public Review retrieveById(long reviewId) {
+        return reviewRepository.findById(reviewId)
                         .orElseThrow(() -> new ResourceDoesNotExistException("review", reviewId));
     }
 

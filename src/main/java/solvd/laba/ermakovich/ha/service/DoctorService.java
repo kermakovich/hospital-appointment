@@ -7,10 +7,10 @@ import java.util.List;
 
 public interface DoctorService {
 
-    Doctor save(Doctor doctor);
+    Doctor create(Doctor doctor);
 
     boolean isExistById(long id);
 
-    List<Doctor> getAllBySearchCriteria(SearchDoctorCriteria searchDoctorCriteriaDto);
+    List<Doctor> retrieveAllBySearchCriteria(SearchDoctorCriteria searchDoctorCriteriaDto);
 
 }

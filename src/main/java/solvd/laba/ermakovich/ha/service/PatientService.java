@@ -4,7 +4,7 @@ import solvd.laba.ermakovich.ha.domain.Patient;
 
 public interface PatientService {
 
-    Patient save(Patient patient);
+    Patient create(Patient patient);
 
     boolean isExistById(long id);
 

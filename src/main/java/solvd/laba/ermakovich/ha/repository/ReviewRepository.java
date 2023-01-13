@@ -9,16 +9,16 @@ public interface ReviewRepository {
 
     void save(Review review);
 
-    boolean existsByDoctorIdAndPatientId(long doctorId, long patientId);
+    boolean isExistByDoctorIdAndPatientId(long doctorId, long patientId);
 
-    boolean existsById(long reviewId);
+    boolean isExistById(long reviewId);
 
     void delete(long reviewId);
 
     void update(Review review);
 
-    Optional<Review> getById(long id);
+    Optional<Review> findById(long id);
 
-    List<Review> getAllByDoctorId(long doctorId);
+    List<Review> findAllByDoctorId(long doctorId);
 
 }

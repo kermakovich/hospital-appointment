@@ -6,6 +6,6 @@ import java.time.LocalDate;
 
 public interface TimeSlotService {
 
-    AvailableSlots getSchedule(long id, LocalDate date);
+    AvailableSlots retrieveSchedule(long id, LocalDate date);
 
 }

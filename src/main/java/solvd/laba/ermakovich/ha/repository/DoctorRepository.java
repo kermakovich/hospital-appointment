@@ -9,8 +9,8 @@ public interface DoctorRepository {
 
     void save(Doctor doctor);
 
-    boolean existsById(long id);
+    boolean isExistById(long id);
 
-    List<Doctor> getAllBySearchCriteria(SearchDoctorCriteria searchDoctorCriteria);
+    List<Doctor> findAllBySearchCriteria(SearchDoctorCriteria searchDoctorCriteria);
 
 }

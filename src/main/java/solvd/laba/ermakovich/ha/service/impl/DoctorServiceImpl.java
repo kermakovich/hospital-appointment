@@ -23,9 +23,9 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     @Transactional
-    public Doctor save(Doctor doctor) {
+    public Doctor create(Doctor doctor) {
         UserInfo userInfo = userInfoMapper.mapToUserInfo(doctor);
-        userInfoService.save(userInfo);
+        userInfoService.create(userInfo);
         doctor.setId(userInfo.getId());
         doctorRepository.save(doctor);
         return doctor;
@@ -34,12 +34,12 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     @Transactional(readOnly = true)
     public boolean isExistById(long id) {
-        return doctorRepository.existsById(id);
+        return doctorRepository.isExistById(id);
     }
 
     @Override
-    public List<Doctor> getAllBySearchCriteria(SearchDoctorCriteria searchDoctorCriteria) {
-        return doctorRepository.getAllBySearchCriteria(searchDoctorCriteria);
+    public List<Doctor> retrieveAllBySearchCriteria(SearchDoctorCriteria searchDoctorCriteria) {
+        return doctorRepository.findAllBySearchCriteria(searchDoctorCriteria);
     }
 
 }

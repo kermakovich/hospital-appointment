@@ -25,21 +25,21 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     @Transactional
-    public Patient save(Patient patient) {
+    public Patient create(Patient patient) {
         UserInfo userInfo = userInfoMapper.mapToUserInfo(patient);
-        userInfoService.save(userInfo);
-        Address address = addressService.save(patient.getAddress());
+        userInfoService.create(userInfo);
+        Address address = addressService.create(patient.getAddress());
         patient.setAddress(address);
         patient.setId(userInfo.getId());
         patientRepository.save(patient);
-        patientCardService.saveByPatientId(patient.getId());
+        patientCardService.createByPatientId(patient.getId());
         return patient;
     }
 
     @Override
     @Transactional(readOnly = true)
     public boolean isExistById(long id) {
-        return patientRepository.existsById(id);
+        return patientRepository.isExistById(id);
     }
 
 }

@@ -4,19 +4,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Repository;
 import solvd.laba.ermakovich.ha.domain.UserInfo;
+import solvd.laba.ermakovich.ha.repository.DataSourceConfig;
 import solvd.laba.ermakovich.ha.repository.UserRepository;
-import solvd.laba.ermakovich.ha.repository.config.DataSourceConfig;
-import solvd.laba.ermakovich.ha.repository.mapper.UsersInfoMapper;
 
 import java.sql.*;
-import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
 public class UserInfoRepositoryImpl implements UserRepository {
 
     private static final String SAVE_USER_INFO = "INSERT INTO user_info (name, surname, fatherhood, birthday, email, password) VALUES (?,?,?,?,?,?)";
-    private static final String GET_BY_EMAIL = "SELECT id, name, surname, fatherhood, birthday, email, password FROM user_info WHERE email=?";
+    private static final String CHECK_IF_EXISTS_BY_EMAIL = "SELECT id FROM user_info WHERE email=?";
     private final DataSourceConfig dataSource;
 
     @Override
@@ -42,16 +40,12 @@ public class UserInfoRepositoryImpl implements UserRepository {
 
     @Override
     @SneakyThrows
-    public Optional<UserInfo> findByEmail(String email) {
+    public boolean isExistByEmail(String email) {
         Connection con = dataSource.getConnection();
-        try (PreparedStatement ps = con.prepareStatement(GET_BY_EMAIL)) {
+        try (PreparedStatement ps = con.prepareStatement(CHECK_IF_EXISTS_BY_EMAIL)) {
             ps.setString(1, email);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return Optional.of(UsersInfoMapper.map(rs));
-                } else {
-                    return Optional.empty();
-                }
+                return rs.next();
             }
         }
     }

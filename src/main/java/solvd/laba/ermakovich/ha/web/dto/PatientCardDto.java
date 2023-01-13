@@ -1,6 +1,5 @@
 package solvd.laba.ermakovich.ha.web.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,10 +12,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PatientCardDto {
 
-    Long id;
+    private Long id;
     private PatientDto patientDto;
     private UUID number;
     private LocalDate registryDate;

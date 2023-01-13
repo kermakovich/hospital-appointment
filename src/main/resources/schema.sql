@@ -14,10 +14,11 @@ CREATE TABLE IF NOT EXISTS user_info (
 
 
 CREATE TABLE IF NOT EXISTS doctors (
-    user_id bigint PRIMARY KEY references user_info(id),
+    user_id bigint PRIMARY KEY,
     department varchar(50) NOT NULL,
     specialization varchar(50) NOT NULL,
-    cabinet smallint
+    cabinet smallint,
+    constraint fk_user_info foreign key(user_id) references user_info(id)
 );
 
 
@@ -31,27 +32,34 @@ CREATE TABLE IF NOT EXISTS addresses (
 
 
 CREATE TABLE IF NOT EXISTS patients (
-    user_id bigint PRIMARY KEY references user_info(id),
-    id_address bigint references addresses(id)
+    user_id bigint PRIMARY KEY,
+    id_address bigint,
+    constraint fk_user_info foreign key(user_id) references user_info(id),
+    constraint fk_address foreign key(id_address) references addresses(id)
 );
 
 
 CREATE TABLE IF NOT EXISTS patient_cards (
-    patient_id bigint PRIMARY KEY references patients(user_id),
+    patient_id bigint PRIMARY KEY,
     number uuid UNIQUE NOT NULL,
-    reg_date date NOT NULL
+    reg_date date NOT NULL,
+    constraint fk_patient foreign key(patient_id) references patients(user_id)
 );
 
 CREATE TABLE IF NOT EXISTS reviews (
     id bigserial PRIMARY KEY,
-    id_doctor bigint references doctors(user_id),
-    id_patient bigint references patients(user_id),
-    description varchar(500)
+    id_doctor bigint,
+    id_patient bigint,
+    description varchar(500),
+    constraint fk_patient foreign key(user_id) references patients(user_id),
+    constraint fk_doctor foreign key(user_id) references doctors(user_id)
 );
 
 CREATE TABLE IF NOT EXISTS appointments (
     id bigserial PRIMARY KEY,
-    id_doctor bigint references doctors(user_id) NOT NULL,
-    id_card bigint references patient_cards(patient_id) NOT NULL,
-    date_time_start timestamp without time zone NOT NULL
+    id_doctor bigint,
+    id_card bigint,
+    date_time_start timestamp without time zone NOT NULL,
+    constraint fk_doctor foreign key(id_doctor) references doctors(user_id),
+    constraint fk_patient_card foreign key(id_card) references patient_cards(patient_id)
 );

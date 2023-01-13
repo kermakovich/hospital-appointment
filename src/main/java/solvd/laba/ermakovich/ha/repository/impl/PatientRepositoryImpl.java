@@ -5,7 +5,7 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Repository;
 import solvd.laba.ermakovich.ha.domain.Patient;
 import solvd.laba.ermakovich.ha.repository.PatientRepository;
-import solvd.laba.ermakovich.ha.repository.config.DataSourceConfig;
+import solvd.laba.ermakovich.ha.repository.DataSourceConfig;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -41,7 +41,7 @@ public class PatientRepositoryImpl implements PatientRepository {
 
     @Override
     @SneakyThrows
-    public boolean existsById(long id) {
+    public boolean isExistById(long id) {
         Connection con = dataSource.getConnection();
         try (PreparedStatement ps = con.prepareStatement(CHECK_IF_EXISTS_BY_ID)) {
             ps.setLong(1, id);

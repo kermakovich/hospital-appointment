@@ -1,4 +1,4 @@
-package solvd.laba.ermakovich.ha.web.config;
+package solvd.laba.ermakovich.ha.web;
 
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;

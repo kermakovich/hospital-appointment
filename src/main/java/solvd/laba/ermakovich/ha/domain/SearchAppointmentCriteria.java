@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Setter
 public class SearchAppointmentCriteria {
 
-    LocalDate date;
-    AppointmentStatus status;
+    private LocalDate date;
+    private AppointmentStatus status;
 
 }

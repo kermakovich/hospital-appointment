@@ -1,16 +1,19 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres?currentSchema=hospital
-    username: "postgres"
-    password: "root"
-    driver-class-name: "org.postgresql.Driver"
-
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
   sql:
     init:
       mode: always
+  jackson:
+    default-property-inclusion: NON_NULL
 hospital:
   hours:
     start: "08:00"
     finish: "20:00"
     minutes-range: 60
+
+
 

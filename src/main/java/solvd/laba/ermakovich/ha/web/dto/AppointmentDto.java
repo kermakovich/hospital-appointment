@@ -1,6 +1,5 @@
 package solvd.laba.ermakovich.ha.web.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
@@ -12,7 +11,6 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AppointmentDto {
 
     private Long id;

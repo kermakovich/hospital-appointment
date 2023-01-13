@@ -16,11 +16,10 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     @Transactional
-    public UserInfo save(UserInfo userInfo) {
-        userRepository.findByEmail(userInfo.getEmail())
-                .ifPresent((user) ->
-                {throw new ResourceAlreadyExistsException(" User with this email: "
-                                                            + userInfo.getEmail() + " already exist");});
+    public UserInfo create(UserInfo userInfo) {
+        if (userRepository.isExistByEmail(userInfo.getEmail())) {
+            throw new ResourceAlreadyExistsException(" User with this email: " + userInfo.getEmail() + " already exist");
+        }
         userRepository.save(userInfo);
         return userInfo;
     }

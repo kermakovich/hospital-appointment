@@ -5,7 +5,7 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Repository;
 import solvd.laba.ermakovich.ha.domain.Address;
 import solvd.laba.ermakovich.ha.repository.AddressRepository;
-import solvd.laba.ermakovich.ha.repository.config.DataSourceConfig;
+import solvd.laba.ermakovich.ha.repository.DataSourceConfig;
 import solvd.laba.ermakovich.ha.repository.mapper.AddressMapper;
 
 import java.sql.Connection;

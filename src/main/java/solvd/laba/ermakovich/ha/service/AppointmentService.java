@@ -11,13 +11,13 @@ public interface AppointmentService {
 
     List<LocalTime> getTimeSlotsByDoctorIdAndDate(long id, LocalDate date);
 
-    Appointment save(long patientId, Appointment appointment);
+    Appointment create(long patientId, Appointment appointment);
 
     void delete(long appointmentId);
 
     boolean isExistPastByPatientIdAndDoctorId(long patientId, long doctorId);
 
-    List<Appointment> getAllByPatientIdAndCriteria(long patientId, SearchAppointmentCriteria criteria);
+    List<Appointment> retrieveAllByPatientIdAndCriteria(long patientId, SearchAppointmentCriteria criteria);
 
-    List<Appointment> getAllByDoctorIdAndCriteria(long doctorId, SearchAppointmentCriteria criteria);
+    List<Appointment> retrieveAllByDoctorIdAndCriteria(long doctorId, SearchAppointmentCriteria criteria);
 }

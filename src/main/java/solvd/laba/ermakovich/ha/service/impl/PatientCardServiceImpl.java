@@ -15,7 +15,7 @@ public class PatientCardServiceImpl implements PatientCardService {
 
     @Override
     @Transactional
-    public PatientCard saveByPatientId(long id) {
+    public PatientCard createByPatientId(long id) {
         return patientCardRepository.saveByPatientId(id);
     }
 

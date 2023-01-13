@@ -4,6 +4,6 @@ import solvd.laba.ermakovich.ha.domain.UserInfo;
 
 public interface UserInfoService {
 
-    UserInfo save(UserInfo userInfo);
+    UserInfo create(UserInfo userInfo);
 
 }

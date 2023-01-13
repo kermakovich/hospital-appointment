@@ -5,18 +5,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import solvd.laba.ermakovich.ha.domain.Appointment;
+import solvd.laba.ermakovich.ha.domain.Review;
+import solvd.laba.ermakovich.ha.domain.SearchAppointmentCriteria;
 import solvd.laba.ermakovich.ha.domain.SearchDoctorCriteria;
 import solvd.laba.ermakovich.ha.domain.doctor.AvailableSlots;
 import solvd.laba.ermakovich.ha.domain.doctor.Doctor;
+import solvd.laba.ermakovich.ha.service.AppointmentService;
 import solvd.laba.ermakovich.ha.service.DoctorService;
+import solvd.laba.ermakovich.ha.service.ReviewService;
 import solvd.laba.ermakovich.ha.service.TimeSlotService;
-import solvd.laba.ermakovich.ha.web.dto.AvailableSlotsDto;
-import solvd.laba.ermakovich.ha.web.dto.DoctorDto;
-import solvd.laba.ermakovich.ha.web.dto.SearchCriteriaDto;
+import solvd.laba.ermakovich.ha.web.dto.*;
 import solvd.laba.ermakovich.ha.web.dto.group.onCreate;
-import solvd.laba.ermakovich.ha.web.mapper.AvailableSlotsMapper;
-import solvd.laba.ermakovich.ha.web.mapper.DoctorMapper;
-import solvd.laba.ermakovich.ha.web.mapper.SearchCriteriaMapper;
+import solvd.laba.ermakovich.ha.web.mapper.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -31,28 +32,46 @@ public class DoctorController {
     private final DoctorMapper doctorMapper;
     private final AvailableSlotsMapper availableSlotsMapper;
     private final SearchCriteriaMapper searchCriteriaMapper;
+    private final AppointmentService appointmentService;
+    private final AppointmentMapper appointmentMapper;
+    private final SearchAppointmentCriteriaMapper searchAppointmentCriteriaMapper;
+    private final ReviewService reviewService;
+    private final ReviewMapper reviewMapper;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public DoctorDto save(@Validated({onCreate.class, Default.class}) @RequestBody DoctorDto doctorDto) {
+    public DoctorDto create(@Validated({onCreate.class, Default.class}) @RequestBody DoctorDto doctorDto) {
         Doctor doctor = doctorMapper.dtoToEntity(doctorDto);
-        doctorService.save(doctor);
+        doctorService.create(doctor);
         return doctorMapper.entityToDto(doctor);
     }
-
 
     @GetMapping
     public List<DoctorDto> getAll(SearchCriteriaDto searchCriteriaDto) {
         SearchDoctorCriteria criteria = searchCriteriaMapper.dtoToEntity(searchCriteriaDto);
-        List<Doctor> doctors = doctorService.getAllBySearchCriteria(criteria);
+        List<Doctor> doctors = doctorService.retrieveAllBySearchCriteria(criteria);
         return doctorMapper.entityToDto(doctors);
     }
 
 
     @GetMapping("/{id}/schedule")
     public AvailableSlotsDto getAvailableSlots(@PathVariable long id, @RequestParam LocalDate date) {
-        AvailableSlots availableSlots = timeSlotService.getSchedule(id, date);
+        AvailableSlots availableSlots = timeSlotService.retrieveSchedule(id, date);
         return availableSlotsMapper.entityToDto(availableSlots);
+    }
+
+
+    @GetMapping("/{doctorId}/appointments")
+    public List<AppointmentDto> getAppointmentByDoctorAndCriteria(@PathVariable long doctorId, SearchAppointmentCriteriaDto criteriaDto) {
+        SearchAppointmentCriteria criteria = searchAppointmentCriteriaMapper.dtoToEntity(criteriaDto);
+        List<Appointment> appointments = appointmentService.retrieveAllByDoctorIdAndCriteria(doctorId, criteria);
+        return appointmentMapper.entityToDto(appointments);
+    }
+
+    @GetMapping("/{doctorId}/reviews")
+    public List<ReviewDto> getReviewByDoctor(@PathVariable long doctorId) {
+        List<Review> reviews = reviewService.retrieveAllByDoctorId(doctorId);
+        return reviewMapper.entityToDto(reviews);
     }
 
 }

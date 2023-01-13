@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.function.IntFunction;
 import java.util.stream.IntStream;
 
 @Service
@@ -26,20 +27,22 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 
     @Override
     @Transactional(readOnly = true)
-    public AvailableSlots getSchedule(long id, LocalDate date) {
+    public AvailableSlots retrieveSchedule(long id, LocalDate date) {
         if (!doctorService.isExistById(id)) {
             throw new ResourceDoesNotExistException("doctor", id);
         }
         int steps = (int) openingHours.start.until(openingHours.finish, ChronoUnit.HOURS);
         List<LocalTime> startTimeSlots = new java.util.ArrayList<>(
-                IntStream
-                        .rangeClosed(0, steps - 1)
-                        .mapToObj(n -> openingHours.start
-                                .plus(openingHours.minutesRange * n, ChronoUnit.MINUTES))
+                IntStream.rangeClosed(0, steps - 1)
+                        .mapToObj(buildTimeSlots())
                         .toList());
         List<LocalTime> timeList = appointmentService.getTimeSlotsByDoctorIdAndDate(id, date);
         startTimeSlots.removeAll(timeList);
         return new AvailableSlots(id, date, startTimeSlots);
+    }
+
+    private IntFunction<LocalTime> buildTimeSlots() {
+        return n -> openingHours.start.plus(openingHours.minutesRange * n, ChronoUnit.MINUTES);
     }
 
 }

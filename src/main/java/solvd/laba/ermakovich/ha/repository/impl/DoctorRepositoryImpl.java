@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import solvd.laba.ermakovich.ha.domain.SearchDoctorCriteria;
 import solvd.laba.ermakovich.ha.domain.doctor.Doctor;
 import solvd.laba.ermakovich.ha.repository.DoctorRepository;
-import solvd.laba.ermakovich.ha.repository.config.DataSourceConfig;
+import solvd.laba.ermakovich.ha.repository.DataSourceConfig;
 import solvd.laba.ermakovich.ha.repository.mapper.DoctorMapper;
 
 import java.sql.Connection;
@@ -55,7 +55,7 @@ public class DoctorRepositoryImpl implements DoctorRepository {
 
     @Override
     @SneakyThrows
-    public boolean existsById(long id) {
+    public boolean isExistById(long id) {
         Connection con = dataSource.getConnection();
         try (PreparedStatement ps = con.prepareStatement(CHECK_IF_EXISTS_BY_ID)) {
             ps.setLong(1, id);
@@ -67,7 +67,7 @@ public class DoctorRepositoryImpl implements DoctorRepository {
 
     @Override
     @SneakyThrows
-    public List<Doctor> getAllBySearchCriteria(SearchDoctorCriteria searchDoctorCriteria) {
+    public List<Doctor> findAllBySearchCriteria(SearchDoctorCriteria searchDoctorCriteria) {
         Connection con = dataSource.getConnection();
         try( PreparedStatement ps = con.prepareStatement(SELECT_BY_SEARCH_CRITERIA
                                                             + buildWhereClauseBySearchCriteria(searchDoctorCriteria))) {

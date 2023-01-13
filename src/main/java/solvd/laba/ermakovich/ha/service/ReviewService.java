@@ -6,14 +6,14 @@ import java.util.List;
 
 public interface ReviewService {
 
-    void save(Review review);
+    void create(Review review);
 
-    List<Review> getAllByDoctorId(long doctorId);
+    List<Review> retrieveAllByDoctorId(long doctorId);
 
     void delete(long reviewId);
 
     Review update(long reviewId, Review review);
 
-    Review getById(long reviewId);
+    Review retrieveById(long reviewId);
 
 }

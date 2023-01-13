@@ -1,6 +1,5 @@
 package solvd.laba.ermakovich.ha.web.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +10,6 @@ import solvd.laba.ermakovich.ha.web.dto.group.onCreate;
 
 @Getter
 @Setter
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DoctorDto extends UserInfoDto {
 
     @NotNull(message = "can`t be null", groups = onCreate.class)
