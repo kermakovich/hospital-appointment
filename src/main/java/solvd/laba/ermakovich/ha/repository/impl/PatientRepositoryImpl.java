@@ -16,7 +16,7 @@ import java.sql.Statement;
 @RequiredArgsConstructor
 public class PatientRepositoryImpl implements PatientRepository {
 
-    private static final String SAVE_PATIENT = "INSERT INTO patents (user_id, id_address) VALUES (?,?)";
+    private static final String SAVE_PATIENT = "INSERT INTO patients (user_id, id_address) VALUES (?,?)";
     private static final String CHECK_IF_EXISTS_BY_ID = "SELECT user_id, id_address FROM patients WHERE user_id = ?";
     private final DataSourceConfig dataSource;
 
