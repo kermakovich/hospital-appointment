@@ -16,7 +16,7 @@ public enum Specialization {
 
     @Override
     public String toString() {
-        return value;
+        return value.toUpperCase();
     }
 
 }

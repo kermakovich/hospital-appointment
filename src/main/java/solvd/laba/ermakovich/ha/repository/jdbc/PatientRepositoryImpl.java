@@ -1,7 +1,8 @@
-package solvd.laba.ermakovich.ha.repository.impl;
+package solvd.laba.ermakovich.ha.repository.jdbc;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 import solvd.laba.ermakovich.ha.domain.Patient;
 import solvd.laba.ermakovich.ha.repository.PatientRepository;
@@ -11,9 +12,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
+@ConditionalOnProperty(prefix = "persistence", name = "type", havingValue = "jdbc")
 public class PatientRepositoryImpl implements PatientRepository {
 
     private static final String SAVE_PATIENT = "INSERT INTO patients (user_id, id_address) VALUES (?,?)";
@@ -49,6 +52,11 @@ public class PatientRepositoryImpl implements PatientRepository {
                 return rs.next();
             }
         }
+    }
+
+    @Override
+    public Optional<Patient> findById(Long id) {
+        return Optional.empty();
     }
 
 }

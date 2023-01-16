@@ -1,0 +1,13 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="solvd.laba.ermakovich.ha.repository.PatientRepository">
+
+    <insert id="save" parameterType="solvd.laba.ermakovich.ha.domain.Patient">
+        INSERT INTO patients (user_id, id_address) VALUES (#{id}, #{address.id})
+    </insert>
+
+    <select id="isExistById" parameterType="java.lang.Long" resultType="java.lang.Boolean">
+        SELECT EXISTS(SELECT 1 FROM patients WHERE user_id = #{id})
+    </select>
+</mapper>

@@ -1,0 +1,15 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="solvd.laba.ermakovich.ha.repository.UserRepository">
+
+    <insert id="save" parameterType="solvd.laba.ermakovich.ha.domain.UserInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into user_info (name, surname, fatherhood, birthday, email, password)
+        values (#{name}, #{surname}, #{fatherhood}, #{birthday}, #{email}, #{password})
+    </insert>
+
+    <select id="isExistByEmail" parameterType="java.lang.String" resultType="java.lang.Boolean">
+        SELECT EXISTS(SELECT 1 FROM user_info WHERE email = #{email})
+    </select>
+
+</mapper>

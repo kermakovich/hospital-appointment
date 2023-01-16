@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import solvd.laba.ermakovich.ha.domain.Review;
+import solvd.laba.ermakovich.ha.repository.ReviewRepository;
 import solvd.laba.ermakovich.ha.service.ReviewService;
 import solvd.laba.ermakovich.ha.web.dto.ReviewDto;
 import solvd.laba.ermakovich.ha.web.dto.group.onCreateReview;
@@ -18,6 +19,7 @@ public class ReviewController {
 
     private final ReviewService reviewService;
     private final ReviewMapper reviewMapper;
+    private final ReviewRepository reviewMyBatisMapper;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

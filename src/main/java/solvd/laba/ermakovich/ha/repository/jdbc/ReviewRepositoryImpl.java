@@ -1,7 +1,8 @@
-package solvd.laba.ermakovich.ha.repository.impl;
+package solvd.laba.ermakovich.ha.repository.jdbc;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 import solvd.laba.ermakovich.ha.domain.Review;
 import solvd.laba.ermakovich.ha.repository.ReviewRepository;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
+@ConditionalOnProperty(prefix = "persistence", name = "type", havingValue = "jdbc")
 public class ReviewRepositoryImpl implements ReviewRepository {
 
     private static final String SAVE = "INSERT INTO reviews (id_doctor, id_patient, description) VALUES (?,?,?)";

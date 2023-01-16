@@ -1,8 +1,9 @@
-package solvd.laba.ermakovich.ha.repository.impl;
+package solvd.laba.ermakovich.ha.repository.jdbc;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 import solvd.laba.ermakovich.ha.domain.Appointment;
 import solvd.laba.ermakovich.ha.domain.PatientCard;
@@ -20,6 +21,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
+@ConditionalOnProperty(prefix = "persistence", name = "type")
 public class AppointmentRepositoryImpl implements AppointmentRepository {
 
     private static final String GET_TIME_SLOTS_BY_DOCTOR_AND_DATE = "SELECT date_time_start::time FROM appointments WHERE id_doctor=? and date_time_start::date=?";

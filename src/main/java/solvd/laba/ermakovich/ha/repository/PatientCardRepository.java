@@ -4,6 +4,6 @@ import solvd.laba.ermakovich.ha.domain.PatientCard;
 
 public interface PatientCardRepository {
 
-    PatientCard saveByPatientId(long id);
+    void save(PatientCard card);
 
 }

@@ -1,7 +1,8 @@
-package solvd.laba.ermakovich.ha.repository.impl;
+package solvd.laba.ermakovich.ha.repository.jdbc;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 import solvd.laba.ermakovich.ha.domain.UserInfo;
 import solvd.laba.ermakovich.ha.repository.DataSourceConfig;
@@ -11,6 +12,7 @@ import java.sql.*;
 
 @Repository
 @RequiredArgsConstructor
+@ConditionalOnProperty(prefix = "persistence", name = "type", havingValue = "jdbc")
 public class UserInfoRepositoryImpl implements UserRepository {
 
     private static final String SAVE_USER_INFO = "INSERT INTO user_info (name, surname, fatherhood, birthday, email, password) VALUES (?,?,?,?,?,?)";
@@ -41,6 +43,7 @@ public class UserInfoRepositoryImpl implements UserRepository {
     @Override
     @SneakyThrows
     public boolean isExistByEmail(String email) {
+        System.out.println("jdbc");
         Connection con = dataSource.getConnection();
         try (PreparedStatement ps = con.prepareStatement(CHECK_IF_EXISTS_BY_EMAIL)) {
             ps.setString(1, email);

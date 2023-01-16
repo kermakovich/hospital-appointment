@@ -1,5 +1,6 @@
 package solvd.laba.ermakovich.ha.repository;
 
+import org.apache.ibatis.annotations.Param;
 import solvd.laba.ermakovich.ha.domain.Review;
 
 import java.util.List;
@@ -9,7 +10,7 @@ public interface ReviewRepository {
 
     void save(Review review);
 
-    boolean isExistByDoctorIdAndPatientId(long doctorId, long patientId);
+    boolean isExistByDoctorIdAndPatientId(@Param("doctorId") long doctorId, @Param("patientId") long patientId);
 
     boolean isExistById(long reviewId);
 

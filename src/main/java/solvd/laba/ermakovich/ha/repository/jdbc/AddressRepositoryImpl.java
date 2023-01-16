@@ -1,7 +1,8 @@
-package solvd.laba.ermakovich.ha.repository.impl;
+package solvd.laba.ermakovich.ha.repository.jdbc;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 import solvd.laba.ermakovich.ha.domain.Address;
 import solvd.laba.ermakovich.ha.repository.AddressRepository;
@@ -16,6 +17,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
+@ConditionalOnProperty(prefix = "persistence", name = "type")
 public class AddressRepositoryImpl implements AddressRepository {
 
     private static final String SAVE_ADDRESS = "INSERT INTO addresses (city, street, house, flat) VALUES (?,?,?,?)";

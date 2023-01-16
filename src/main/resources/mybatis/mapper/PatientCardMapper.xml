@@ -1,0 +1,11 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="solvd.laba.ermakovich.ha.repository.PatientCardRepository">
+
+    <insert id="save" parameterType="solvd.laba.ermakovich.ha.domain.PatientCard">
+        INSERT INTO patient_cards (patient_id, number, reg_date)
+        values (#{id},
+        #{number, typeHandler=solvd.laba.ermakovich.ha.repository.mybatis.UuidTypeHandler}, #{registryDate})
+    </insert>
+
+</mapper>

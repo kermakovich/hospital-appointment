@@ -15,7 +15,7 @@ public enum Department {
 
     @Override
     public String toString() {
-        return value;
+        return value.toUpperCase();
     }
 
 }
