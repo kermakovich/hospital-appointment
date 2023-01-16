@@ -60,4 +60,11 @@ public class MyBatisConfig {
         SqlSessionTemplate template = new SqlSessionTemplate(sqlSessionFactory());
         return template.getMapper(PatientCardRepository.class);
     }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "persistence", name = "type", havingValue = "mybatis")
+    public AddressRepository addressRepository() throws Exception {
+        SqlSessionTemplate template = new SqlSessionTemplate(sqlSessionFactory());
+        return template.getMapper(AddressRepository.class);
+    }
 }

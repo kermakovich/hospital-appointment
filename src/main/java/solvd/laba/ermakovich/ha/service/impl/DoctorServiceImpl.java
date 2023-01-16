@@ -7,7 +7,7 @@ import solvd.laba.ermakovich.ha.domain.SearchDoctorCriteria;
 import solvd.laba.ermakovich.ha.domain.UserInfo;
 import solvd.laba.ermakovich.ha.domain.doctor.Doctor;
 import solvd.laba.ermakovich.ha.repository.DoctorRepository;
-import solvd.laba.ermakovich.ha.repository.mapper.UserInfoMapper;
+import solvd.laba.ermakovich.ha.repository.jdbc.mapper.UserInfoMapper;
 import solvd.laba.ermakovich.ha.service.DoctorService;
 import solvd.laba.ermakovich.ha.service.UserInfoService;
 

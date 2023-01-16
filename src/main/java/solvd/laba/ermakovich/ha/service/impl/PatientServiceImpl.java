@@ -7,7 +7,7 @@ import solvd.laba.ermakovich.ha.domain.Address;
 import solvd.laba.ermakovich.ha.domain.Patient;
 import solvd.laba.ermakovich.ha.domain.UserInfo;
 import solvd.laba.ermakovich.ha.repository.PatientRepository;
-import solvd.laba.ermakovich.ha.repository.mapper.UserInfoMapper;
+import solvd.laba.ermakovich.ha.repository.jdbc.mapper.UserInfoMapper;
 import solvd.laba.ermakovich.ha.service.AddressService;
 import solvd.laba.ermakovich.ha.service.PatientCardService;
 import solvd.laba.ermakovich.ha.service.PatientService;

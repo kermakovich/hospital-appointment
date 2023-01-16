@@ -9,7 +9,7 @@ import solvd.laba.ermakovich.ha.domain.SearchDoctorCriteria;
 import solvd.laba.ermakovich.ha.domain.doctor.Doctor;
 import solvd.laba.ermakovich.ha.repository.DoctorRepository;
 import solvd.laba.ermakovich.ha.repository.DataSourceConfig;
-import solvd.laba.ermakovich.ha.repository.mapper.DoctorMapper;
+import solvd.laba.ermakovich.ha.repository.jdbc.mapper.DoctorMapper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

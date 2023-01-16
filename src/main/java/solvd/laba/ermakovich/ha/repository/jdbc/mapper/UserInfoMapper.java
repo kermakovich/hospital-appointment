@@ -1,4 +1,4 @@
-package solvd.laba.ermakovich.ha.repository.mapper;
+package solvd.laba.ermakovich.ha.repository.jdbc.mapper;
 
 import org.mapstruct.Mapper;
 import solvd.laba.ermakovich.ha.domain.UserInfo;
