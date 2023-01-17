@@ -16,12 +16,12 @@ public interface ReviewRepository {
 
     boolean isExistById(long reviewId);
 
-    void delete(long reviewId);
-
-    void update(Review review);
-
     Optional<Review> findById(long id);
 
     List<Review> findAllByDoctorId(long doctorId);
+
+    void update(Review review);
+
+    void delete(long reviewId);
 
 }

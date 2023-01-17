@@ -1,18 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="solvd.laba.ermakovich.ha.repository.PatientRepository">
-    <resultMap id="patientMap" type="solvd.laba.ermakovich.ha.domain.Patient" autoMapping="false">
-        <id property="id" column="patient_user_id"/>
-        <result property="name" column="patient_name"/>
-        <result property="surname" column="patient_surname"/>
-        <result property="fatherhood" column="patient_fatherhood"/>
-    </resultMap>
+
     <insert id="save" parameterType="solvd.laba.ermakovich.ha.domain.Patient">
-        INSERT INTO patients (user_id, id_address) VALUES (#{id}, #{address.id})
+        INSERT INTO patients
+        (user_id,
+        id_address)
+        VALUES
+            (#{id},
+             #{address.id})
     </insert>
 
     <select id="isExistById" parameterType="java.lang.Long" resultType="java.lang.Boolean">
-        SELECT EXISTS(SELECT 1 FROM patients WHERE user_id = #{id})
+        SELECT EXISTS ( SELECT 1 FROM patients p WHERE p.user_id = #{id})
     </select>
+
+    <resultMap id="patientMap" type="solvd.laba.ermakovich.ha.domain.Patient" autoMapping="false">
+        <id property="id" column="patient_id"/>
+        <result property="name" column="patient_name"/>
+        <result property="surname" column="patient_surname"/>
+        <result property="fatherhood" column="patient_fatherhood"/>
+        <result property="birthday" column="patient_birthday"/>
+        <result property="email" column="patient_email"/>
+        <result property="password" column="patient_password"/>
+        <association property="address" resultMap="solvd.laba.ermakovich.ha.repository.AddressRepository.addressMap"/>
+    </resultMap>
+
 </mapper>

@@ -1,19 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="solvd.laba.ermakovich.ha.repository.PatientCardRepository">
-<resultMap id="patientCardMap" type="solvd.laba.ermakovich.ha.domain.PatientCard" autoMapping="false">
-    <id property="id" column="id_card"/>
-    <result property="number" column="card_number" typeHandler="solvd.laba.ermakovich.ha.repository.mybatis.UuidTypeHandler"/>
-    <result property="registryDate" column="reg_date_card"/>
-    <association property="patient" >
-        <id property="id" column="id_card"/>
-    </association>
-</resultMap>
 
     <insert id="save" parameterType="solvd.laba.ermakovich.ha.domain.PatientCard">
-        INSERT INTO patient_cards (patient_id, number, reg_date)
+        INSERT INTO patient_cards
+        (patient_id,
+        number,
+        reg_date)
         values (#{id},
-        #{number, typeHandler=solvd.laba.ermakovich.ha.repository.mybatis.UuidTypeHandler}, #{registryDate})
+                #{number, typeHandler=solvd.laba.ermakovich.ha.repository.mybatis.UuidTypeHandler},
+                #{registryDate})
     </insert>
+
+    <resultMap id="patientCardMap" type="solvd.laba.ermakovich.ha.domain.PatientCard" autoMapping="false">
+        <id property="id" column="patient_card_id"/>
+        <result property="number" column="patient_card_number" typeHandler="solvd.laba.ermakovich.ha.repository.mybatis.UuidTypeHandler"/>
+        <result property="registryDate" column="patient_card_reg_date"/>
+        <association property="patient" resultMap="solvd.laba.ermakovich.ha.repository.PatientRepository.patientMap"/>
+    </resultMap>
 
 </mapper>

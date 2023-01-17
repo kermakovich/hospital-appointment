@@ -1,16 +1,38 @@
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="solvd.laba.ermakovich.ha.repository.AddressRepository">
 
     <insert id="save" parameterType="solvd.laba.ermakovich.ha.domain.Address" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO addresses (city, street, house, flat) VALUES
-        (#{city}, #{street}, #{house}, #{flat})
+        INSERT INTO addresses
+        (city,
+        street,
+        house,
+        flat) VALUES
+            (#{city},
+            #{street},
+            #{house},
+            #{flat})
     </insert>
 
-    <select id="find" parameterType="solvd.laba.ermakovich.ha.domain.Address" resultType="solvd.laba.ermakovich.ha.domain.Address">
-        SELECT id, city, street, house, flat
-        FROM addresses
-        WHERE city =#{city} and street=#{street} and house=#{house} and flat=#{flat}
+    <select id="find" parameterType="solvd.laba.ermakovich.ha.domain.Address" resultMap="addressMap">
+        SELECT
+        a.id          as address_id,
+        a.city        as address_city,
+        a.street      as address_street,
+        a.house       as address_house,
+        a.flat        as address_flat
+        FROM addresses a
+        WHERE a.city = #{city} and a.street = #{street} and a.house = #{house} and a.flat = #{flat}
     </select>
+
+    <resultMap id="addressMap" type="solvd.laba.ermakovich.ha.domain.Address" autoMapping="false">
+        <id property="id" column="address_id"/>
+        <result property="city" column="address_city"/>
+        <result property="street" column="address_street"/>
+        <result property="house" column="address_house"/>
+        <result property="flat" column="address_flat"/>
+    </resultMap>
 
 </mapper>

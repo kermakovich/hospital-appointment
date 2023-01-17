@@ -5,7 +5,6 @@ import solvd.laba.ermakovich.ha.domain.SearchDoctorCriteria;
 import solvd.laba.ermakovich.ha.domain.doctor.Doctor;
 
 import java.util.List;
-import java.util.Optional;
 
 @Mapper
 public interface DoctorRepository {
@@ -15,7 +14,5 @@ public interface DoctorRepository {
     boolean isExistById(long id);
 
     List<Doctor> findAllBySearchCriteria(SearchDoctorCriteria searchDoctorCriteria);
-
-    Optional<Doctor> findById(Long id);
 
 }

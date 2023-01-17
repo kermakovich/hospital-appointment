@@ -1,43 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="solvd.laba.ermakovich.ha.repository.ReviewRepository">
-    <resultMap id="review" type="solvd.laba.ermakovich.ha.domain.Review" autoMapping="false">
-        <id property="id" column="review_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
-        <result property="description" column="review_description" jdbcType="VARCHAR" javaType="java.lang.String"/>
-        <association property="doctor" column="doctor_id" javaType="solvd.laba.ermakovich.ha.domain.doctor.Doctor">
-            <id property="id" column="doctor_id"/>
-            <result property="specialization" column="doctor_specialization"/>
-            <result property="name" column="doctor_name"/>
-            <result property="surname" column="doctor_surname"/>
-            <result property="fatherhood" column="doctor_fatherhood"/>
-            <result property="email" column="doctor_name"/>
-            <result property="cabinet" column="doctor_cabinet"/>
-        </association>
-        <association
-                property="patient" column="id_patient"
-                javaType="solvd.laba.ermakovich.ha.domain.Patient">
-            <id property="id" column="patient_id"/>
-            <result property="name" column="patient_name"/>
-        </association>
-    </resultMap>
 
-
-    <insert id="save" parameterType="solvd.laba.ermakovich.ha.domain.Review" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    <insert id="save" parameterType="solvd.laba.ermakovich.ha.domain.Review" useGeneratedKeys="true" keyProperty="id"
+            keyColumn="id">
         INSERT INTO reviews (id_doctor, id_patient, description) VALUES (#{doctor.id}, #{patient.id}, #{description})
     </insert>
 
     <select id="isExistByDoctorIdAndPatientId" resultType="java.lang.Boolean">
-        SELECT EXISTS(SELECT 1 FROM reviews WHERE id_doctor = #{doctorId} and id_patient = #{patientId})
+        SELECT EXISTS(SELECT 1 FROM reviews r WHERE r.id_doctor = #{doctorId} and r.id_patient = #{patientId})
     </select>
 
     <select id="isExistById" parameterType="java.lang.Long" resultType="java.lang.Boolean">
-        SELECT EXISTS(SELECT 1 FROM reviews WHERE id = #{id})
+        SELECT EXISTS(SELECT 1 FROM reviews r WHERE r.id = #{id})
     </select>
 
-    <delete id="delete" parameterType="java.lang.Long">
-        DELETE from hospital.reviews where id = #{reviewId}
-    </delete>
+    <select id="findById" parameterType="java.lang.Long" resultMap="review">
+        SELECT
+        r.id                    as "review_id",
+        r.description           as "review_description",
+        r.id_patient            as "patient_id",
+        r.id_doctor             as "doctor_id",
+        pat.name                as "patient_name",
+        ui.id                   as "doctor_id",
+        ui.name                 as "doctor_name",
+        ui.surname              as "doctor_surname",
+        ui.fatherhood           as "doctor_fatherhood",
+        ui.birthday             as "doctor_birthday",
+        ui.email                as "doctor_email",
+        d.department      as "doctor_department",
+        d.specialization  as "doctor_specialization",
+        d.cabinet         as "doctor_cabinet"
+        from reviews r
+        join user_info pat on pat.id = r.id_patient
+        join user_info ui on ui.id = r.id_doctor
+        left join doctors d on d.user_id = r.id_doctor
+        WHERE r.id = #{id}
+    </select>
+
+    <select id="findAllByDoctorId" parameterType="java.lang.Long" resultMap="review">
+        SELECT
+        r.id                  as "review_id",
+        r.description         as "review_description",
+        r.id_patient          as "patient_id",
+        r.id_doctor           as "doctor_id",
+        pat.name              as "patient_name"
+        from reviews r
+        left join user_info pat on pat.id = r.id_patient
+        WHERE r.id_doctor = #{id}
+    </select>
 
     <update id="update" parameterType="solvd.laba.ermakovich.ha.domain.Review">
         UPDATE reviews
@@ -47,27 +60,15 @@
         WHERE id = #{id}
     </update>
 
-    <select id="findById" parameterType="java.lang.Long" resultMap="review">
-        SELECT reviews.id as "review_id", reviews.description as "review_description",
-        reviews.id_patient as "patient_id", pat.name as "patient_name", reviews.id_doctor as "doctor_id",
-        d.id as "doctor_id", d.name as "doctor_name", d.surname as "doctor_surname",
-        d.fatherhood as "doctor_fatherhood", d.birthday as "doctor_birthday",
-        d.email as "doctor_email", doctors.department as "doctor_department",
-        doctors.specialization as "doctor_specialization", doctors.cabinet as "doctor_cabinet"
-        from reviews
-        join user_info pat on pat.id = reviews.id_patient
-        join user_info d on d.id = reviews.id_doctor
-        left join doctors on doctors.user_id = reviews.id_doctor
-        WHERE reviews.id = #{id}
-    </select>
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE from reviews r where r.id = #{reviewId}
+    </delete>
 
-
-    <select id="findAllByDoctorId" parameterType="java.lang.Long" resultMap="review">
-        SELECT reviews.id as "review_id", reviews.description as "review_description",
-        reviews.id_patient as "patient_id", pat.name as "patient_name", reviews.id_doctor as "doctor_id"
-        from reviews
-        left join user_info pat on pat.id = reviews.id_patient
-        WHERE reviews.id_doctor = #{id}
-    </select>
+    <resultMap id="review" type="solvd.laba.ermakovich.ha.domain.Review" autoMapping="false">
+        <id property="id" column="review_id"/>
+        <result property="description" column="review_description"/>
+        <association property="doctor" resultMap="solvd.laba.ermakovich.ha.repository.DoctorRepository.doctorMap"/>
+        <association property="patient" resultMap="solvd.laba.ermakovich.ha.repository.PatientRepository.patientMap"/>
+    </resultMap>
 
 </mapper>

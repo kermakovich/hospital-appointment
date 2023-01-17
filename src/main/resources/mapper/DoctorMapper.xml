@@ -1,53 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="solvd.laba.ermakovich.ha.repository.DoctorRepository">
-<resultMap id="doctorMap" type="solvd.laba.ermakovich.ha.domain.doctor.Doctor" autoMapping="false">
-    <id property="id" column="doctor_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
-    <result property="department" column="doctor_department" jdbcType="VARCHAR" javaType="solvd.laba.ermakovich.ha.domain.hospital.Department"/>
-    <result property="specialization" column="doctor_specialization" javaType="solvd.laba.ermakovich.ha.domain.doctor.Specialization" jdbcType="VARCHAR"/>
-    <result property="cabinet" column="doctor_cabinet" jdbcType="SMALLINT" javaType="java.lang.Integer"/>
-    <result property="name" column="doctor_name"/>
-    <result property="surname" column="doctor_surname"/>
-    <result property="fatherhood" column="doctor_fatherhood"/>
-</resultMap>
 
     <insert id="save" parameterType="solvd.laba.ermakovich.ha.domain.doctor.Doctor">
-        INSERT INTO doctors (user_id, department, specialization, cabinet)
-        VALUES (#{id},#{department},#{specialization},#{cabinet})
+        INSERT INTO doctors
+        (user_id,
+        department,
+        specialization,
+        cabinet)
+        VALUES
+            (#{id},
+             #{department},
+             #{specialization},
+             #{cabinet})
     </insert>
 
-    <select id="findById" parameterType="java.lang.Long" resultMap="doctorMap">
-        SELECT user_id as doctor_id, department as "doctor_department",
-        specialization as "doctor_specialization",
-        cabinet as "doctor_cabinet",
-        user_info.name as doctor_name, user_info.surname as doctor_surname,
-        user_info.fatherhood as doctor_fatherhood
-        FROM hospital.doctors
-        left join hospital.user_info on user_info.id = doctors.user_id
-        WHERE user_id = #{id}
-    </select>
-
     <select id="isExistById" parameterType="java.lang.Long" resultType="java.lang.Boolean">
-        SELECT EXISTS(SELECT 1 FROM doctors WHERE user_id = #{id})
+        SELECT EXISTS(SELECT 1 FROM doctors d WHERE d.user_id = #{id})
     </select>
 
     <select id="findAllBySearchCriteria" parameterType="solvd.laba.ermakovich.ha.domain.SearchDoctorCriteria" resultMap="doctorMap">
-        SELECT user_id as "doctor_id", name as "doctor_name",
-        surname as "doctor_surname", fatherhood as "doctor_fatherhood",
-        birthday as "doctor_birthday", email as "doctor_email",
-        department as "doctor_department", specialization as "doctor_specialization",
-        cabinet as "doctor_cabinet"
-        FROM doctors
-        LEFT JOIN user_info on user_id = id
+        SELECT
+        d.user_id                 as "doctor_id",
+        ui.name                   as "doctor_name",
+        ui.surname                as "doctor_surname",
+        ui.fatherhood             as "doctor_fatherhood",
+        d.department              as "doctor_department",
+        d.specialization          as "doctor_specialization",
+        d.cabinet                 as "doctor_cabinet"
+        FROM doctors d
+        LEFT JOIN user_info ui on d.user_id = ui.id
         <where>
             <if test="department != null">
-                department = #{department}
+                d.department = #{department}
             </if>
             <if test="specialization != null">
-                AND specialization = #{specialization}
+                AND d.specialization = #{specialization}
             </if>
         </where>
     </select>
+
+    <resultMap id="doctorMap" type="solvd.laba.ermakovich.ha.domain.doctor.Doctor"  autoMapping="false">
+        <id property="id" column="doctor_id"/>
+        <result property="department" column="doctor_department"/>
+        <result property="specialization" column="doctor_specialization"/>
+        <result property="cabinet" column="doctor_cabinet" />
+        <result property="name" column="doctor_name"/>
+        <result property="surname" column="doctor_surname"/>
+        <result property="fatherhood" column="doctor_fatherhood"/>
+        <result property="birthday" column="doctor_birthday"/>
+        <result property="email" column="doctor_email"/>
+        <result property="password" column="doctor_password"/>
+    </resultMap>
 
 </mapper>

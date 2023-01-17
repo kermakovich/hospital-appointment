@@ -15,7 +15,6 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 //@Repository
 @RequiredArgsConstructor
@@ -77,10 +76,6 @@ public class DoctorRepositoryImpl implements DoctorRepository {
         }
     }
 
-    @Override
-    public Optional<Doctor> findById(Long id) {
-        return Optional.empty();
-    }
 
     private String buildWhereClauseBySearchCriteria (SearchDoctorCriteria searchDoctorCriteria) {
         List<String> conditions = new ArrayList<>();

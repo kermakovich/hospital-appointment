@@ -10,7 +10,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.Optional;
 
 //@Repository
 @RequiredArgsConstructor
@@ -49,11 +48,6 @@ public class PatientRepositoryImpl implements PatientRepository {
                 return rs.next();
             }
         }
-    }
-
-    @Override
-    public Optional<Patient> findById(Long id) {
-        return Optional.empty();
     }
 
 }
