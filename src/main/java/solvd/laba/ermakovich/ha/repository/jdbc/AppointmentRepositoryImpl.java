@@ -3,8 +3,6 @@ package solvd.laba.ermakovich.ha.repository.jdbc;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.logging.log4j.util.Strings;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Repository;
 import solvd.laba.ermakovich.ha.domain.Appointment;
 import solvd.laba.ermakovich.ha.domain.PatientCard;
 import solvd.laba.ermakovich.ha.domain.SearchAppointmentCriteria;
@@ -19,12 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@Repository
+//@Repository
 @RequiredArgsConstructor
-@ConditionalOnProperty(prefix = "persistence", name = "type")
 public class AppointmentRepositoryImpl implements AppointmentRepository {
 
-    private static final String GET_TIME_SLOTS_BY_DOCTOR_AND_DATE = "SELECT date_time_start::time FROM appointments WHERE id_doctor=? and date_time_start::date=?";
+    private static final String GET_APPOINTMENTS_BY_DOCTOR_AND_DATE = "SELECT date_time_start::time FROM appointments WHERE id_doctor=? and date_time_start::date=?";
     private static final String SAVE = "INSERT INTO appointments (id_doctor, id_card, date_time_start) VALUES (?,?,?)";
     private static final String CHECK_IF_EXISTS_BY_DOCTOR_ID_AND_DATE_TIME = "SELECT id FROM appointments WHERE id_doctor=? and date_time_start=?";
     private static final String GET_INFO_FOR_DOCTOR = """
@@ -32,13 +29,13 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
             			pat.id as "patient_id",
             			pat.name as "patient_name", pat.surname as "patient_surname",
             			pat.fatherhood as "patient_fatherhood", pat.birthday as "patient_birthday",
-                        pat.email as "patient_email", cards.number as "card_number", 
+                        pat.email as "patient_email", cards.number as "card_number",
                         cards.reg_date as "reg_date_card", cards.patient_id as "patient_card_id"
                         from appointments ap
                         left join patient_cards cards on id_card = cards.patient_id
             			left join patients on id_card = patients.user_id
             			join user_info pat on pat.id = patients.user_id
-            			WHERE ap.id_doctor=? 
+            			WHERE ap.id_doctor=?
             """;
     private static final String WHERE_DATE_START = "  ap.date_time_start::date ";
     private static final String GET_INFO_FOR_PATIENT = """
@@ -60,10 +57,10 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
     @Override
     @SneakyThrows
-    public List<LocalTime> findTimeSlotsByDoctorIdAndDate(long id, LocalDate date) {
+    public List<LocalTime> findAppointmentsTimeByDoctorIdAndDate(long id, LocalDate date) {
         List<LocalTime> timeSlots = new ArrayList<>();
         Connection con = dataSource.getConnection();
-        try (PreparedStatement ps = con.prepareStatement(GET_TIME_SLOTS_BY_DOCTOR_AND_DATE)) {
+        try (PreparedStatement ps = con.prepareStatement(GET_APPOINTMENTS_BY_DOCTOR_AND_DATE)) {
             ps.setLong(1, id);
             ps.setDate(2, Date.valueOf(date));
             try (ResultSet rs = ps.executeQuery()) {
@@ -77,7 +74,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
     @Override
     @SneakyThrows
-    public void create(long patientId, Appointment appointment) {
+    public void save(long patientId, Appointment appointment) {
         Connection con = dataSource.getConnection();
         try (PreparedStatement ps = con.prepareStatement(SAVE, Statement.RETURN_GENERATED_KEYS)) {
             ps.setLong(1, appointment.getDoctor().getId());

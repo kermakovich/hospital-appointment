@@ -30,12 +30,12 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     @Transactional(readOnly = true)
     public List<LocalTime> getTimeSlotsByDoctorIdAndDate(long id, LocalDate date) {
-        return appointmentRepository.findTimeSlotsByDoctorIdAndDate(id, date);
+        return appointmentRepository.findAppointmentsTimeByDoctorIdAndDate(id, date);
     }
 
     @Override
     @Transactional
-    public Appointment create(long patientId, Appointment appointment) {
+    public Appointment save(long patientId, Appointment appointment) {
         if (!doctorService.isExistById(appointment.getDoctor().getId())) {
             throw new ResourceDoesNotExistException("doctor", appointment.getDoctor().getId());
         }
@@ -53,7 +53,7 @@ public class AppointmentServiceImpl implements AppointmentService {
             throw new IllegalOperationException( "Patient already has another appointment ( date : " + appointment.getStart() + " )");
         }
 
-        appointmentRepository.create(patientId, appointment);
+        appointmentRepository.save(patientId, appointment);
         return appointment;
     }
 

@@ -1,0 +1,107 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="solvd.laba.ermakovich.ha.repository.AppointmentRepository">
+
+    <resultMap id="appointmentMap" type="solvd.laba.ermakovich.ha.domain.Appointment"  autoMapping="false">
+        <id property="id" column="id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+        <result property="start" column="date_time_start" jdbcType="TIMESTAMP" javaType="java.time.LocalDateTime"/>
+        <association property="doctor"  resultMap="solvd.laba.ermakovich.ha.repository.DoctorRepository.doctorMap" >
+        </association>
+        <association property="patientCard" column="id_card" javaType="solvd.laba.ermakovich.ha.domain.PatientCard" resultMap="solvd.laba.ermakovich.ha.repository.PatientCardRepository.patientCardMap">
+        </association>
+    </resultMap>
+
+    <insert id="save" parameterType="solvd.laba.ermakovich.ha.domain.Appointment" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO appointments (id_doctor, id_card, date_time_start)
+        VALUES (#{appointment.doctor.id}, #{patientId}, #{appointment.start})
+    </insert>
+
+    <select id="isExistByDoctorIdAndTime"  parameterType="solvd.laba.ermakovich.ha.domain.Appointment" resultType="java.lang.Boolean">
+        SELECT EXISTS(SELECT 1 FROM appointments WHERE id_doctor=#{doctor.id} and date_time_start=#{start})
+    </select>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE FROM appointments WHERE id=#{id}
+    </delete>
+
+    <select id="isExistById" parameterType="java.lang.Long" resultType="java.lang.Boolean">
+        SELECT EXISTS(SELECT 1 FROM appointments WHERE id = #{id})
+    </select>
+
+    <select id="isExistPastByPatientIdAndDoctorId" resultType="java.lang.Boolean">
+        SELECT EXISTS(SELECT 1 FROM appointments
+        WHERE id_doctor = #{doctorId} and id_card = #{patientId} and date_time_start
+        <![CDATA[ < ]]> now())
+    </select>
+
+    <select id="isExistByPatientIdAndTime" resultType="java.lang.Boolean">
+        SELECT EXISTS(SELECT 1 FROM appointments WHERE id_card = #{patientId} and date_time_start=#{appointment.start})
+    </select>
+
+    <select id="findAppointmentsTimeByDoctorIdAndDate" resultType="java.time.LocalTime" >
+        SELECT date_time_start::time FROM appointments WHERE id_doctor=#{id} and date_time_start::date=#{date}
+    </select>
+
+    <select id="findAllByPatientIdAndCriteria"  resultMap="appointmentMap">
+        SELECT ap.id, ap.date_time_start,
+        ap.id_card                                  as "patient_id",
+        d.id                                        as "doctor_id",
+        d.name                                      as "doctor_name",
+        d.surname                                   as "doctor_surname",
+        d.fatherhood                                as "doctor_fatherhood",
+        d.birthday                                  as "doctor_birthday",
+        d.email                                     as "doctor_email",
+        doctors.department                          as "doctor_department",
+        doctors.specialization                      as "doctor_specialization",
+        doctors.cabinet                             as "doctor_cabinet"
+        from appointments ap
+        LEFT JOIN doctors on id_doctor = doctors.user_id
+        join user_info d on  d.id=doctors.user_id
+        <where>
+            ap.id_card=#{patientId}
+            <include refid="buildCriteria">
+            </include>
+        </where>
+    </select>
+
+    <select id="findAllByDoctorIdAndCriteria"  resultMap="appointmentMap">
+        SELECT ap.id, ap.date_time_start,
+        pat.id                                  as "patient_id",
+        pat.name                                as "patient_name",
+        pat.surname                             as "patient_surname",
+        pat.fatherhood                          as "patient_fatherhood",
+        pat.birthday                            as "patient_birthday",
+        pat.email                               as "patient_email",
+        cards.number                            as "card_number",
+        cards.reg_date                          as "reg_date_card",
+        cards.patient_id                        as "patient_card_id"
+        from appointments ap
+        left join patient_cards cards on id_card = cards.patient_id
+        left join patients on id_card = patients.user_id
+        join user_info pat on pat.id = patients.user_id
+        <where>
+            ap.id_doctor=#{doctorId}
+            <include refid="buildCriteria">
+            </include>
+        </where>
+    </select>
+
+    <sql id="buildCriteria">
+            <if test="criteria.status != null">
+                <choose>
+                    <when test='criteria.status.name().equals("FUTURE")'>
+                        AND date_time_start::date <![CDATA[ >= ]]> now()
+                    </when>
+                    <when test='criteria.status.name().equals("DONE")'>
+                        AND date_time_start::date <![CDATA[ <= ]]> now()
+                    </when>
+                </choose>
+            </if>
+            <if test="criteria.date != null">
+                AND date_time_start::date = #{criteria.date}
+            </if>
+    </sql>
+
+</mapper>

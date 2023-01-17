@@ -3,12 +3,10 @@ package solvd.laba.ermakovich.ha.repository.jdbc;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.logging.log4j.util.Strings;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Repository;
 import solvd.laba.ermakovich.ha.domain.SearchDoctorCriteria;
 import solvd.laba.ermakovich.ha.domain.doctor.Doctor;
-import solvd.laba.ermakovich.ha.repository.DoctorRepository;
 import solvd.laba.ermakovich.ha.repository.DataSourceConfig;
+import solvd.laba.ermakovich.ha.repository.DoctorRepository;
 import solvd.laba.ermakovich.ha.repository.jdbc.mapper.DoctorMapper;
 
 import java.sql.Connection;
@@ -19,20 +17,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+//@Repository
 @RequiredArgsConstructor
-@ConditionalOnProperty(prefix = "persistence", name = "type", havingValue = "jdbc")
 public class DoctorRepositoryImpl implements DoctorRepository {
 
     private static final String SAVE = "INSERT INTO doctors (user_id, department, specialization, cabinet) VALUES (?,?,?,?)";
     private static final String SELECT_BY_SEARCH_CRITERIA = """
-            SELECT user_id as "doctor_id", name as "doctor_name", 
-            surname as "doctor_surname", fatherhood as "doctor_fatherhood", 
-            birthday as "doctor_birthday", email as "doctor_email", 
+            SELECT user_id as "doctor_id", name as "doctor_name",
+            surname as "doctor_surname", fatherhood as "doctor_fatherhood",
+            birthday as "doctor_birthday", email as "doctor_email",
             department as "doctor_department", specialization as "doctor_specialization",
             cabinet as "doctor_cabinet"
             FROM doctors
-            LEFT JOIN user_info on user_id = id 
+            LEFT JOIN user_info on user_id = id
             """;
     private static final String CHECK_IF_EXISTS_BY_ID = "SELECT user_id FROM doctors WHERE user_id = ?";
     private final DataSourceConfig dataSource;

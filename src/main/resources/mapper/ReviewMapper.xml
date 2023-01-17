@@ -2,10 +2,10 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="solvd.laba.ermakovich.ha.repository.ReviewRepository">
-    <resultMap id="review" type="solvd.laba.ermakovich.ha.domain.Review">
+    <resultMap id="review" type="solvd.laba.ermakovich.ha.domain.Review" autoMapping="false">
         <id property="id" column="review_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
         <result property="description" column="review_description" jdbcType="VARCHAR" javaType="java.lang.String"/>
-        <association property="doctor" column="id_doctor" javaType="solvd.laba.ermakovich.ha.domain.doctor.Doctor">
+        <association property="doctor" column="doctor_id" javaType="solvd.laba.ermakovich.ha.domain.doctor.Doctor">
             <id property="id" column="doctor_id"/>
             <result property="specialization" column="doctor_specialization"/>
             <result property="name" column="doctor_name"/>

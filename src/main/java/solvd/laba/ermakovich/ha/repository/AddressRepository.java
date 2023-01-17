@@ -1,11 +1,12 @@
 package solvd.laba.ermakovich.ha.repository;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
+import org.apache.ibatis.annotations.Mapper;
 import solvd.laba.ermakovich.ha.domain.Address;
 
 import java.util.Optional;
 
-@ConditionalOnProperty(prefix = "persistence", name = "type")
+@Mapper
 public interface AddressRepository {
 
     void save(Address address);

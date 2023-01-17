@@ -2,7 +2,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="solvd.laba.ermakovich.ha.repository.DoctorRepository">
-<resultMap id="doctorMap" type="solvd.laba.ermakovich.ha.domain.doctor.Doctor">
+<resultMap id="doctorMap" type="solvd.laba.ermakovich.ha.domain.doctor.Doctor" autoMapping="false">
     <id property="id" column="doctor_id" javaType="java.lang.Long" jdbcType="BIGINT"/>
     <result property="department" column="doctor_department" jdbcType="VARCHAR" javaType="solvd.laba.ermakovich.ha.domain.hospital.Department"/>
     <result property="specialization" column="doctor_specialization" javaType="solvd.laba.ermakovich.ha.domain.doctor.Specialization" jdbcType="VARCHAR"/>

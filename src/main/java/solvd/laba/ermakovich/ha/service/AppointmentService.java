@@ -11,7 +11,7 @@ public interface AppointmentService {
 
     List<LocalTime> getTimeSlotsByDoctorIdAndDate(long id, LocalDate date);
 
-    Appointment create(long patientId, Appointment appointment);
+    Appointment save(long patientId, Appointment appointment);
 
     void delete(long appointmentId);
 

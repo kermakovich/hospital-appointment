@@ -2,17 +2,14 @@ package solvd.laba.ermakovich.ha.repository.jdbc;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Repository;
 import solvd.laba.ermakovich.ha.domain.UserInfo;
 import solvd.laba.ermakovich.ha.repository.DataSourceConfig;
 import solvd.laba.ermakovich.ha.repository.UserRepository;
 
 import java.sql.*;
 
-@Repository
+//@Repository
 @RequiredArgsConstructor
-@ConditionalOnProperty(prefix = "persistence", name = "type", havingValue = "jdbc")
 public class UserInfoRepositoryImpl implements UserRepository {
 
     private static final String SAVE_USER_INFO = "INSERT INTO user_info (name, surname, fatherhood, birthday, email, password) VALUES (?,?,?,?,?,?)";

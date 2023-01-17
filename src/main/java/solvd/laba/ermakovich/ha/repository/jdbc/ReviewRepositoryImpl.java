@@ -2,20 +2,20 @@ package solvd.laba.ermakovich.ha.repository.jdbc;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Repository;
 import solvd.laba.ermakovich.ha.domain.Review;
-import solvd.laba.ermakovich.ha.repository.ReviewRepository;
 import solvd.laba.ermakovich.ha.repository.DataSourceConfig;
+import solvd.laba.ermakovich.ha.repository.ReviewRepository;
 import solvd.laba.ermakovich.ha.repository.jdbc.mapper.ReviewMapper;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+//@Repository
 @RequiredArgsConstructor
-@ConditionalOnProperty(prefix = "persistence", name = "type", havingValue = "jdbc")
 public class ReviewRepositoryImpl implements ReviewRepository {
 
     private static final String SAVE = "INSERT INTO reviews (id_doctor, id_patient, description) VALUES (?,?,?)";
