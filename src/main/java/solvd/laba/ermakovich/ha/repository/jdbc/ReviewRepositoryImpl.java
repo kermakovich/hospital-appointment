@@ -3,7 +3,6 @@ package solvd.laba.ermakovich.ha.repository.jdbc;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import solvd.laba.ermakovich.ha.domain.Review;
-import solvd.laba.ermakovich.ha.repository.DataSourceConfig;
 import solvd.laba.ermakovich.ha.repository.ReviewRepository;
 import solvd.laba.ermakovich.ha.repository.jdbc.mapper.ReviewMapper;
 

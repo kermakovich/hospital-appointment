@@ -45,6 +45,22 @@
         WHERE ap.id_doctor = #{id} and ap.date_time_start::date = #{date}
     </select>
 
+    <sql id="buildCriteria">
+        <if test="criteria.status != null">
+            <choose>
+                <when test='criteria.status.name().equals("FUTURE")'>
+                    AND ap.date_time_start::date <![CDATA[ >= ]]> now()
+                </when>
+                <when test='criteria.status.name().equals("DONE")'>
+                    AND ap.date_time_start::date <![CDATA[ <= ]]> now()
+                </when>
+            </choose>
+        </if>
+        <if test="criteria.date != null">
+            AND ap.date_time_start::date = #{criteria.date}
+        </if>
+    </sql>
+
     <select id="findAllByPatientIdAndCriteria"  resultMap="appointmentMap">
         SELECT
         ap.id                                       as "appoint_id",
@@ -91,22 +107,6 @@
     <delete id="delete" parameterType="java.lang.Long">
         DELETE FROM appointments ap WHERE ap.id = #{id}
     </delete>
-
-    <sql id="buildCriteria">
-            <if test="criteria.status != null">
-                <choose>
-                    <when test='criteria.status.name().equals("FUTURE")'>
-                        AND ap.date_time_start::date <![CDATA[ >= ]]> now()
-                    </when>
-                    <when test='criteria.status.name().equals("DONE")'>
-                        AND ap.date_time_start::date <![CDATA[ <= ]]> now()
-                    </when>
-                </choose>
-            </if>
-            <if test="criteria.date != null">
-                AND ap.date_time_start::date = #{criteria.date}
-            </if>
-    </sql>
 
     <resultMap id="appointmentMap" type="solvd.laba.ermakovich.ha.domain.Appointment"  autoMapping="false">
         <id property="id" column="appoint_id"/>

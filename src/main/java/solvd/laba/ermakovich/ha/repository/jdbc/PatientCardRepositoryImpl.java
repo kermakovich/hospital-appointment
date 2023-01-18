@@ -3,7 +3,6 @@ package solvd.laba.ermakovich.ha.repository.jdbc;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import solvd.laba.ermakovich.ha.domain.PatientCard;
-import solvd.laba.ermakovich.ha.repository.DataSourceConfig;
 import solvd.laba.ermakovich.ha.repository.PatientCardRepository;
 
 import java.sql.*;

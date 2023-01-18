@@ -5,7 +5,6 @@ import lombok.SneakyThrows;
 import org.apache.logging.log4j.util.Strings;
 import solvd.laba.ermakovich.ha.domain.SearchDoctorCriteria;
 import solvd.laba.ermakovich.ha.domain.doctor.Doctor;
-import solvd.laba.ermakovich.ha.repository.DataSourceConfig;
 import solvd.laba.ermakovich.ha.repository.DoctorRepository;
 import solvd.laba.ermakovich.ha.repository.jdbc.mapper.DoctorMapper;
 

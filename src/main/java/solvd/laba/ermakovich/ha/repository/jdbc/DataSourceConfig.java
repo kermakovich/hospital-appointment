@@ -1,4 +1,4 @@
-package solvd.laba.ermakovich.ha.repository;
+package solvd.laba.ermakovich.ha.repository.jdbc;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
