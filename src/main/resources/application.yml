@@ -9,6 +9,19 @@ spring:
       mode: always
   jackson:
     default-property-inclusion: NON_NULL
+  liquibase:
+    change-log: classpath:db/liquibaseConfig.xml
+    liquibase-schema: hospital
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration
+
+security:
+  jwt:
+    expiration-time-access: 5
+    expiration-time-refresh: 336
+    secret: "sdfkhpofgsfg;ly@TYnldw.x[dpuyq,snBJ?fwfergkegDV3RFdsXDdSfsWs"
+
+
 hospital:
   hours:
     start: "08:00"

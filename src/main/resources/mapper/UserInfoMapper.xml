@@ -11,18 +11,33 @@
         fatherhood,
         birthday,
         email,
-        password)
+        password,
+        role)
         values
             (#{name},
             #{surname},
             #{fatherhood},
             #{birthday},
             #{email},
-            #{password})
+            #{password},
+            #{role})
     </insert>
 
     <select id="isExistByEmail" parameterType="java.lang.String" resultType="java.lang.Boolean">
         SELECT EXISTS(SELECT 1 FROM user_info ui WHERE ui.email = #{email})
+    </select>
+
+    <select id="findByEmail" parameterType="java.lang.String" resultMap="userInfoMap">
+        SELECT ui.id              as user_id,
+        ui.name                   as user_name,
+        ui.surname                as user_surname,
+        ui.fatherhood             as user_fatherhood,
+        ui.birthday               as user_birthday,
+        ui.email                  as user_email,
+        ui.password               as user_password,
+        ui.role                   as user_role
+        FROM user_info ui
+        WHERE ui.email = #{email}
     </select>
 
     <resultMap id="userInfoMap" type="solvd.laba.ermakovich.ha.domain.UserInfo" autoMapping="false">
@@ -33,6 +48,7 @@
         <result property="birthday" column="user_birthday"/>
         <result property="email" column="user_email"/>
         <result property="password" column="user_password"/>
+        <result property="role" column="user_role"/>
     </resultMap>
 
 </mapper>

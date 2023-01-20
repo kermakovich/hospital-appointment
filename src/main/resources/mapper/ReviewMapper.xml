@@ -21,7 +21,7 @@
         SELECT
         r.id                    as "review_id",
         r.description           as "review_description",
-        r.id_patient            as "patient_id",
+<!--        r.id_patient            as "patient_id",-->
         r.id_doctor             as "doctor_id",
         pat.name                as "patient_name",
         ui.id                   as "doctor_id",
