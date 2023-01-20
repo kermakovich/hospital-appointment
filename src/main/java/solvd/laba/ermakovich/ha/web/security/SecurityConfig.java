@@ -19,7 +19,6 @@ import solvd.laba.ermakovich.ha.web.security.jwt.JwtFilter;
 
 @Configuration
 @RequiredArgsConstructor
-//@EnableMethodSecurity
 @EnableGlobalMethodSecurity( prePostEnabled = true)
 @EnableWebSecurity
 public class SecurityConfig {

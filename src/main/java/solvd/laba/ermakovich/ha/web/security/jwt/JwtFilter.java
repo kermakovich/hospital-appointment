@@ -30,7 +30,6 @@ public class JwtFilter extends GenericFilterBean {
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain filterChain) throws IOException, ServletException {
         try {
             String token = getTokenFromRequest((HttpServletRequest) req);
-            //TODO implement check on permitAll
             if (token != null && jwtService.validateToken(token)) {
 
                 Authentication auth = jwtService.getAuthentication(token);
@@ -51,7 +50,5 @@ public class JwtFilter extends GenericFilterBean {
         }
         return null;
     }
-
-
 
 }

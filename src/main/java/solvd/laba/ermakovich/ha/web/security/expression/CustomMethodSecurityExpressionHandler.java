@@ -30,4 +30,5 @@ public class CustomMethodSecurityExpressionHandler extends DefaultMethodSecurity
         super.setApplicationContext(applicationContext);
         this.applicationContext = applicationContext;
     }
+
 }

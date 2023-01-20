@@ -6,7 +6,6 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
 @SpringBootApplication
 @ConfigurationPropertiesScan
-//@EnableConfigurationProperties
 public class AppInitializer {
 
 	public static void main(String[] args) {
