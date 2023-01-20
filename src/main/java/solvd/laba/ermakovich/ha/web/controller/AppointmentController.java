@@ -11,7 +11,7 @@ import solvd.laba.ermakovich.ha.service.AppointmentService;
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
-
+    //todo check sec expression that patient has right
     @DeleteMapping("/{appointmentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable long appointmentId) {

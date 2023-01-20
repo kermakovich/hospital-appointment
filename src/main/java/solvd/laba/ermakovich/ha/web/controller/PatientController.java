@@ -40,6 +40,7 @@ public class PatientController {
         return patientMapper.entityToDto(patient);
     }
 
+    //todo expr that patient post app for himself
     @PostMapping("/{patientId}/appointments")
     @ResponseStatus(HttpStatus.CREATED)
     public AppointmentDto createAppointment(@PathVariable long patientId,
@@ -51,6 +52,7 @@ public class PatientController {
         return appointmentDto;
     }
 
+    //todo expr that patient get app for himself
     @GetMapping("/{patientId}/appointments")
     public List<AppointmentDto> getAppointmentByPatientIdAndCriteria(@PathVariable long patientId, SearchAppointmentCriteriaDto criteriaDto) {
         SearchAppointmentCriteria criteria = searchAppointmentCriteriaMapper.dtoToEntity(criteriaDto);

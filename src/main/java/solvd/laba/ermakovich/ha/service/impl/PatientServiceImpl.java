@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import solvd.laba.ermakovich.ha.domain.Address;
 import solvd.laba.ermakovich.ha.domain.Patient;
 import solvd.laba.ermakovich.ha.domain.UserInfo;
+import solvd.laba.ermakovich.ha.domain.UserRole;
+import solvd.laba.ermakovich.ha.domain.exception.IllegalOperationException;
 import solvd.laba.ermakovich.ha.repository.PatientRepository;
 import solvd.laba.ermakovich.ha.repository.jdbc.mapper.UserInfoMapper;
 import solvd.laba.ermakovich.ha.service.AddressService;
@@ -27,6 +29,9 @@ public class PatientServiceImpl implements PatientService {
     @Transactional
     public Patient create(Patient patient) {
         UserInfo userInfo = userInfoMapper.mapToUserInfo(patient);
+        if (!userInfo.getRole().equals(UserRole.PATIENT)) {
+            throw new IllegalOperationException("Patient has wrong role");
+        }
         userInfoService.create(userInfo);
         Address address = addressService.create(patient.getAddress());
         patient.setAddress(address);

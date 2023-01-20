@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import solvd.laba.ermakovich.ha.domain.UserRole;
 import solvd.laba.ermakovich.ha.web.dto.group.onCreate;
 import solvd.laba.ermakovich.ha.web.dto.group.onCreateAppointment;
 import solvd.laba.ermakovich.ha.web.dto.group.onCreateReview;
@@ -44,5 +45,8 @@ public abstract class UserInfoDto {
     @NotBlank(groups = onCreate.class, message = "can`t be empty")
     @Size(min = 4, max = 20, groups = onCreate.class, message = "length should be in 4..20")
     private String password;
+
+    @NotNull(groups = onCreate.class, message = "can`t be null")
+    private UserRole role;
 
 }
