@@ -19,6 +19,7 @@ import solvd.laba.ermakovich.ha.web.security.jwt.JwtFilter;
 
 @Configuration
 @RequiredArgsConstructor
+//@EnableMethodSecurity
 @EnableGlobalMethodSecurity( prePostEnabled = true)
 @EnableWebSecurity
 public class SecurityConfig {
@@ -52,10 +53,10 @@ public class SecurityConfig {
     }
 
     @Bean
-    public MethodSecurityExpressionHandler handler() {
-        CustomMethodSecurityExpressionHandler handler = new CustomMethodSecurityExpressionHandler();
-        handler.setApplicationContext(applicationContext);
-        return handler;
+    public MethodSecurityExpressionHandler createExpressionHandler() {
+        var expressionHandler = new CustomMethodSecurityExpressionHandler();
+        expressionHandler.setApplicationContext(applicationContext);
+        return expressionHandler;
     }
 
     static {

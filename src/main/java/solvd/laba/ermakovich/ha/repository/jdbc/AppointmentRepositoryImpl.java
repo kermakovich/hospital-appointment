@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 //@Repository
@@ -112,6 +113,11 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
             ps.setLong(1, appointmentId);
             ps.executeUpdate();
         }
+    }
+
+    @Override
+    public Optional<Appointment> findById(long appId) {
+        return Optional.empty();
     }
 
     @Override

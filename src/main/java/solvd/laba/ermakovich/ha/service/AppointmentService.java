@@ -20,4 +20,6 @@ public interface AppointmentService {
     List<Appointment> retrieveAllByPatientIdAndCriteria(long patientId, SearchAppointmentCriteria criteria);
 
     List<Appointment> retrieveAllByDoctorIdAndCriteria(long doctorId, SearchAppointmentCriteria criteria);
+
+    Appointment retrieveById(Long appId);
 }

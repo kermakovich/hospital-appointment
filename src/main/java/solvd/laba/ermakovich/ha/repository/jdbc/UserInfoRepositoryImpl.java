@@ -55,9 +55,4 @@ public class UserInfoRepositoryImpl implements UserRepository {
         return Optional.empty();
     }
 
-    @Override
-    public Optional<UserInfo> findById(Long id) {
-        return Optional.empty();
-    }
-
 }

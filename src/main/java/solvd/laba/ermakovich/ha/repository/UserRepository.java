@@ -14,5 +14,4 @@ public interface UserRepository {
 
     Optional<UserInfo> findByEmail(String email);
 
-    Optional<UserInfo> findById(Long id);
 }

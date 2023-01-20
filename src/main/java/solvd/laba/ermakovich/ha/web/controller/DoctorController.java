@@ -62,7 +62,7 @@ public class DoctorController {
         return availableSlotsMapper.entityToDto(availableSlots);
     }
 
-    @PreAuthorize("hasRole('DOCTOR') or hasRole('ADMIN')")
+    @PreAuthorize("(hasRole('DOCTOR') or hasRole('ADMIN')) and hasAccess(#doctorId)")
     @GetMapping("/{doctorId}/appointments")
     public List<AppointmentDto> getAppointmentByDoctorAndCriteria(@PathVariable long doctorId, SearchAppointmentCriteriaDto criteriaDto) {
         SearchAppointmentCriteria criteria = searchAppointmentCriteriaMapper.dtoToEntity(criteriaDto);

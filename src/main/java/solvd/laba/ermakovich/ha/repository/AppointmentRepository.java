@@ -8,6 +8,7 @@ import solvd.laba.ermakovich.ha.domain.SearchAppointmentCriteria;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 @Mapper
 public interface AppointmentRepository {
@@ -30,4 +31,5 @@ public interface AppointmentRepository {
 
     void delete(long appointmentId);
 
+    Optional<Appointment> findById(long appId);
 }

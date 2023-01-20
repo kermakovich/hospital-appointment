@@ -12,8 +12,8 @@ import solvd.laba.ermakovich.ha.service.AppointmentService;
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
-    //todo check sec expression that patient has right
-    @PreAuthorize("hasRole('PATIENT') or hasRole('ADMIN')")
+
+    @PreAuthorize("(hasRole('PATIENT') or hasRole('ADMIN')) and hasAccessForDelApp(#appointmentId)")
     @DeleteMapping("/{appointmentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable long appointmentId) {

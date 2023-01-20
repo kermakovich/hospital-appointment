@@ -87,6 +87,12 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointmentRepository.findAllByDoctorIdAndCriteria(doctorId, criteria);
     }
 
+    @Override
+    public Appointment retrieveById(Long appId) {
+        return appointmentRepository.findById(appId)
+                .orElseThrow(() -> new ResourceDoesNotExistException("appointment with id " + appId + "doesn`t exist"));
+    }
+
     private boolean validSearchCriteria(SearchAppointmentCriteria criteria) {
        return criteria.getDate() != null && criteria.getStatus() != null
                 && (criteria.getDate().isBefore(LocalDate.now()) && criteria.getStatus() == AppointmentStatus.FUTURE

@@ -1,35 +1,48 @@
 package solvd.laba.ermakovich.ha.web.security.expression;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.Setter;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionOperations;
 import org.springframework.security.core.Authentication;
-import solvd.laba.ermakovich.ha.domain.UserInfo;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import solvd.laba.ermakovich.ha.domain.Appointment;
 import solvd.laba.ermakovich.ha.domain.UserRole;
-import solvd.laba.ermakovich.ha.service.UserInfoService;
+import solvd.laba.ermakovich.ha.service.AppointmentService;
+import solvd.laba.ermakovich.ha.web.security.jwt.JwtUserDetails;
 
 @Setter
-public class CustomMethodSecurityExpressionRoot extends SecurityExpressionRoot implements MethodSecurityExpressionOperations {
+public class CustomMethodSecurityExpressionRoot extends SecurityExpressionRoot  implements MethodSecurityExpressionOperations {
 
-    private UserInfoService userService;
+    private HttpServletRequest request;
     private Object filterObject;
     private Object returnObject;
     private Object target;
     private Authentication authentication;
+    private AppointmentService appointmentService;
 
     public CustomMethodSecurityExpressionRoot(Authentication authentication) {
         super(authentication);
         this.authentication = authentication;
     }
 
+    public boolean hasAccess(Long id) {
+        JwtUserDetails jwtUser = (JwtUserDetails) authentication.getPrincipal();
+        return id.equals(jwtUser.getId()) || hasAdminRole(jwtUser);
+    }
 
-    public boolean hasPatientAccess(Long id) {
-        UserInfo userInfo = userService.findByEmail(authentication.getName());
-        UserInfo user =  this.userService.findById(id);
-        if (user.getRole().equals(UserRole.ADMIN)) {
-            return true;
-        }
-        return id.equals(userInfo.getId());
+    public boolean hasAccessForDelApp(Long appId) {
+        JwtUserDetails jwtUser = (JwtUserDetails) authentication.getPrincipal();
+        Appointment appointment = appointmentService.retrieveById(appId);
+        return appointment.getPatientCard()
+                .getId()
+                .equals(jwtUser.getId()) || hasAdminRole(jwtUser);
+    }
+
+    private boolean hasAdminRole(JwtUserDetails jwtUser) {
+        var adminAuthority = new SimpleGrantedAuthority(UserRole.ADMIN.getAuthority());
+        return jwtUser.getAuthorities()
+                .contains(adminAuthority);
     }
 
     @Override

@@ -41,9 +41,7 @@ public class PatientController {
         return patientMapper.entityToDto(patient);
     }
 
-    //todo expr that patient post app for himself
-//    (hasRole('PATIENT') or hasRole('ADMIN')) and
-    @PreAuthorize("hasPatientAccess(#patientId)")
+    @PreAuthorize("(hasRole('PATIENT') or hasRole('ADMIN')) and hasAccess(#patientId)")
     @PostMapping("/{patientId}/appointments")
     @ResponseStatus(HttpStatus.CREATED)
     public AppointmentDto createAppointment(@PathVariable Long patientId,
@@ -55,8 +53,7 @@ public class PatientController {
         return appointmentDto;
     }
 
-    //todo expr that patient get app for himself
-    @PreAuthorize("hasRole('PATIENT') or hasRole('ADMIN')")
+    @PreAuthorize("(hasRole('PATIENT') or hasRole('ADMIN')) and hasAccess(#patientId)")
     @GetMapping("/{patientId}/appointments")
     public List<AppointmentDto> getAppointmentByPatientIdAndCriteria(@PathVariable long patientId, SearchAppointmentCriteriaDto criteriaDto) {
         SearchAppointmentCriteria criteria = searchAppointmentCriteriaMapper.dtoToEntity(criteriaDto);

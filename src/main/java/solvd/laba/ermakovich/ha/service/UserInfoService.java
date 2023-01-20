@@ -8,5 +8,4 @@ public interface UserInfoService {
 
     UserInfo findByEmail(String email);
 
-    UserInfo findById(Long id);
 }

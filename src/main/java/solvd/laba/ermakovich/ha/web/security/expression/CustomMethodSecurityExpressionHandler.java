@@ -7,8 +7,7 @@ import org.springframework.security.access.expression.method.MethodSecurityExpre
 import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
 import org.springframework.security.core.Authentication;
-import solvd.laba.ermakovich.ha.service.UserInfoService;
-
+import solvd.laba.ermakovich.ha.service.AppointmentService;
 
 public class CustomMethodSecurityExpressionHandler extends DefaultMethodSecurityExpressionHandler {
 
@@ -20,11 +19,10 @@ public class CustomMethodSecurityExpressionHandler extends DefaultMethodSecurity
         CustomMethodSecurityExpressionRoot root = new CustomMethodSecurityExpressionRoot(authentication);
         root.setTrustResolver(this.trustResolver);
         root.setPermissionEvaluator(getPermissionEvaluator());
-        root.setUserService(this.applicationContext.getBean(UserInfoService.class));
+        root.setAppointmentService(this.applicationContext.getBean(AppointmentService.class));
         return root;
     }
 
-    //This setter method will be called from the config class
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         super.setApplicationContext(applicationContext);
