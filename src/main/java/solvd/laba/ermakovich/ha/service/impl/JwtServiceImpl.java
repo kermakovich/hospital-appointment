@@ -64,7 +64,7 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public String generateRefreshToken(UserInfo user) {
-        final Instant refreshExpiration = Instant.now().plus(expirationTimeRefresh, ChronoUnit.MINUTES);
+        final Instant refreshExpiration = Instant.now().plus(expirationTimeRefresh, ChronoUnit.HOURS);
         return Jwts.builder()
                 .setSubject(user.getEmail())
                 .setExpiration(java.util.Date.from(refreshExpiration))

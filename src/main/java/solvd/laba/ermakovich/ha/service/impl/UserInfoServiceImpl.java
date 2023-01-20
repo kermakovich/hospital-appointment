@@ -38,4 +38,10 @@ public class UserInfoServiceImpl implements UserInfoService {
                 .orElseThrow(() -> new ResourceDoesNotExistException("user with email: " + email + "doesn`t exist"));
     }
 
+    @Override
+    public UserInfo findById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceDoesNotExistException("user with this id: " + id +" doesn`t exist"));
+    }
+
 }

@@ -44,12 +44,6 @@ public class JwtFilter extends GenericFilterBean {
         }
     }
 
-//    private boolean isPermitAllRequest(String contextPath) {
-//        return Arrays.stream(SecurityConfig
-//               .getPermitAll())
-//               .anyMatch(path -> contextPath.replaceAll("/[0-9]+/","/*/").equals(path));
-//    }
-
     public String getTokenFromRequest(HttpServletRequest req) {
         final String bearer = req.getHeader(AUTHORIZATION);
         if (StringUtils.hasText(bearer) && bearer.startsWith("Bearer ")) {

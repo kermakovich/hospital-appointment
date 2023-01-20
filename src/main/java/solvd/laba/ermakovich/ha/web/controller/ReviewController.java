@@ -3,6 +3,7 @@ package solvd.laba.ermakovich.ha.web.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import solvd.laba.ermakovich.ha.domain.Review;
@@ -13,6 +14,7 @@ import solvd.laba.ermakovich.ha.web.mapper.ReviewMapper;
 
 @RestController
 @RequestMapping("api/v1/reviews")
+@PreAuthorize("hasRole('PATIENT') or hasRole('ADMIN')")
 @RequiredArgsConstructor
 public class ReviewController {
 
