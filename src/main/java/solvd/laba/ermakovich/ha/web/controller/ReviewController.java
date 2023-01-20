@@ -14,13 +14,13 @@ import solvd.laba.ermakovich.ha.web.mapper.ReviewMapper;
 
 @RestController
 @RequestMapping("api/v1/reviews")
-@PreAuthorize("hasRole('PATIENT') or hasRole('ADMIN')")
 @RequiredArgsConstructor
 public class ReviewController {
 
     private final ReviewService reviewService;
     private final ReviewMapper reviewMapper;
 
+    @PreAuthorize("hasRole('PATIENT') or hasRole('ADMIN')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ReviewDto create(@RequestBody @Validated(onCreateReview.class) ReviewDto reviewDto) {
@@ -29,13 +29,14 @@ public class ReviewController {
         return reviewMapper.entityToDto(review);
     }
 
-    //todo check patient
+    @PreAuthorize("(hasRole('PATIENT') or hasRole('ADMIN')) and hasAccessForReview(#reviewId)")
     @DeleteMapping("/{reviewId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable long reviewId) {
         reviewService.delete(reviewId);
     }
 
+    @PreAuthorize("(hasRole('PATIENT') or hasRole('ADMIN')) and hasAccessForReview(#reviewId)")
     @PutMapping("/{reviewId}")
     public ReviewDto update(@RequestBody @Valid ReviewDto reviewDto, @PathVariable long reviewId) {
         Review review = reviewMapper.dtoToEntity(reviewDto);
@@ -43,6 +44,7 @@ public class ReviewController {
         return reviewMapper.entityToDto(review);
     }
 
+    @PreAuthorize("(hasRole('PATIENT') or hasRole('ADMIN')) and hasAccessForReview(#reviewId)")
     @GetMapping("/{reviewId}")
     public ReviewDto get(@PathVariable long reviewId) {
         Review review = reviewService.retrieveById(reviewId);

@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
 import org.springframework.security.core.Authentication;
 import solvd.laba.ermakovich.ha.service.AppointmentService;
+import solvd.laba.ermakovich.ha.service.ReviewService;
 
 public class CustomMethodSecurityExpressionHandler extends DefaultMethodSecurityExpressionHandler {
 
@@ -20,6 +21,7 @@ public class CustomMethodSecurityExpressionHandler extends DefaultMethodSecurity
         root.setTrustResolver(this.trustResolver);
         root.setPermissionEvaluator(getPermissionEvaluator());
         root.setAppointmentService(this.applicationContext.getBean(AppointmentService.class));
+        root.setReviewService(this.applicationContext.getBean(ReviewService.class));
         return root;
     }
 
