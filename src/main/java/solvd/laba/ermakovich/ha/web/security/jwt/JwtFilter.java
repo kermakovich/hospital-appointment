@@ -30,8 +30,11 @@ public class JwtFilter extends GenericFilterBean {
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain filterChain) throws IOException, ServletException {
         try {
             String token = getTokenFromRequest((HttpServletRequest) req);
-            if (token != null && jwtService.validateToken(token)) {
-
+            if (token != null) {
+                JwtUserDetails jwtUserDetails = jwtService.parseToken(token);
+                if (!jwtService.isAccessToken(jwtUserDetails)) {
+                    throw new JwtException("invalid token");
+                }
                 Authentication auth = jwtService.getAuthentication(token);
                 if (auth != null) {
                     SecurityContextHolder.getContext().setAuthentication(auth);

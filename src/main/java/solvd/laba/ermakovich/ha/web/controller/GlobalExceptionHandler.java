@@ -61,7 +61,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({JwtException.class, AuthException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorDto handleJwtException(RuntimeException ex) {
-        return new ErrorDto("");
+        return new ErrorDto(ex.getMessage());
     }
 
 

@@ -12,9 +12,9 @@ import solvd.laba.ermakovich.ha.service.AuthService;
 import solvd.laba.ermakovich.ha.web.dto.jwt.AuthenticationDto;
 import solvd.laba.ermakovich.ha.web.dto.jwt.JwtResponseDto;
 import solvd.laba.ermakovich.ha.web.dto.jwt.RefreshDto;
-import solvd.laba.ermakovich.ha.web.mapper.AuthenticationMapper;
-import solvd.laba.ermakovich.ha.web.mapper.JwtResponseMapper;
-import solvd.laba.ermakovich.ha.web.mapper.RefreshMapper;
+import solvd.laba.ermakovich.ha.web.mapper.jwt.AuthenticationMapper;
+import solvd.laba.ermakovich.ha.web.mapper.jwt.JwtResponseMapper;
+import solvd.laba.ermakovich.ha.web.mapper.jwt.RefreshMapper;
 
 @RestController
 @RequestMapping("api/v1/users")

@@ -1,11 +1,11 @@
 package solvd.laba.ermakovich.ha.service.impl;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,8 +13,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import solvd.laba.ermakovich.ha.domain.UserInfo;
+import solvd.laba.ermakovich.ha.domain.jwt.JwtAccess;
 import solvd.laba.ermakovich.ha.service.JwtService;
 import solvd.laba.ermakovich.ha.service.UserInfoService;
+import solvd.laba.ermakovich.ha.service.property.JwtProperties;
+import solvd.laba.ermakovich.ha.web.security.jwt.JwtUserDetails;
+import solvd.laba.ermakovich.ha.web.security.jwt.JwtUserDetailsFactory;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -26,62 +30,54 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtServiceImpl implements JwtService {
 
-    @Value("${security.jwt.expiration-time-access}")
-    private Long expirationTimeAccess;
-
-    @Value("${security.jwt.expiration-time-refresh}")
-    private Long expirationTimeRefresh;
-
-    @Value("${security.jwt.secret}")
-    private String secretKey;
-
+    private final JwtProperties jwtProperties;
     private final UserInfoService userInfoService;
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserDetailsService userDetailsService;
 
     @Override
-    public boolean validateToken(String token) {
-        Jwts.parser()
-                .setSigningKey(secretKey)
-                .parseClaimsJws(token);
-        return true;
+    public JwtUserDetails parseToken(String token) {
+       Claims claims =  Jwts.parser()
+                .setSigningKey(jwtProperties.getSecret())
+                .parseClaimsJws(token)
+                .getBody();
+       return JwtUserDetailsFactory.create(claims);
     }
 
     @Override
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(getSubject(token));
+        JwtUserDetails jwtUserDetails = parseToken(token);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(jwtUserDetails.getEmail());
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
     @Override
-    public String getSubject(String token) {
-        return Jwts.parser()
-                .setSigningKey(secretKey)
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+    public boolean isAccessToken(JwtUserDetails jwtUserDetails) {
+        return jwtUserDetails.getId() != null && jwtUserDetails.getPassword() == null;
     }
 
     @Override
     public String generateRefreshToken(UserInfo user) {
-        final Instant refreshExpiration = Instant.now().plus(expirationTimeRefresh, ChronoUnit.HOURS);
+        final Instant refreshExpiration = Instant.now().plus(jwtProperties.getRefresh(), ChronoUnit.HOURS);
         return Jwts.builder()
                 .setSubject(user.getEmail())
+                .claim("password", user.getPassword())
                 .setExpiration(java.util.Date.from(refreshExpiration))
-                .signWith(SignatureAlgorithm.HS512, secretKey)
+                .signWith(SignatureAlgorithm.HS512, jwtProperties.getSecret())
                 .compact();
     }
 
     @Override
-    public String generateAccessToken(UserInfo user) {
-        final Instant accessExpiration = Instant.now().plus(expirationTimeAccess, ChronoUnit.MINUTES);
-        return Jwts.builder()
+    public JwtAccess generateAccessToken(UserInfo user) {
+        final Instant accessExpiration = Instant.now().plus(jwtProperties.getAccess(), ChronoUnit.MINUTES);
+        String token = Jwts.builder()
                 .setSubject(user.getEmail())
                 .setExpiration(Date.from(accessExpiration))
-                .signWith(SignatureAlgorithm.HS512, secretKey)
+                .signWith(SignatureAlgorithm.HS512, jwtProperties.getSecret())
                 .claim("role", user.getRole())
                 .claim("id", user.getId())
                 .compact();
+        return new JwtAccess(token, accessExpiration);
     }
 
 }

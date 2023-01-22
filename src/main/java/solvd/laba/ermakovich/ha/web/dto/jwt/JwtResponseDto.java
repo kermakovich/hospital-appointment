@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class JwtResponseDto {
 
-    private String access;
+    private JwtAccessDto accessDto;
     private String refresh;
 
 }

@@ -4,12 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.Instant;
+
 @Getter
 @Setter
 @AllArgsConstructor
-public class JwtResponse {
+public class JwtAccess {
 
-    private JwtAccess access;
-    private String refresh;
+    private String token;
+    private Instant expirationTime;
 
 }
