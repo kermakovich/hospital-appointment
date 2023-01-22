@@ -9,4 +9,5 @@ public interface AuthService {
     JwtResponse login(Authentication authentication);
 
     JwtResponse refresh(Refresh refresh);
+
 }

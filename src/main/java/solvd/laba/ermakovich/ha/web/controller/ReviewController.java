@@ -20,7 +20,7 @@ public class ReviewController {
     private final ReviewService reviewService;
     private final ReviewMapper reviewMapper;
 
-    @PreAuthorize("hasRole('PATIENT') or hasRole('ADMIN')")
+    @PreAuthorize("(hasRole('PATIENT') or hasRole('ADMIN')) and hasAccess(#reviewDto.patientDto.id)")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ReviewDto create(@RequestBody @Validated(onCreateReview.class) ReviewDto reviewDto) {

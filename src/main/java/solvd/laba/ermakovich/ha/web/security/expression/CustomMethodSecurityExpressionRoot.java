@@ -50,6 +50,7 @@ public class CustomMethodSecurityExpressionRoot extends SecurityExpressionRoot  
                 .equals(jwtUser.getId()) || hasAdminRole(jwtUser);
     }
 
+
     private boolean hasAdminRole(JwtUserDetails jwtUser) {
         var adminAuthority = new SimpleGrantedAuthority(UserRole.ADMIN.getAuthority());
         return jwtUser.getAuthorities()

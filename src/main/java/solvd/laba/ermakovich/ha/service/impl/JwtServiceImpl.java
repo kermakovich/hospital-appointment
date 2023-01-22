@@ -72,10 +72,10 @@ public class JwtServiceImpl implements JwtService {
         final Instant accessExpiration = Instant.now().plus(jwtProperties.getAccess(), ChronoUnit.MINUTES);
         String token = Jwts.builder()
                 .setSubject(user.getEmail())
-                .setExpiration(Date.from(accessExpiration))
-                .signWith(SignatureAlgorithm.HS512, jwtProperties.getSecret())
                 .claim("role", user.getRole())
                 .claim("id", user.getId())
+                .setExpiration(Date.from(accessExpiration))
+                .signWith(SignatureAlgorithm.HS512, jwtProperties.getSecret())
                 .compact();
         return new JwtAccess(token, accessExpiration);
     }
