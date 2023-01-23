@@ -1,5 +1,8 @@
 package solvd.laba.ermakovich.ha.web.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,6 +18,7 @@ import solvd.laba.ermakovich.ha.web.mapper.ReviewMapper;
 @RestController
 @RequestMapping("api/v1/reviews")
 @RequiredArgsConstructor
+@Tag(name = "Review", description = "doctor`s reviews")
 public class ReviewController {
 
     private final ReviewService reviewService;
@@ -23,6 +27,7 @@ public class ReviewController {
     @PreAuthorize("(hasRole('PATIENT') or hasRole('ADMIN')) and hasAccess(#reviewDto.patientDto.id)")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(description = "post doctor`s review by patient")
     public ReviewDto create(@RequestBody @Validated(onCreateReview.class) ReviewDto reviewDto) {
         Review review = reviewMapper.dtoToEntity(reviewDto);
         reviewService.create(review);
@@ -32,13 +37,16 @@ public class ReviewController {
     @PreAuthorize("(hasRole('PATIENT') or hasRole('ADMIN')) and hasAccessForReview(#reviewId)")
     @DeleteMapping("/{reviewId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable long reviewId) {
+    @Operation(description = "delete review by patient")
+    public void delete(@Parameter(description = "id review for delete") @PathVariable long reviewId) {
         reviewService.delete(reviewId);
     }
 
     @PreAuthorize("(hasRole('PATIENT') or hasRole('ADMIN')) and hasAccessForReview(#reviewId)")
     @PutMapping("/{reviewId}")
-    public ReviewDto update(@RequestBody @Valid ReviewDto reviewDto, @PathVariable long reviewId) {
+    @Operation(description = "update review by patient")
+    public ReviewDto update(@RequestBody @Valid ReviewDto reviewDto,
+                            @Parameter(description = "id review for update") @PathVariable long reviewId) {
         Review review = reviewMapper.dtoToEntity(reviewDto);
         review = reviewService.update(reviewId, review);
         return reviewMapper.entityToDto(review);
@@ -46,7 +54,8 @@ public class ReviewController {
 
     @PreAuthorize("(hasRole('PATIENT') or hasRole('ADMIN')) and hasAccessForReview(#reviewId)")
     @GetMapping("/{reviewId}")
-    public ReviewDto get(@PathVariable long reviewId) {
+    @Operation(description = "get review by id")
+    public ReviewDto get(@Parameter(description = "id review") @PathVariable long reviewId) {
         Review review = reviewService.retrieveById(reviewId);
         return reviewMapper.entityToDto(review);
     }

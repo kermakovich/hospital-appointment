@@ -62,12 +62,14 @@ public class SecurityConfig {
         permitGetAll = new String[] {
                 "/api/v1/doctors/*/reviews",
                 "/api/v1/doctors",
-                "/api/v1/doctors/*/schedule"
+                "/api/v1/doctors/*/schedule",
+                "/swagger-ui/**",
+                "/v3/api-docs/**"
         };
         permitPostAll = new String[] {
                 "/api/v1/users/login",
                 "/api/v1/users/refresh",
-                "/api/v1/patients"
+                "/api/v1/patients",
         };
     }
 

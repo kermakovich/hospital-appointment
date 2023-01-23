@@ -1,5 +1,7 @@
 package solvd.laba.ermakovich.ha.web.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +21,7 @@ import solvd.laba.ermakovich.ha.web.mapper.jwt.RefreshMapper;
 @RestController
 @RequestMapping("api/v1/users")
 @RequiredArgsConstructor
+@Tag(name = "User", description = "The User API")
 public class UserController {
 
     private final AuthService authService;
@@ -27,6 +30,7 @@ public class UserController {
     private final AuthenticationMapper authenticationMapper;
 
     @PostMapping("/login")
+    @Operation(summary = "user authorization by email, password")
     public JwtResponseDto login(@RequestBody AuthenticationDto authenticationDto) {
         Authentication authentication = authenticationMapper.dtoToEntity(authenticationDto);
         JwtResponse response = authService.login(authentication);
@@ -34,6 +38,7 @@ public class UserController {
     }
 
     @PostMapping("/refresh")
+    @Operation(summary = "refresh jwt tokens for user")
     public JwtResponseDto refresh(@RequestBody RefreshDto refreshDto) {
         Refresh refresh = refreshMapper.dtoToEntity(refreshDto);
         JwtResponse response = authService.refresh(refresh);

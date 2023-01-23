@@ -1,5 +1,8 @@
 package solvd.laba.ermakovich.ha.web.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,6 +28,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1/patients")
 @RequiredArgsConstructor
+@Tag(name = "Patient", description = "patient")
 public class PatientController {
 
     private final PatientService patientService;
@@ -35,6 +39,7 @@ public class PatientController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(description = "create patient")
     public PatientDto create(@Validated({onCreate.class, Default.class}) @RequestBody PatientDto patientDto) {
         Patient patient = patientMapper.dtoToEntity(patientDto);
         patientService.create(patient);
@@ -44,7 +49,8 @@ public class PatientController {
     @PreAuthorize("(hasRole('PATIENT') or hasRole('ADMIN')) and hasAccess(#patientId)")
     @PostMapping("/{patientId}/appointments")
     @ResponseStatus(HttpStatus.CREATED)
-    public AppointmentDto createAppointment(@PathVariable Long patientId,
+    @Operation(description = "create appointment by patient")
+    public AppointmentDto createAppointment(@Parameter(description = "patient id") @PathVariable Long patientId,
                                @Validated({onCreateAppointment.class, Default.class})
                                @RequestBody AppointmentDto appointmentDto) {
         Appointment appointment = appointmentMapper.dtoToEntity(appointmentDto);
@@ -55,7 +61,9 @@ public class PatientController {
 
     @PreAuthorize("(hasRole('PATIENT') or hasRole('ADMIN')) and hasAccess(#patientId)")
     @GetMapping("/{patientId}/appointments")
-    public List<AppointmentDto> getAppointmentByPatientIdAndCriteria(@PathVariable long patientId, SearchAppointmentCriteriaDto criteriaDto) {
+    @Operation(description = "get appointments by patient and criteria")
+    public List<AppointmentDto> getAppointmentByPatientIdAndCriteria(@Parameter(description = "patient id") @PathVariable long patientId,
+                                                                     SearchAppointmentCriteriaDto criteriaDto) {
         SearchAppointmentCriteria criteria = searchAppointmentCriteriaMapper.dtoToEntity(criteriaDto);
         List<Appointment> appointments = appointmentService.retrieveAllByPatientIdAndCriteria(patientId, criteria);
         return appointmentMapper.entityToDto(appointments);

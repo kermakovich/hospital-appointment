@@ -1,5 +1,8 @@
 package solvd.laba.ermakovich.ha.web.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,6 +29,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1/doctors")
 @RequiredArgsConstructor
+@Tag(name = "Doctor", description = "doctor")
 public class DoctorController {
 
     private final DoctorService doctorService;
@@ -42,6 +46,7 @@ public class DoctorController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(description = "add doctor to hospital")
     public DoctorDto create(@Validated({onCreate.class, Default.class}) @RequestBody DoctorDto doctorDto) {
         Doctor doctor = doctorMapper.dtoToEntity(doctorDto);
         doctorService.create(doctor);
@@ -49,6 +54,7 @@ public class DoctorController {
     }
 
     @GetMapping
+    @Operation(description = "get doctors by search criteria")
     public List<DoctorDto> getAll(SearchCriteriaDto searchCriteriaDto) {
         SearchDoctorCriteria criteria = searchCriteriaMapper.dtoToEntity(searchCriteriaDto);
         List<Doctor> doctors = doctorService.retrieveAllBySearchCriteria(criteria);
@@ -57,21 +63,25 @@ public class DoctorController {
 
 
     @GetMapping("/{id}/schedule")
-    public AvailableSlotsDto getAvailableSlots(@PathVariable long id, @RequestParam LocalDate date) {
+    @Operation(description = "get available doctor`s time slots")
+    public AvailableSlotsDto getAvailableSlots(@Parameter(description = "doctor id") @PathVariable long id,
+                                               @Parameter(description = "date for searching slots") @RequestParam LocalDate date) {
         AvailableSlots availableSlots = timeSlotService.retrieveSchedule(id, date);
         return availableSlotsMapper.entityToDto(availableSlots);
     }
 
     @PreAuthorize("(hasRole('DOCTOR') or hasRole('ADMIN')) and hasAccess(#doctorId)")
     @GetMapping("/{doctorId}/appointments")
-    public List<AppointmentDto> getAppointmentByDoctorAndCriteria(@PathVariable long doctorId, SearchAppointmentCriteriaDto criteriaDto) {
+    @Operation(description = "get doctor`s appointments")
+    public List<AppointmentDto> getAppointmentByDoctorAndCriteria(@Parameter(description = "doctor id") @PathVariable long doctorId, SearchAppointmentCriteriaDto criteriaDto) {
         SearchAppointmentCriteria criteria = searchAppointmentCriteriaMapper.dtoToEntity(criteriaDto);
         List<Appointment> appointments = appointmentService.retrieveAllByDoctorIdAndCriteria(doctorId, criteria);
         return appointmentMapper.entityToDto(appointments);
     }
 
     @GetMapping("/{doctorId}/reviews")
-    public List<ReviewDto> getReviewByDoctor(@PathVariable long doctorId) {
+    @Operation(description = "get doctor`s reviews")
+    public List<ReviewDto> getReviewByDoctor(@Parameter(description = "doctor id") @PathVariable long doctorId) {
         List<Review> reviews = reviewService.retrieveAllByDoctorId(doctorId);
         return reviewMapper.entityToDto(reviews);
     }
