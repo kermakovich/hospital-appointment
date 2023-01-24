@@ -2,6 +2,7 @@ package solvd.laba.ermakovich.ha.web.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,9 @@ import solvd.laba.ermakovich.ha.web.mapper.SearchAppointmentCriteriaMapper;
 
 import java.util.List;
 
+import static solvd.laba.ermakovich.ha.web.security.SecurityConfig.SECURITY_SCHEME_NAME;
+
+
 @RestController
 @RequestMapping("api/v1/patients")
 @RequiredArgsConstructor
@@ -39,7 +43,7 @@ public class PatientController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(description = "create patient")
+    @Operation(summary = "creates patient")
     public PatientDto create(@Validated({onCreate.class, Default.class}) @RequestBody PatientDto patientDto) {
         Patient patient = patientMapper.dtoToEntity(patientDto);
         patientService.create(patient);
@@ -49,7 +53,8 @@ public class PatientController {
     @PreAuthorize("(hasRole('PATIENT') or hasRole('ADMIN')) and hasAccess(#patientId)")
     @PostMapping("/{patientId}/appointments")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(description = "create appointment by patient")
+    @Operation(summary = "creates appointment by patient")
+    @SecurityRequirement(name = SECURITY_SCHEME_NAME)
     public AppointmentDto createAppointment(@Parameter(description = "patient id") @PathVariable Long patientId,
                                @Validated({onCreateAppointment.class, Default.class})
                                @RequestBody AppointmentDto appointmentDto) {
@@ -61,7 +66,8 @@ public class PatientController {
 
     @PreAuthorize("(hasRole('PATIENT') or hasRole('ADMIN')) and hasAccess(#patientId)")
     @GetMapping("/{patientId}/appointments")
-    @Operation(description = "get appointments by patient and criteria")
+    @Operation(summary = "gets appointments by patient and criteria")
+    @SecurityRequirement(name = SECURITY_SCHEME_NAME)
     public List<AppointmentDto> getAppointmentByPatientIdAndCriteria(@Parameter(description = "patient id") @PathVariable long patientId,
                                                                      SearchAppointmentCriteriaDto criteriaDto) {
         SearchAppointmentCriteria criteria = searchAppointmentCriteriaMapper.dtoToEntity(criteriaDto);

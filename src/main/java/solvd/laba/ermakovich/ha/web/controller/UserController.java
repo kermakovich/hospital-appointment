@@ -21,7 +21,7 @@ import solvd.laba.ermakovich.ha.web.mapper.jwt.RefreshMapper;
 @RestController
 @RequestMapping("api/v1/users")
 @RequiredArgsConstructor
-@Tag(name = "User", description = "The User API")
+@Tag(name = "User", description = "user")
 public class UserController {
 
     private final AuthService authService;
@@ -30,7 +30,7 @@ public class UserController {
     private final AuthenticationMapper authenticationMapper;
 
     @PostMapping("/login")
-    @Operation(summary = "user authorization by email, password")
+    @Operation(summary = "authorizes user by email and password")
     public JwtResponseDto login(@RequestBody AuthenticationDto authenticationDto) {
         Authentication authentication = authenticationMapper.dtoToEntity(authenticationDto);
         JwtResponse response = authService.login(authentication);
@@ -38,7 +38,7 @@ public class UserController {
     }
 
     @PostMapping("/refresh")
-    @Operation(summary = "refresh jwt tokens for user")
+    @Operation(summary = "refreshes jwt tokens for user")
     public JwtResponseDto refresh(@RequestBody RefreshDto refreshDto) {
         Refresh refresh = refreshMapper.dtoToEntity(refreshDto);
         JwtResponse response = authService.refresh(refresh);

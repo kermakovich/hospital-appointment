@@ -18,7 +18,7 @@ public class JwtAccessDto {
     @Schema(description = "access token")
     private String token;
 
-    @Schema(description = "expiration time for access token")
+    @Schema(description = "expiration time for access token. Time is in UTC")
     private Instant expirationTime;
 
 }

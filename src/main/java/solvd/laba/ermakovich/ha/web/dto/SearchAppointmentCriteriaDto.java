@@ -12,10 +12,10 @@ import java.time.LocalDate;
 @Schema(description = "criteria for filter appointments")
 public class SearchAppointmentCriteriaDto {
 
-    @Schema(description = "particular date for appointments")
+    @Schema(description = "particular date for appointments", format = "dd-MM-yyyy")
     private LocalDate date;
 
-    @Schema(description = "status for appointments: DONE, FUTURE")
+    @Schema(description = "status for appointments")
     private AppointmentStatus status;
 
 }

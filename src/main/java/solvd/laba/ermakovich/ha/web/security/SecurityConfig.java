@@ -1,5 +1,6 @@
 package solvd.laba.ermakovich.ha.web.security;
 
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -17,10 +18,14 @@ import org.springframework.security.web.access.ExceptionTranslationFilter;
 import solvd.laba.ermakovich.ha.web.security.expression.CustomMethodSecurityExpressionHandler;
 import solvd.laba.ermakovich.ha.web.security.jwt.JwtFilter;
 
+import static io.swagger.v3.oas.annotations.enums.SecuritySchemeIn.HEADER;
+import static io.swagger.v3.oas.annotations.enums.SecuritySchemeType.HTTP;
+
 @Configuration
 @RequiredArgsConstructor
 @EnableGlobalMethodSecurity( prePostEnabled = true)
 @EnableWebSecurity
+@SecurityScheme(name = SecurityConfig.SECURITY_SCHEME_NAME, in = HEADER, type = HTTP, scheme = "bearer", bearerFormat = "JWT")
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
@@ -29,6 +34,8 @@ public class SecurityConfig {
     private final ApplicationContext applicationContext;
     private static final String[] permitGetAll;
     private static final String[] permitPostAll;
+    public static final String SECURITY_SCHEME_NAME = "bearerAuth";
+
 
 
     @Bean
@@ -50,6 +57,8 @@ public class SecurityConfig {
                 .addFilterAfter(jwtFilter, ExceptionTranslationFilter.class)
                 .build();
     }
+
+
 
     @Bean
     public MethodSecurityExpressionHandler createExpressionHandler() {

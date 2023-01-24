@@ -10,7 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
-@Schema(description = "available doctor`s  time slots for particular day")
+@Schema(description = "available doctor`s time slots for the particular day")
 public class AvailableSlotsDto {
 
     @Schema(description = "doctor id")

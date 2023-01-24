@@ -42,7 +42,7 @@ public abstract class UserInfoDto {
 
     @NotNull(groups = onCreate.class, message = "can`t be null")
     @Past(groups = onCreate.class, message = "can`t be in the future")
-    @Schema(description = "user birthday", example = "21-01-2001", pattern = "dd-MM-yyyy")
+    @Schema(description = "user birthday", type = "string", example ="20-01-2000" )
     private LocalDate birthday;
 
     @NotBlank(groups = onCreate.class, message = "can`t be empty")
@@ -56,7 +56,8 @@ public abstract class UserInfoDto {
     private String password;
 
     @NotNull(groups = onCreate.class, message = "can`t be null")
-    @Schema(description = "user role, possible roles: ADMIN, PATIENT, DOCTOR")
+    @Schema(description = "user role"
+    )
     private UserRole role;
 
 }

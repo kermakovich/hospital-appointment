@@ -6,12 +6,9 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
-import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.security.SecurityRequirement;
-import io.swagger.v3.oas.models.security.SecurityScheme;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -75,21 +72,14 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public OpenAPI customOpenApi(@Value("${application.description}") String appDescription,
-                                 @Value("${application.version}") String appVersion) {
-        final String securitySchemeName = "bearerAuth";
-
-        return new OpenAPI().addSecurityItem(new SecurityRequirement()
-                .addList(securitySchemeName))
-                .components(new Components()
-                        .addSecuritySchemes(securitySchemeName, new SecurityScheme()
-                                .name(securitySchemeName)
-                                .type(SecurityScheme.Type.HTTP)
-                                .scheme("bearer")
-                                .bearerFormat("JWT")))
-                .info(new Info().title("Hospital-appointment API")
-                        .version(appVersion)
-                        .description(appDescription)
+    public OpenAPI customOpenApi() {
+        return new OpenAPI().info(new Info()
+                        .title("Hospital-appointment API")
+                        .version("1.0")
+                        .description("booking system for №3 Minsk city hospital")
+                        .contact(new Contact()
+                                        .email("kermakovich.laba@silnd.com")
+                                        .name("Kseniya Ermakovich"))
                 );
     }
 
