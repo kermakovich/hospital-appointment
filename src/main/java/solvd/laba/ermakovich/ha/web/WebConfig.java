@@ -6,6 +6,9 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -66,6 +69,18 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public OpenAPI customOpenApi() {
+        return new OpenAPI().info(new Info()
+                        .title("Hospital-appointment API")
+                        .version("1.0")
+                        .description("booking system for №3 Minsk city hospital")
+                        .contact(new Contact()
+                                        .email("kermakovich.laba@silnd.com")
+                                        .name("Kseniya Ermakovich"))
+                );
     }
 
 }

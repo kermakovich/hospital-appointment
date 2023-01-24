@@ -1,5 +1,6 @@
 package solvd.laba.ermakovich.ha.web.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
@@ -11,8 +12,10 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@Schema(description = "appointment info")
 public class AppointmentDto {
 
+    @Schema(description = "appointment id")
     private Long id;
 
     @NotNull( groups = onCreateAppointment.class, message = "doctor can`t be null")
@@ -23,6 +26,7 @@ public class AppointmentDto {
 
     @NotNull(groups = onCreateAppointment.class, message = "start time can`t be null")
     @Future(message = "appointment start time can`t be in the past")
+    @Schema(description = "time and date of start appointment")
     private LocalDateTime start;
 
 }
