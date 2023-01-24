@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.format.Formatter;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.lang.NonNull;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import solvd.laba.ermakovich.ha.web.mapper.DepartmentConverter;
 import solvd.laba.ermakovich.ha.web.mapper.SpecializationConverter;
@@ -60,6 +61,11 @@ public class WebConfig implements WebMvcConfigurer {
                 return DateTimeFormatter.ofPattern(dateFormat).format(object);
             }
         };
+    }
+
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
 }

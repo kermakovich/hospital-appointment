@@ -1,5 +1,6 @@
 package solvd.laba.ermakovich.ha.web.controller;
 
+import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
@@ -8,10 +9,12 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import solvd.laba.ermakovich.ha.domain.exception.AuthException;
 import solvd.laba.ermakovich.ha.domain.exception.IllegalOperationException;
 import solvd.laba.ermakovich.ha.domain.exception.ResourceAlreadyExistsException;
 import solvd.laba.ermakovich.ha.domain.exception.ResourceDoesNotExistException;
 import solvd.laba.ermakovich.ha.web.dto.ErrorDto;
+import solvd.laba.ermakovich.ha.web.dto.FieldErrorDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,13 +35,14 @@ public class GlobalExceptionHandler {
         return new ErrorDto(ex.getMessage());
     }
 
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public List<ErrorDto> handleValidationException(MethodArgumentNotValidException ex) {
         List<ErrorDto> errors = new ArrayList<>();
          ex.getBindingResult().getAllErrors().forEach( error -> {
                  FieldError fieldError = (FieldError) error;
-                errors.add(new ErrorDto(fieldError.getField(), error.getDefaultMessage()));
+                errors.add(new FieldErrorDto(fieldError.getField(), error.getDefaultMessage()));
          });
         return errors;
     }
@@ -49,16 +53,23 @@ public class GlobalExceptionHandler {
         List<ErrorDto> errors = new ArrayList<>();
         ex.getBindingResult().getAllErrors().forEach( error -> {
             FieldError fieldError = (FieldError) error;
-            errors.add(new ErrorDto(fieldError.getField(), "can`t parse value: " + fieldError.getRejectedValue()));
+            errors.add(new FieldErrorDto(fieldError.getField(), "can`t parse value: " + fieldError.getRejectedValue()));
         });
         return errors;
     }
 
-    @ExceptionHandler({Exception.class})
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorDto handleOtherException(Exception ex) {
-        log.error(ex.getCause().getMessage(), ex.getCause());
-        return new ErrorDto("something is wrong, please, try later");
+    @ExceptionHandler({JwtException.class, AuthException.class})
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorDto handleJwtException(RuntimeException ex) {
+        return new ErrorDto(ex.getMessage());
     }
+
+
+//    @ExceptionHandler({Exception.class})
+//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+//    public ErrorDto handleOtherException(Exception ex) {
+//        log.error(ex.getCause().getMessage(), ex.getCause());
+//        return new ErrorDto("something is wrong, please, try later");
+//    }
 
 }

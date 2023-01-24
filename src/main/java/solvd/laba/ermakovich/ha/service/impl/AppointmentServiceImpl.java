@@ -37,10 +37,10 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Transactional
     public Appointment save(long patientId, Appointment appointment) {
         if (!doctorService.isExistById(appointment.getDoctor().getId())) {
-            throw new ResourceDoesNotExistException("doctor", appointment.getDoctor().getId());
+            throw new ResourceDoesNotExistException("doctor with id: " + appointment.getDoctor().getId() + "doesn`t exist");
         }
         if (!patientService.isExistById(patientId)) {
-            throw new ResourceDoesNotExistException("patient", patientId);
+            throw new ResourceDoesNotExistException("patient with id: " + patientId+ "doesn`t exist");
         }
         if (!openingHours.isWithinOpenHours(appointment.getStart().toLocalTime())) {
             throw new IllegalOperationException("Hospital is closed at this time: "
@@ -85,6 +85,12 @@ public class AppointmentServiceImpl implements AppointmentService {
             throw new IllegalOperationException("conflict data with status");
         }
         return appointmentRepository.findAllByDoctorIdAndCriteria(doctorId, criteria);
+    }
+
+    @Override
+    public Appointment retrieveById(Long appId) {
+        return appointmentRepository.findById(appId)
+                .orElseThrow(() -> new ResourceDoesNotExistException("appointment with id " + appId + "doesn`t exist"));
     }
 
     private boolean validSearchCriteria(SearchAppointmentCriteria criteria) {

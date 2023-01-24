@@ -3,6 +3,7 @@ package solvd.laba.ermakovich.ha.web.controller;
 import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import solvd.laba.ermakovich.ha.domain.Appointment;
@@ -40,9 +41,10 @@ public class PatientController {
         return patientMapper.entityToDto(patient);
     }
 
+    @PreAuthorize("(hasRole('PATIENT') or hasRole('ADMIN')) and hasAccess(#patientId)")
     @PostMapping("/{patientId}/appointments")
     @ResponseStatus(HttpStatus.CREATED)
-    public AppointmentDto createAppointment(@PathVariable long patientId,
+    public AppointmentDto createAppointment(@PathVariable Long patientId,
                                @Validated({onCreateAppointment.class, Default.class})
                                @RequestBody AppointmentDto appointmentDto) {
         Appointment appointment = appointmentMapper.dtoToEntity(appointmentDto);
@@ -51,6 +53,7 @@ public class PatientController {
         return appointmentDto;
     }
 
+    @PreAuthorize("(hasRole('PATIENT') or hasRole('ADMIN')) and hasAccess(#patientId)")
     @GetMapping("/{patientId}/appointments")
     public List<AppointmentDto> getAppointmentByPatientIdAndCriteria(@PathVariable long patientId, SearchAppointmentCriteriaDto criteriaDto) {
         SearchAppointmentCriteria criteria = searchAppointmentCriteriaMapper.dtoToEntity(criteriaDto);

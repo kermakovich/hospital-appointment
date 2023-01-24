@@ -3,6 +3,7 @@ package solvd.laba.ermakovich.ha.web.controller;
 import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import solvd.laba.ermakovich.ha.domain.Appointment;
@@ -38,6 +39,7 @@ public class DoctorController {
     private final ReviewService reviewService;
     private final ReviewMapper reviewMapper;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public DoctorDto create(@Validated({onCreate.class, Default.class}) @RequestBody DoctorDto doctorDto) {
@@ -60,7 +62,7 @@ public class DoctorController {
         return availableSlotsMapper.entityToDto(availableSlots);
     }
 
-
+    @PreAuthorize("(hasRole('DOCTOR') or hasRole('ADMIN')) and hasAccess(#doctorId)")
     @GetMapping("/{doctorId}/appointments")
     public List<AppointmentDto> getAppointmentByDoctorAndCriteria(@PathVariable long doctorId, SearchAppointmentCriteriaDto criteriaDto) {
         SearchAppointmentCriteria criteria = searchAppointmentCriteriaMapper.dtoToEntity(criteriaDto);

@@ -6,6 +6,7 @@ import solvd.laba.ermakovich.ha.domain.UserInfo;
 import solvd.laba.ermakovich.ha.repository.UserRepository;
 
 import java.sql.*;
+import java.util.Optional;
 
 //@Repository
 @RequiredArgsConstructor
@@ -47,6 +48,11 @@ public class UserInfoRepositoryImpl implements UserRepository {
                 return rs.next();
             }
         }
+    }
+
+    @Override
+    public Optional<UserInfo> findByEmail(String email) {
+        return Optional.empty();
     }
 
 }

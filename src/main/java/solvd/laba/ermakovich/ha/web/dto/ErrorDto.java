@@ -1,9 +1,16 @@
 package solvd.laba.ermakovich.ha.web.dto;
 
-public record ErrorDto(String fieldName, String message) {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-    public ErrorDto(String message) {
-        this(null, message);
-    }
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class ErrorDto {
+
+    private String message;
 
 }

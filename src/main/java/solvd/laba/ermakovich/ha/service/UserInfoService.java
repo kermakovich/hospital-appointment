@@ -6,4 +6,6 @@ public interface UserInfoService {
 
     UserInfo create(UserInfo userInfo);
 
+    UserInfo findByEmail(String email);
+
 }

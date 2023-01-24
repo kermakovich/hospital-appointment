@@ -64,7 +64,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional(readOnly = true)
     public Review retrieveById(long reviewId) {
         return reviewRepository.findById(reviewId)
-                        .orElseThrow(() -> new ResourceDoesNotExistException("review", reviewId));
+                        .orElseThrow(() -> new ResourceDoesNotExistException("review with id: " + reviewId + "doesn`t exist"));
     }
 
 }

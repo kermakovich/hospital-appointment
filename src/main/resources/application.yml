@@ -9,11 +9,24 @@ spring:
       mode: always
   jackson:
     default-property-inclusion: NON_NULL
+  liquibase:
+    change-log: classpath:db/liquibaseConfig.yml
+    liquibase-schema: hospital
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration
+
+security:
+  jwt:
+    access: 5
+    refresh: 336
+    secret: c651749e8354adb09452a8ad14d4beadb7d57064d6cfb5c0e812bc30724458d187f43e58c22c30486303bbfc655391860952e92add87b5ce9e2ac7cdc612ad73
+
 hospital:
   hours:
     start: "08:00"
     finish: "20:00"
     minutes-range: 60
+
 mybatis:
   mapper-locations: classpath:mapper/*.xml
 

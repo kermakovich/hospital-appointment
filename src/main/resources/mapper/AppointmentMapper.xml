@@ -104,6 +104,34 @@
         </where>
     </select>
 
+    <select id="findById"  resultMap="appointmentMap">
+        SELECT
+        ap.id                                   as "appoint_id",
+        ap.date_time_start                      as "appoint_date_time_start",
+        pat.id                                  as "patient_id",
+        pat.name                                as "patient_name",
+        pat.surname                             as "patient_surname",
+        pat.fatherhood                          as "patient_fatherhood",
+        pat.email                               as "patient_email",
+        c.number                                as "patient_card_number",
+        c.reg_date                              as "patient_card_reg_date",
+        c.patient_id                            as "patient_card_id",
+        uid.id                                  as "doctor_id",
+        uid.name                                as "doctor_name",
+        uid.surname                             as "doctor_surname",
+        uid.fatherhood                          as "doctor_fatherhood",
+        uid.email                               as "doctor_email",
+        d.department                            as "doctor_department",
+        d.specialization                        as "doctor_specialization",
+        d.cabinet                               as "doctor_cabinet"
+        from appointments ap
+        LEFT join patient_cards c on ap.id_card = c.patient_id
+        LEFT JOIN doctors d on ap.id_doctor = d.user_id
+        join user_info pat on pat.id = ap.id_card
+        join user_info uid on uid.id = ap.id_doctor
+        WHERE ap.id = #{appId}
+    </select>
+
     <delete id="delete" parameterType="java.lang.Long">
         DELETE FROM appointments ap WHERE ap.id = #{id}
     </delete>

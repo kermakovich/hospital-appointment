@@ -3,10 +3,10 @@ package solvd.laba.ermakovich.ha.web.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import solvd.laba.ermakovich.ha.domain.Review;
-import solvd.laba.ermakovich.ha.repository.ReviewRepository;
 import solvd.laba.ermakovich.ha.service.ReviewService;
 import solvd.laba.ermakovich.ha.web.dto.ReviewDto;
 import solvd.laba.ermakovich.ha.web.dto.group.onCreateReview;
@@ -19,8 +19,8 @@ public class ReviewController {
 
     private final ReviewService reviewService;
     private final ReviewMapper reviewMapper;
-    private final ReviewRepository reviewMyBatisMapper;
 
+    @PreAuthorize("(hasRole('PATIENT') or hasRole('ADMIN')) and hasAccess(#reviewDto.patientDto.id)")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ReviewDto create(@RequestBody @Validated(onCreateReview.class) ReviewDto reviewDto) {
@@ -29,12 +29,14 @@ public class ReviewController {
         return reviewMapper.entityToDto(review);
     }
 
+    @PreAuthorize("(hasRole('PATIENT') or hasRole('ADMIN')) and hasAccessForReview(#reviewId)")
     @DeleteMapping("/{reviewId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable long reviewId) {
         reviewService.delete(reviewId);
     }
 
+    @PreAuthorize("(hasRole('PATIENT') or hasRole('ADMIN')) and hasAccessForReview(#reviewId)")
     @PutMapping("/{reviewId}")
     public ReviewDto update(@RequestBody @Valid ReviewDto reviewDto, @PathVariable long reviewId) {
         Review review = reviewMapper.dtoToEntity(reviewDto);
@@ -42,6 +44,7 @@ public class ReviewController {
         return reviewMapper.entityToDto(review);
     }
 
+    @PreAuthorize("(hasRole('PATIENT') or hasRole('ADMIN')) and hasAccessForReview(#reviewId)")
     @GetMapping("/{reviewId}")
     public ReviewDto get(@PathVariable long reviewId) {
         Review review = reviewService.retrieveById(reviewId);

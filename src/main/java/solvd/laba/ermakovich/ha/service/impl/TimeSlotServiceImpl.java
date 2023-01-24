@@ -29,7 +29,7 @@ public class TimeSlotServiceImpl implements TimeSlotService {
     @Transactional(readOnly = true)
     public AvailableSlots retrieveSchedule(long id, LocalDate date) {
         if (!doctorService.isExistById(id)) {
-            throw new ResourceDoesNotExistException("doctor", id);
+            throw new ResourceDoesNotExistException("doctor with id: " + id + "doesn`t exist");
         }
         int steps = (int) openingHours.start.until(openingHours.finish, ChronoUnit.HOURS);
         List<LocalTime> startTimeSlots = new java.util.ArrayList<>(
