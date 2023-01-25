@@ -5,8 +5,7 @@ import solvd.laba.ermakovich.ha.domain.UserInfo;
 import solvd.laba.ermakovich.ha.domain.hospital.Department;
 
 
-@Getter
-@Setter
+@Data
 public class Doctor extends UserInfo implements Cloneable {
 
     private Department department;

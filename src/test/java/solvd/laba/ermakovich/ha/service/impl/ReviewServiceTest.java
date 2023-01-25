@@ -39,7 +39,7 @@ class ReviewServiceTest {
     private ReviewServiceImpl reviewService;
 
     @Test
-    void verifyCreateSuccessTest() {
+    void verifyCreateSuccessfulTest() {
         Review expectedReview = getReview();
         given(reviewRepository.isExistByDoctorIdAndPatientId(anyLong(), anyLong())).willReturn(false);
         given(appointmentService.isExistPastByPatientIdAndDoctorId(anyLong(), anyLong())).willReturn(true);
@@ -107,7 +107,7 @@ class ReviewServiceTest {
     }
 
     @Test
-    void verifyRetrieveByIdSuccessTest() {
+    void verifyRetrieveByIdSuccessfulTest() {
         final long reviewId = 1L;
         given(reviewRepository.findById(anyLong())).willReturn(Optional.of(getReview()));
 

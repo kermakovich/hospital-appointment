@@ -24,7 +24,8 @@ class PatientCardServiceTest {
 
     @Test
     void verifyCreateByPatientIdTest() {
-        PatientCard patientCard = patientCardService.createByPatientId(1L);
+        final long patientId = 1L;
+        PatientCard patientCard = patientCardService.createByPatientId(patientId);
 
         assertNotNull(patientCard.getNumber(), "card number is null");
         assertNotNull(patientCard.getRegistryDate(), "registry date is null");

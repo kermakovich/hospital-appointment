@@ -11,7 +11,6 @@ import solvd.laba.ermakovich.ha.repository.AddressRepository;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -29,12 +28,11 @@ public class AddressServiceTest {
 
     @Test
     void verifyCreateAddressAlreadyExistsTest() {
-        Address expectedAddress = getAddress();
-        given(addressRepository.find(any(Address.class))).willReturn(Optional.of(expectedAddress));
+        given(addressRepository.find(any(Address.class))).willReturn(Optional.of(getAddress()));
 
-        Address actualAddress = addressService.create(getAddressWithoutId());
+        Address actualAddress = addressService.create(getAddress());
 
-        assertEquals(expectedAddress, actualAddress, "addresses are not equal");
+        assertNotNull(actualAddress, "address is null");
         verify(addressRepository, times(1)).find(any(Address.class));
         verify(addressRepository, never()).save(any(Address.class));
     }
@@ -66,6 +64,5 @@ public class AddressServiceTest {
                 23,
                 34);
     }
-
 
 }

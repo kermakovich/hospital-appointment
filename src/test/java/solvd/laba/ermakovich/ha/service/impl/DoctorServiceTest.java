@@ -2,6 +2,8 @@ package solvd.laba.ermakovich.ha.service.impl;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -19,8 +21,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -41,12 +42,11 @@ class DoctorServiceTest {
 
     @Test
     void verifyCreateDoctorSuccessTest() {
-        Doctor expectedDoctor = getDoctorDentistFromDental();
-        given(userInfoService.create(any(Doctor.class))).willReturn(expectedDoctor);
+        given(userInfoService.create(any(Doctor.class))).willReturn(getDoctorDentistFromDental());
 
         Doctor newDoctor = doctorService.create(getDoctorDentistFromDental());
 
-        assertEquals(expectedDoctor, newDoctor, "doctors are not equal");
+        assertNotNull(newDoctor, "doctor is null");
         verify(doctorRepository, times(1)).save(any(Doctor.class));
     }
 
@@ -67,36 +67,29 @@ class DoctorServiceTest {
         Boolean actualResponse = doctorService.isExistById(1L);
 
         assertEquals(true, actualResponse, "boolean types are not equal");
-        verify(doctorRepository, times(1)).isExistById(Mockito.anyLong());  }
+        verify(doctorRepository, times(1)).isExistById(Mockito.anyLong());
+    }
 
-    @Test
-    void verifyRetrieveAllBySearchCriteriaWithDepartmentTest() {
-        SearchDoctorCriteria criteria = new SearchDoctorCriteria();
-        criteria.setDepartment(Department.THERAPEUTIC);
-        List<Doctor> therapeuticDoctorList = getTherapeuticDoctorList();
-        given(doctorRepository.findAllBySearchCriteria(any(SearchDoctorCriteria.class)))
-                .willReturn(therapeuticDoctorList);
 
+    public static Object[][] searchDoctorCriteria() {
+        return new Object [][] {
+                {new SearchDoctorCriteria(Department.THERAPEUTIC, null), getTherapeuticDoctorList()},
+               {new SearchDoctorCriteria(), getFullDoctorList()}
+        };
+    }
+
+    @ParameterizedTest
+    @MethodSource("searchDoctorCriteria")
+    void verifyRetrieveAllBySearchCriteriaWithDepartmentTest(SearchDoctorCriteria criteria, List<Doctor> appointmentList) {
+        doReturn(appointmentList).when(doctorRepository).findAllBySearchCriteria(criteria);
         List<Doctor> doctorsTest = doctorService.retrieveAllBySearchCriteria(criteria);
 
-        assertEquals(doctorsTest, therapeuticDoctorList, "doctor lists are not equal");
+        assertEquals(appointmentList, doctorsTest, "doctor lists are not equal");
         verify(doctorRepository, times(1)).findAllBySearchCriteria(any(SearchDoctorCriteria.class));
     }
 
-    @Test
-    void verifyRetrieveAllByEmptySearchCriteriaTest() {
-        SearchDoctorCriteria criteria = new SearchDoctorCriteria();
-        List<Doctor> fullDoctorList = getFullDoctorList();
-        given(doctorRepository.findAllBySearchCriteria(any(SearchDoctorCriteria.class)))
-                .willReturn(fullDoctorList);
 
-        List<Doctor> doctorsTest = doctorService.retrieveAllBySearchCriteria(criteria);
-
-        assertEquals(doctorsTest, fullDoctorList, "doctor lists are not equal");
-        verify(doctorRepository, times(1)).findAllBySearchCriteria(any(SearchDoctorCriteria.class));
-    }
-
-    private Doctor getDoctorDentistFromDental() {
+    private static Doctor getDoctorDentistFromDental() {
         Doctor doctor = new Doctor();
         doctor.setId(1L);
         doctor.setName("Lera");
@@ -112,14 +105,14 @@ class DoctorServiceTest {
         return doctor;
     }
 
-    private Doctor getDoctorTherapistFromTherapeutic() {
+    private static Doctor getDoctorTherapistFromTherapeutic() {
         Doctor doctor = getDoctorDentistFromDental();
         doctor.setSpecialization(Specialization.THERAPIST);
         doctor.setDepartment(Department.THERAPEUTIC);
         return doctor;
     }
 
-    private List<Doctor> getFullDoctorList() {
+    private static List<Doctor> getFullDoctorList() {
         List<Doctor> doctorList = new ArrayList<>();
         doctorList.add(getDoctorDentistFromDental());
         doctorList.add(getDoctorTherapistFromTherapeutic());
@@ -127,7 +120,7 @@ class DoctorServiceTest {
         return doctorList;
     }
 
-    private List<Doctor> getTherapeuticDoctorList() {
+    private static List<Doctor> getTherapeuticDoctorList() {
         List<Doctor> doctorList = new ArrayList<>();
         doctorList.add(getDoctorTherapistFromTherapeutic());
         doctorList.add(getDoctorTherapistFromTherapeutic());

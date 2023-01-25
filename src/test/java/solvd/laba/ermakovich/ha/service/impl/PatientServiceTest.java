@@ -45,7 +45,7 @@ class PatientServiceTest {
 
 
     @Test
-    void verifyCreatePatientSuccessTest() {
+    void verifyCreatePatientSuccessfulTest() {
         Patient expectedPatient = getPatient();
         given(userInfoService.create(any(Patient.class))).willReturn(expectedPatient);
         given(addressService.create(any(Address.class))).willReturn(expectedPatient.getAddress());
@@ -58,7 +58,7 @@ class PatientServiceTest {
     }
 
     @Test
-    void verifyCreatePatientWithWrongRoleTest() {
+    void verifyCreatePatientWithDoctorRoleTest() {
         Patient patientWithWrongRole = getPatient();
         patientWithWrongRole.setRole(UserRole.DOCTOR);
 
@@ -69,9 +69,10 @@ class PatientServiceTest {
 
     @Test
     void verifyIsExistByIdTest() {
+        final long patientId = 1L;
         given(patientRepository.isExistById(anyLong())).willReturn(true);
 
-        Boolean actualResponse = patientService.isExistById(1L);
+        Boolean actualResponse = patientService.isExistById(patientId);
 
         assertEquals(true, actualResponse, "boolean types are not equal");
         verify(patientRepository, times(1)).isExistById(Mockito.anyLong());
@@ -80,20 +81,6 @@ class PatientServiceTest {
     private Patient getPatient() {
         Patient patient = new Patient();
         patient.setId(1L);
-        patient.setName("Lera");
-        patient.setSurname("Parova");
-        patient.setFatherhood("Valerievna");
-        patient.setBirthday(LocalDate.of(2001, 9, 23));
-        patient.setEmail("myemail@mail.ru");
-        patient.setRole(UserRole.PATIENT);
-        patient.setPassword("$2a$10$UmzxqbNCl9aBTtmkdAKajeXFrir6AHD6I3kE/MiLWU.W1RWLMvnYq");
-        patient.setAddress(new Address("minsk", "bogushevicha", 24, 56));
-        patient.setEmail("myemail@gmail.com");
-        return patient;
-    }
-
-    private Patient getPatientWithoutId() {
-        Patient patient = new Patient();
         patient.setName("Lera");
         patient.setSurname("Parova");
         patient.setFatherhood("Valerievna");

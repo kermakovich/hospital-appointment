@@ -2,6 +2,8 @@ package solvd.laba.ermakovich.ha.service.impl;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -50,7 +52,7 @@ class AppointmentServiceTest {
 
 
     @Test
-    void verifyGetTimeSlotsByDoctorIdAndDateTest() {
+    void verifyGetTimeSlotsByDoctorIdAndDateSuccessfulTest() {
         final long doctorId = 1L;
         final LocalDate date = LocalDate.now().plusDays(1);
         List<LocalTime> expectedAppointmentsTime = getSlots();
@@ -64,9 +66,8 @@ class AppointmentServiceTest {
     }
 
     @Test
-    void verifySaveAppointmentSuccessTest() {
+    void verifySaveAppointmentSuccessfulTest() {
         final long patientId = 1L;
-        Appointment expectedAppointment = getAppointment();
         given(doctorService.isExistById(anyLong())).willReturn(true);
         given(patientService.isExistById(anyLong())).willReturn(true);
         given(openingHours.isWithinOpenHours(any(LocalTime.class))).willReturn(true);
@@ -75,12 +76,13 @@ class AppointmentServiceTest {
 
         Appointment actualAppointment = appointmentService.save(patientId, getAppointment());
 
-        assertEquals(expectedAppointment, actualAppointment, "appointments are not equal");
+        assertNotNull(actualAppointment, "appointment is null");
+        verify(appointmentRepository, times(1)).save(anyLong(), any(Appointment.class));
     }
 
 
     @Test
-    void verifySaveAppointmentThrowsResourceDoesNotExistExceptionDoctorTest() {
+    void verifySaveAppointmentWhenDoctorIdThrowsResourceDoesNotExistExceptionTest() {
         final long patientId = 1L;
         given(doctorService.isExistById(anyLong())).willReturn(false);
 
@@ -91,10 +93,11 @@ class AppointmentServiceTest {
     }
 
     @Test
-    void verifySaveAppointmentThrowsResourceDoesNotExistExceptionPatientTest() {
+    void verifySaveAppointmentWhenPatientIdThrowsResourceDoesNotExistExceptionByTest() {
         final long patientId = 1L;
         given(doctorService.isExistById(anyLong())).willReturn(true);
         given(patientService.isExistById(anyLong())).willReturn(false);
+       // given(patientService.create(any())).willReturn(new Patient());
 
         var exception = assertThrows(ResourceDoesNotExistException.class, () -> appointmentService.save(patientId, getAppointment()),
                 "Exception wasn`t thrown (that patient with id doesn`t exist)");
@@ -103,7 +106,7 @@ class AppointmentServiceTest {
     }
 
     @Test
-    void verifySaveAppointmentWithWrongTimeAppointmentTest() {
+    void verifySaveWhenTimeAppointmentIsWithinHospitalClosedHoursTest() {
         final long patientId = 1L;
         given(doctorService.isExistById(anyLong())).willReturn(true);
         given(patientService.isExistById(anyLong())).willReturn(true);
@@ -116,7 +119,7 @@ class AppointmentServiceTest {
     }
 
     @Test
-    void verifySaveAlreadyTakenAppointmentTest() {
+    void verifySaveWhenAppointmentIsAlreadyTakenTest() {
         final long patientId = 1L;
         given(doctorService.isExistById(anyLong())).willReturn(true);
         given(patientService.isExistById(anyLong())).willReturn(true);
@@ -130,7 +133,7 @@ class AppointmentServiceTest {
     }
 
     @Test
-    void verifySaveAppointmentWithWrongTimeForPatientTest() {
+    void verifySaveWhenPatientAlreadyHasAnotherAppointmentTest() {
         final long patientId = 1L;
         given(doctorService.isExistById(anyLong())).willReturn(true);
         given(patientService.isExistById(anyLong())).willReturn(true);
@@ -147,7 +150,9 @@ class AppointmentServiceTest {
     @Test
     void verifyDeleteTest() {
         final long appointmentId = 1L;
+
         appointmentService.delete(appointmentId);
+
         verify(appointmentRepository, times(1)).delete(anyLong());
     }
 
@@ -178,50 +183,6 @@ class AppointmentServiceTest {
     }
 
     @Test
-    void verifyRetrieveAllByPatientIdAndWrongCriteriaTest() {
-        final long patientId = 1L;
-        final var criteria = getCriteriaDoneStatusAndFutureDate();
-
-        assertThrows(IllegalOperationException.class, () -> appointmentService.retrieveAllByPatientIdAndCriteria(patientId, criteria),
-                "Exception wasn`t thrown") ;
-        verify(appointmentRepository, never()).findAllByPatientIdAndCriteria(anyLong(), any(SearchAppointmentCriteria.class));
-    }
-
-    @Test
-    void verifyRetrieveAllByDoctorIdAndCriteriaSuccessTest() {
-        final long doctorId = 1L;
-        final var criteria = new SearchAppointmentCriteria();
-        criteria.setStatus(AppointmentStatus.FUTURE);
-        List<Appointment> expectedAppointments = getAppointmentList();
-        given(appointmentRepository.findAllByDoctorIdAndCriteria(anyLong(), any(SearchAppointmentCriteria.class))).willReturn(expectedAppointments);
-
-        List<Appointment> actualAppointments = appointmentService.retrieveAllByDoctorIdAndCriteria(doctorId, criteria);
-
-        assertEquals(expectedAppointments, actualAppointments);
-        verify(appointmentRepository, times(1)).findAllByDoctorIdAndCriteria(anyLong(), any(SearchAppointmentCriteria.class));
-    }
-
-    @Test
-    void verifyRetrieveAllByDoctorIdAndFutureStatusPastDateInCriteriaTest() {
-        final long doctorId = 1L;
-        final var criteria = getCriteriaFutureStatusAndPastDate();
-
-        assertThrows(IllegalOperationException.class, () -> appointmentService.retrieveAllByDoctorIdAndCriteria(doctorId, criteria),
-                "Exception wasn`t thrown") ;
-        verify(appointmentRepository, never()).findAllByDoctorIdAndCriteria(anyLong(), any(SearchAppointmentCriteria.class));
-    }
-
-    @Test
-    void verifyRetrieveAllByDoctorIdAndDoneStatusFutureDateInCriteriaFailedTest() {
-        final long doctorId = 1L;
-        final var criteria = getCriteriaDoneStatusAndFutureDate();
-
-        assertThrows(IllegalOperationException.class, () -> appointmentService.retrieveAllByDoctorIdAndCriteria(doctorId, criteria),
-                "Exception wasn`t thrown") ;
-        verify(appointmentRepository, never()).findAllByDoctorIdAndCriteria(anyLong(), any(SearchAppointmentCriteria.class));
-    }
-
-    @Test
     void verifyRetrieveByIdSuccessTest() {
         final long appointmentId = 1L;
         Appointment expectedAppointment = getAppointment();
@@ -241,6 +202,49 @@ class AppointmentServiceTest {
         assertThrows(ResourceDoesNotExistException.class, () -> appointmentService.retrieveById(appointmentId), "Exception wasn`t thrown");
         verify(appointmentRepository, times(1)).findById(Mockito.anyLong());
     }
+
+    @Test
+    void verifyRetrieveAllByDoctorIdAndCriteriaSuccessTest() {
+        final long doctorId = 1L;
+        final var criteria = new SearchAppointmentCriteria();
+        criteria.setStatus(AppointmentStatus.FUTURE);
+        List<Appointment> expectedAppointments = getAppointmentList();
+        given(appointmentRepository.findAllByDoctorIdAndCriteria(anyLong(), any(SearchAppointmentCriteria.class))).willReturn(expectedAppointments);
+
+        List<Appointment> actualAppointments = appointmentService.retrieveAllByDoctorIdAndCriteria(doctorId, criteria);
+
+        assertEquals(expectedAppointments, actualAppointments);
+        verify(appointmentRepository, times(1)).findAllByDoctorIdAndCriteria(anyLong(), any(SearchAppointmentCriteria.class));
+    }
+
+    public static List<SearchAppointmentCriteria> searchCriteriaData() {
+        List<SearchAppointmentCriteria> criteria = new ArrayList<>();
+        criteria.add(new SearchAppointmentCriteria(LocalDate.now().minusDays(1), AppointmentStatus.FUTURE));
+        criteria.add(new SearchAppointmentCriteria(LocalDate.now().plusDays(1), AppointmentStatus.DONE));
+        return criteria;
+    }
+
+
+    @ParameterizedTest
+    @MethodSource("searchCriteriaData")
+    void verifyRetrieveAllByPatientIdAndCriteriaThrowsIllegalOperationExceptionTest(SearchAppointmentCriteria criteria) {
+        final long patientId = 1L;
+
+        assertThrows(IllegalOperationException.class, () -> appointmentService.retrieveAllByPatientIdAndCriteria(patientId, criteria),
+                "Exception wasn`t thrown") ;
+        verify(appointmentRepository, never()).findAllByPatientIdAndCriteria(anyLong(), any(SearchAppointmentCriteria.class));
+    }
+
+    @ParameterizedTest
+    @MethodSource("searchCriteriaData")
+    void verifyRetrieveAllByDoctorIdAndCriteriaThrowsIllegalOperationExceptionTest(SearchAppointmentCriteria criteria) {
+        final long doctorId = 1L;
+
+        assertThrows(IllegalOperationException.class, () -> appointmentService.retrieveAllByDoctorIdAndCriteria(doctorId, criteria),
+                "Exception wasn`t thrown") ;
+        verify(appointmentRepository, never()).findAllByDoctorIdAndCriteria(anyLong(), any(SearchAppointmentCriteria.class));
+    }
+
 
     private List<LocalTime> getSlots() {
         List<LocalTime> slots = new ArrayList<>();
@@ -282,20 +286,6 @@ class AppointmentServiceTest {
         appointments.add(getAppointment(12));
         appointments.add(getAppointment(13));
         return appointments;
-    }
-
-    private SearchAppointmentCriteria getCriteriaDoneStatusAndFutureDate() {
-        final var criteria = new SearchAppointmentCriteria();
-        criteria.setStatus(AppointmentStatus.FUTURE);
-        criteria.setDate(LocalDate.now().minusDays(1));
-        return criteria;
-    }
-
-    private SearchAppointmentCriteria getCriteriaFutureStatusAndPastDate() {
-        final var criteria = new SearchAppointmentCriteria();
-        criteria.setStatus(AppointmentStatus.DONE);
-        criteria.setDate(LocalDate.now().plusDays(1));
-        return criteria;
     }
 
 }

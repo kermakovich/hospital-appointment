@@ -38,7 +38,7 @@ class UserInfoServiceTest {
 
 
     @Test
-    void verifyCreateUserInfoSuccessTest() {
+    void verifyCreateUserInfoSuccessfulTest() {
         UserInfo userInfoExpected = getUserInfoWithHashedPassword();
         given(userRepository.isExistByEmail(Mockito.anyString())).willReturn(false);
         given(encoder.encode(anyString())).willReturn(userInfoExpected.getPassword());
@@ -59,7 +59,7 @@ class UserInfoServiceTest {
     }
 
     @Test
-    void verifyFindByEmailSuccessTest() {
+    void verifyFindByEmailSuccessfulTest() {
         UserInfo userInfoExpected = getUserInfoWithHashedPassword();
         given(userRepository.findByEmail(Mockito.anyString())).willReturn(Optional.of(userInfoExpected));
 

@@ -46,7 +46,7 @@ class AuthServiceTest {
 
 
     @Test
-    void verifyLoginSuccessTest() {
+    void verifyLoginSuccessfulTest() {
         given(userInfoService.findByEmail(anyString())).willReturn(getUserInfo());
         given(encoder.matches(anyString(), anyString())).willReturn(true);
         given(jwtService.generateAccessToken(any(UserInfo.class))).willReturn(getJwtAccess());
@@ -58,7 +58,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void verifyLoginWithWrongPasswordTest() {
+    void verifyLoginThrowsAuthExceptionTest() {
         given(userInfoService.findByEmail(anyString())).willReturn(getUserInfo());
         given(encoder.matches(any(CharSequence.class), anyString())).willReturn(false);
 
@@ -68,7 +68,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void verifyRefreshSuccessTest() {
+    void verifyRefreshSuccessfulTest() {
         given(jwtService.parseToken(anyString())).willReturn(getJwtUserDetails());
         given(userInfoService.findByEmail(anyString())).willReturn(getUserInfo());
         given(jwtService.generateAccessToken(any(UserInfo.class))).willReturn(getJwtAccess());
@@ -80,7 +80,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void verifyRefreshWithWrongPasswordTest() {
+    void verifyRefreshThrowsAuthExceptionTest() {
         given(jwtService.parseToken(anyString())).willReturn(getJwtUserDetails());
         UserInfo wrongUserInfo = getUserInfo();
         wrongUserInfo.setPassword("123444");

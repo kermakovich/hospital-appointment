@@ -41,13 +41,15 @@ class TimeSlotServiceTest {
 
     @Test
     void verifyRetrieveScheduleSuccessWithOneExistsAppointmentTest() {
+        final long doctorId = 1L;
+        final LocalDate futureDate = LocalDate.now().plusDays(1);
         given(doctorService.isExistById(anyLong())).willReturn(true);
         ReflectionTestUtils.setField(openingHours, "start", LocalTime.of(8,0));
         ReflectionTestUtils.setField(openingHours, "finish", LocalTime.of(20,0));
         ReflectionTestUtils.setField(openingHours, "minutesRange", 60);
         given(appointmentService.getTimeSlotsByDoctorIdAndDate(anyLong(), any())).willReturn(getTimeSlot(9));
 
-        AvailableSlots availableSlots = timeSlotService.retrieveSchedule(1, LocalDate.now().plusDays(1));
+        AvailableSlots availableSlots = timeSlotService.retrieveSchedule(doctorId, futureDate);
 
         assertEquals(getSlotsWithoutOneSlot(), availableSlots.getTimeList(), "slots are not equal");
     }
