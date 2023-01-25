@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import solvd.laba.ermakovich.ha.domain.Address;
 import solvd.laba.ermakovich.ha.domain.Patient;
-import solvd.laba.ermakovich.ha.domain.UserInfo;
 import solvd.laba.ermakovich.ha.domain.UserRole;
 import solvd.laba.ermakovich.ha.domain.exception.IllegalOperationException;
 import solvd.laba.ermakovich.ha.repository.PatientRepository;
@@ -28,14 +27,13 @@ public class PatientServiceImpl implements PatientService {
     @Override
     @Transactional
     public Patient create(Patient patient) {
-        UserInfo userInfo = userInfoMapper.mapToUserInfo(patient);
-        if (!userInfo.getRole().equals(UserRole.PATIENT)) {
+        if (!UserRole.PATIENT.equals(patient.getRole())) {
             throw new IllegalOperationException("Patient has wrong role");
         }
-        userInfoService.create(userInfo);
+        userInfoService.create(patient);
         Address address = addressService.create(patient.getAddress());
         patient.setAddress(address);
-        patient.setId(userInfo.getId());
+        patient.setId(patient.getId());
         patientRepository.save(patient);
         patientCardService.createByPatientId(patient.getId());
         return patient;

@@ -6,7 +6,11 @@ import java.time.LocalDate;
 
 @Setter
 @Getter
-public class UserInfo {
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode
+
+public class UserInfo implements Cloneable{
 
     private Long id;
     private String name;

@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import solvd.laba.ermakovich.ha.domain.UserInfo;
 import solvd.laba.ermakovich.ha.domain.jwt.JwtAccess;
+import solvd.laba.ermakovich.ha.domain.jwt.Refresh;
 import solvd.laba.ermakovich.ha.service.JwtService;
 import solvd.laba.ermakovich.ha.service.UserInfoService;
 import solvd.laba.ermakovich.ha.service.property.JwtProperties;
@@ -57,14 +58,15 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public String generateRefreshToken(UserInfo user) {
+    public Refresh generateRefreshToken(UserInfo user) {
         final Instant refreshExpiration = Instant.now().plus(jwtProperties.getRefresh(), ChronoUnit.HOURS);
-        return Jwts.builder()
+        String token = Jwts.builder()
                 .setSubject(user.getEmail())
                 .claim("password", user.getPassword())
                 .setExpiration(java.util.Date.from(refreshExpiration))
                 .signWith(SignatureAlgorithm.HS512, jwtProperties.getSecret())
                 .compact();
+        return new Refresh(token);
     }
 
     @Override

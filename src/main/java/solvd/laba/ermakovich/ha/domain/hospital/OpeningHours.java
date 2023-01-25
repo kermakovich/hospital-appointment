@@ -15,7 +15,7 @@ public class OpeningHours {
 
     public final LocalTime start;
     public final LocalTime finish;
-    public final long minutesRange;
+    public final Integer minutesRange;
 
     public boolean isWithinOpenHours(LocalTime time) {
             return (time.isAfter(start) || time.equals(start)) && time.isBefore(finish);

@@ -29,7 +29,7 @@ public class AuthServiceImpl implements AuthService {
             throw new AuthException("wrong password");
         }
         final JwtAccess access = jwtService.generateAccessToken(user);
-        final String refreshToken = jwtService.generateRefreshToken(user);
+        final Refresh refreshToken = jwtService.generateRefreshToken(user);
         return new JwtResponse(access, refreshToken);
     }
 
@@ -42,7 +42,7 @@ public class AuthServiceImpl implements AuthService {
             throw new AuthException("wrong password");
         }
         final JwtAccess access = jwtService.generateAccessToken(user);
-        final String newRefreshToken = jwtService.generateRefreshToken(user);
+        final Refresh newRefreshToken = jwtService.generateRefreshToken(user);
         return new JwtResponse(access, newRefreshToken);
         }
     }

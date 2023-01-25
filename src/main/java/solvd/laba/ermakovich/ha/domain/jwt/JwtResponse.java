@@ -1,15 +1,14 @@
 package solvd.laba.ermakovich.ha.domain.jwt;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+
 @AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class JwtResponse {
 
     private JwtAccess access;
-    private String refresh;
+    private Refresh refresh;
 
 }

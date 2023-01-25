@@ -23,8 +23,8 @@ public class UserInfoServiceImpl implements UserInfoService {
         if (userRepository.isExistByEmail(userInfo.getEmail())) {
             throw new ResourceAlreadyExistsException(" User with this email: " + userInfo.getEmail() + " already exist");
         }
-    userInfo.setPassword(hashPassword(userInfo.getPassword()));
-    userRepository.save(userInfo);
+        userInfo.setPassword(hashPassword(userInfo.getPassword()));
+        userRepository.save(userInfo);
         return userInfo;
     }
 
