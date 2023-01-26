@@ -31,7 +31,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
 class ReviewServiceTest {
 
     @Mock
@@ -71,6 +70,7 @@ class ReviewServiceTest {
 
     @ParameterizedTest
     @MethodSource("getReviewData")
+    @MockitoSettings(strictness = Strictness.LENIENT)
     void verifyCreateThrowsIllegalOperationExceptionTest(Boolean[] booleans, Class<Exception> exceptionClass) {
         Review expectedReview = getReview();
         given(reviewRepository.isExistByDoctorIdAndPatientId(anyLong(), anyLong())).willReturn(booleans[0]);

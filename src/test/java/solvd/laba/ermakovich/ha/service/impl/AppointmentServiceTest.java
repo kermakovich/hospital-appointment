@@ -36,7 +36,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
 class AppointmentServiceTest {
 
     @Mock
@@ -104,6 +103,7 @@ class AppointmentServiceTest {
 
     @ParameterizedTest
     @MethodSource("getAppointmentData")
+    @MockitoSettings(strictness = Strictness.LENIENT)
     void verifyCreateThrowsPatientAlreadyHasAnotherAppointmentTest(Boolean[] booleans, Class<Exception> exceptionClass, String message) {
         final long patientId = 1L;
         given(doctorService.isExistById(anyLong())).willReturn(booleans[0]);
