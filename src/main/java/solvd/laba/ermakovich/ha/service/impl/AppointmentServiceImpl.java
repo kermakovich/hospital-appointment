@@ -35,7 +35,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     @Transactional
-    public Appointment save(long patientId, Appointment appointment) {
+    public Appointment create(long patientId, Appointment appointment) {
         if (!doctorService.isExistById(appointment.getDoctor().getId())) {
             throw new ResourceDoesNotExistException("doctor with id: " + appointment.getDoctor().getId() + "doesn`t exist");
         }

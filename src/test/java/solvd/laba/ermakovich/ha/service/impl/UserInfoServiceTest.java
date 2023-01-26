@@ -38,7 +38,7 @@ class UserInfoServiceTest {
 
 
     @Test
-    void verifyCreateUserInfoSuccessfulTest() {
+    void verifyCreateSuccessfulTest() {
         UserInfo userInfoExpected = getUserInfoWithHashedPassword();
         given(userRepository.isExistByEmail(Mockito.anyString())).willReturn(false);
         given(encoder.encode(anyString())).willReturn(userInfoExpected.getPassword());
@@ -51,7 +51,7 @@ class UserInfoServiceTest {
     }
 
     @Test
-    void verifyCreateUserInfoThrowsResourceAlreadyExistsExceptionTest() {
+    void verifyCreateThrowsResourceAlreadyExistsExceptionTest() {
         given(userRepository.isExistByEmail(Mockito.anyString())).willReturn(true);
 
         assertThrows(ResourceAlreadyExistsException.class, () -> userInfoService.create(getUserInfo()),

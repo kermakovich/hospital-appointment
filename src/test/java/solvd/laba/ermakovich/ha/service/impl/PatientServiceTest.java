@@ -58,7 +58,7 @@ class PatientServiceTest {
     }
 
     @Test
-    void verifyCreatePatientWithDoctorRoleTest() {
+    void verifyCreateThrowsIllegalOperationExceptionTest() {
         Patient patientWithWrongRole = getPatient();
         patientWithWrongRole.setRole(UserRole.DOCTOR);
 

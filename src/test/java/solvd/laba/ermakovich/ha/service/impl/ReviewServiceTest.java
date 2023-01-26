@@ -2,9 +2,13 @@ package solvd.laba.ermakovich.ha.service.impl;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import solvd.laba.ermakovich.ha.domain.Patient;
 import solvd.laba.ermakovich.ha.domain.Review;
 import solvd.laba.ermakovich.ha.domain.doctor.Doctor;
@@ -27,6 +31,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class ReviewServiceTest {
 
     @Mock
@@ -40,33 +45,30 @@ class ReviewServiceTest {
 
     @Test
     void verifyCreateSuccessfulTest() {
-        Review expectedReview = getReview();
         given(reviewRepository.isExistByDoctorIdAndPatientId(anyLong(), anyLong())).willReturn(false);
         given(appointmentService.isExistPastByPatientIdAndDoctorId(anyLong(), anyLong())).willReturn(true);
 
-        Review actualReview = reviewService.create(expectedReview);
+        Review actualReview = reviewService.create(getReview());
 
-        assertEquals(expectedReview, actualReview);
+        assertNotNull(actualReview);
         verify(reviewRepository, times(1)).save(any(Review.class));
     }
 
-    @Test
-    void verifyCreateThrowsResourceAlreadyExistsExceptionTest() {
-        Review expectedReview = getReview();
-        given(reviewRepository.isExistByDoctorIdAndPatientId(anyLong(), anyLong())).willReturn(true);
-
-        assertThrows(ResourceAlreadyExistsException.class, () -> reviewService.create(expectedReview),
-                "Exception wasn`t thrown");
-        verify(reviewRepository, never()).save(any(Review.class));
+    public static Object[][] getReviewData() {
+        return new Object[][] {
+                {new Boolean[] {true, false}, ResourceAlreadyExistsException.class},
+                {new Boolean[] {false, false}, IllegalOperationException.class, "patient with id"}
+        };
     }
 
-    @Test
-    void verifyCreateThrowsIllegalOperationExceptionTest() {
+    @ParameterizedTest
+    @MethodSource("getReviewData")
+    void verifyCreateThrowsIllegalOperationExceptionTest(Boolean[] booleans, Class<Exception> exceptionClass) {
         Review expectedReview = getReview();
-        given(reviewRepository.isExistByDoctorIdAndPatientId(anyLong(), anyLong())).willReturn(false);
-        given(appointmentService.isExistPastByPatientIdAndDoctorId(anyLong(), anyLong())).willReturn(false);
+        given(reviewRepository.isExistByDoctorIdAndPatientId(anyLong(), anyLong())).willReturn(booleans[0]);
+        given(appointmentService.isExistPastByPatientIdAndDoctorId(anyLong(), anyLong())).willReturn(booleans[1]);
 
-        assertThrows(IllegalOperationException.class, () -> reviewService.create(expectedReview),
+        assertThrows(exceptionClass, () -> reviewService.create(expectedReview),
                 "Exception wasn`t thrown");
         verify(reviewRepository, never()).save(any(Review.class));
     }
@@ -102,18 +104,19 @@ class ReviewServiceTest {
         Review updatedReview = reviewService.update(reviewId, newReview);
 
         assertNotNull(updatedReview, "review is null");
-        assertEquals(updatedReview.getDescription(), newReview.getDescription());
+        assertEquals(updatedReview.getDescription(), newReview.getDescription(), "descriptions are not equal");
         verify(reviewRepository, times(1)).update(any(Review.class));
     }
 
     @Test
     void verifyRetrieveByIdSuccessfulTest() {
         final long reviewId = 1L;
-        given(reviewRepository.findById(anyLong())).willReturn(Optional.of(getReview()));
+        final Review expectedReview = getReview();
+        given(reviewRepository.findById(anyLong())).willReturn(Optional.of(expectedReview));
 
         Review actualReview = reviewService.retrieveById(reviewId);
 
-        assertNotNull(actualReview, "review is null");
+        assertEquals(expectedReview, actualReview, "reviews are not equal");
         verify(reviewRepository, times(1)).findById(anyLong());
     }
 

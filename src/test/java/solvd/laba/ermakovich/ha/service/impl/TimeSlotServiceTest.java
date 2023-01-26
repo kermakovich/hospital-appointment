@@ -40,7 +40,7 @@ class TimeSlotServiceTest {
 
 
     @Test
-    void verifyRetrieveScheduleSuccessWithOneExistsAppointmentTest() {
+    void verifyRetrieveScheduleWithOneExistingAppointmentSuccessfulTest() {
         final long doctorId = 1L;
         final LocalDate futureDate = LocalDate.now().plusDays(1);
         given(doctorService.isExistById(anyLong())).willReturn(true);

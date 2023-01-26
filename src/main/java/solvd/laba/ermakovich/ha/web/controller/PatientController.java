@@ -59,7 +59,7 @@ public class PatientController {
                                @Validated({onCreateAppointment.class, Default.class})
                                @RequestBody AppointmentDto appointmentDto) {
         Appointment appointment = appointmentMapper.dtoToEntity(appointmentDto);
-        appointmentService.save(patientId, appointment);
+        appointmentService.create(patientId, appointment);
         appointmentDto = appointmentMapper.entityToDto(appointment);
         return appointmentDto;
     }

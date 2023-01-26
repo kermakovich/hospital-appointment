@@ -41,7 +41,7 @@ class DoctorServiceTest {
 
 
     @Test
-    void verifyCreateDoctorSuccessTest() {
+    void verifyCreateSuccessfulTest() {
         given(userInfoService.create(any(Doctor.class))).willReturn(getDoctorDentistFromDental());
 
         Doctor newDoctor = doctorService.create(getDoctorDentistFromDental());
@@ -51,7 +51,7 @@ class DoctorServiceTest {
     }
 
     @Test
-    void verifyCreateDoctorWithWrongRoleTest() {
+    void verifyCreateThrowsIllegalOperationExceptionTest() {
         Doctor doctorWithWrongRole = getDoctorDentistFromDental();
         doctorWithWrongRole.setRole(UserRole.PATIENT);
 
@@ -71,16 +71,17 @@ class DoctorServiceTest {
     }
 
 
-    public static Object[][] searchDoctorCriteria() {
+    public static Object[][] getSearchDoctorCriteria() {
         return new Object [][] {
                 {new SearchDoctorCriteria(Department.THERAPEUTIC, null), getTherapeuticDoctorList()},
-               {new SearchDoctorCriteria(), getFullDoctorList()}
+                {new SearchDoctorCriteria(Department.THERAPEUTIC, Specialization.THERAPIST), getTherapeuticDoctorList()},
+                {new SearchDoctorCriteria(), getFullDoctorList()}
         };
     }
 
     @ParameterizedTest
-    @MethodSource("searchDoctorCriteria")
-    void verifyRetrieveAllBySearchCriteriaWithDepartmentTest(SearchDoctorCriteria criteria, List<Doctor> appointmentList) {
+    @MethodSource("getSearchDoctorCriteria")
+    void verifyRetrieveAllBySearchCriteriaTest(SearchDoctorCriteria criteria, List<Doctor> appointmentList) {
         doReturn(appointmentList).when(doctorRepository).findAllBySearchCriteria(criteria);
         List<Doctor> doctorsTest = doctorService.retrieveAllBySearchCriteria(criteria);
 

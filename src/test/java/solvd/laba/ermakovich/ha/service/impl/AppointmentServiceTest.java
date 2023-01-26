@@ -8,6 +8,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import solvd.laba.ermakovich.ha.domain.Appointment;
 import solvd.laba.ermakovich.ha.domain.AppointmentStatus;
 import solvd.laba.ermakovich.ha.domain.SearchAppointmentCriteria;
@@ -33,6 +35,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class AppointmentServiceTest {
 
     @Mock
@@ -66,7 +69,7 @@ class AppointmentServiceTest {
     }
 
     @Test
-    void verifySaveAppointmentSuccessfulTest() {
+    void verifyCreateAppointmentSuccessfulTest() {
         final long patientId = 1L;
         given(doctorService.isExistById(anyLong())).willReturn(true);
         given(patientService.isExistById(anyLong())).willReturn(true);
@@ -74,77 +77,36 @@ class AppointmentServiceTest {
         given(appointmentRepository.isExistByDoctorIdAndTime(any(Appointment.class))).willReturn(false);
         given(appointmentRepository.isExistByPatientIdAndTime(anyLong(), any(Appointment.class))).willReturn(false);
 
-        Appointment actualAppointment = appointmentService.save(patientId, getAppointment());
+        Appointment actualAppointment = appointmentService.create(patientId, getAppointment());
 
         assertNotNull(actualAppointment, "appointment is null");
         verify(appointmentRepository, times(1)).save(anyLong(), any(Appointment.class));
     }
 
-
-    @Test
-    void verifySaveAppointmentWhenDoctorIdThrowsResourceDoesNotExistExceptionTest() {
-        final long patientId = 1L;
-        given(doctorService.isExistById(anyLong())).willReturn(false);
-
-        var exception = assertThrows(ResourceDoesNotExistException.class, () -> appointmentService.save(patientId, getAppointment()),
-                "Exception wasn`t thrown (that doctor with id doesn`t exist)");
-        String expectedMessage = "doctor with id";
-        assertTrue(exception.getMessage().contains(expectedMessage), "ResourceDoesNotExistException was thrown with wrong message");
+    public static Object[][] getAppointmentData() {
+        return new Object[][] {
+                {new Boolean[] {false, false, false, false, false}, ResourceDoesNotExistException.class, "doctor with id"},
+                {new Boolean[] {true, false, false, false, false}, ResourceDoesNotExistException.class, "patient with id"},
+                {new Boolean[] {true, true, false, false, false}, IllegalOperationException.class, "Hospital is closed at this time"},
+                {new Boolean[] {true, true, true, true, false}, IllegalOperationException.class, "Appointment is taken"},
+                {new Boolean[] {true, true, true, false, true}, IllegalOperationException.class, "Patient already has another appointment"}
+        };
     }
 
-    @Test
-    void verifySaveAppointmentWhenPatientIdThrowsResourceDoesNotExistExceptionByTest() {
+    @ParameterizedTest
+    @MethodSource("getAppointmentData")
+    void verifyCreateThrowsPatientAlreadyHasAnotherAppointmentTest(Boolean[] booleans, Class<Exception> exceptionClass, String message) {
         final long patientId = 1L;
-        given(doctorService.isExistById(anyLong())).willReturn(true);
-        given(patientService.isExistById(anyLong())).willReturn(false);
-       // given(patientService.create(any())).willReturn(new Patient());
+        given(doctorService.isExistById(anyLong())).willReturn(booleans[0]);
+        given(patientService.isExistById(anyLong())).willReturn(booleans[1]);
+        given(openingHours.isWithinOpenHours(any(LocalTime.class))).willReturn(booleans[2]);
+        given(appointmentRepository.isExistByDoctorIdAndTime(any(Appointment.class))).willReturn(booleans[3]);
+        given(appointmentRepository.isExistByPatientIdAndTime(anyLong(), any(Appointment.class))).willReturn(booleans[4]);
 
-        var exception = assertThrows(ResourceDoesNotExistException.class, () -> appointmentService.save(patientId, getAppointment()),
-                "Exception wasn`t thrown (that patient with id doesn`t exist)");
-        String expectedMessage = "patient with id";
-        assertTrue(exception.getMessage().contains(expectedMessage), "ResourceDoesNotExistException was thrown with wrong message");
-    }
+        var exception = assertThrows(exceptionClass, () -> appointmentService.create(patientId, getAppointment()),
+                "Exception wasn`t thrown");
 
-    @Test
-    void verifySaveWhenTimeAppointmentIsWithinHospitalClosedHoursTest() {
-        final long patientId = 1L;
-        given(doctorService.isExistById(anyLong())).willReturn(true);
-        given(patientService.isExistById(anyLong())).willReturn(true);
-        given(openingHours.isWithinOpenHours(any(LocalTime.class))).willReturn(false);
-
-        var exception = assertThrows(IllegalOperationException.class, () -> appointmentService.save(patientId, getAppointment()),
-                "Exception wasn`t thrown (that hospital is closed at this time)");
-        String expectedMessage = "Hospital is closed at this time";
-        assertTrue(exception.getMessage().contains(expectedMessage), "IllegalOperationException was thrown with wrong message");
-    }
-
-    @Test
-    void verifySaveWhenAppointmentIsAlreadyTakenTest() {
-        final long patientId = 1L;
-        given(doctorService.isExistById(anyLong())).willReturn(true);
-        given(patientService.isExistById(anyLong())).willReturn(true);
-        given(openingHours.isWithinOpenHours(any(LocalTime.class))).willReturn(true);
-        given(appointmentRepository.isExistByDoctorIdAndTime(any(Appointment.class))).willReturn(true);
-
-        var exception = assertThrows(IllegalOperationException.class, () -> appointmentService.save(patientId, getAppointment()),
-                "Exception wasn`t thrown (that appointment is taken)");
-        String expectedMessage = "Appointment is taken";
-        assertTrue(exception.getMessage().contains(expectedMessage), "IllegalOperationException was thrown with wrong message");
-    }
-
-    @Test
-    void verifySaveWhenPatientAlreadyHasAnotherAppointmentTest() {
-        final long patientId = 1L;
-        given(doctorService.isExistById(anyLong())).willReturn(true);
-        given(patientService.isExistById(anyLong())).willReturn(true);
-        given(openingHours.isWithinOpenHours(any(LocalTime.class))).willReturn(true);
-        given(appointmentRepository.isExistByDoctorIdAndTime(any(Appointment.class))).willReturn(false);
-        given(appointmentRepository.isExistByPatientIdAndTime(anyLong(), any(Appointment.class))).willReturn(true);
-
-        var exception = assertThrows(IllegalOperationException.class, () -> appointmentService.save(patientId, getAppointment()),
-                "Exception wasn`t thrown (that patient already has another appointment)");
-        String expectedMessage = "Patient already has another appointment";
-        assertTrue(exception.getMessage().contains(expectedMessage), "IllegalOperationException was thrown with wrong message");
+        assertTrue(exception.getMessage().contains(message), "exception was thrown with wrong message");
     }
 
     @Test
@@ -169,7 +131,7 @@ class AppointmentServiceTest {
     }
 
     @Test
-    void verifyRetrieveAllByPatientIdAndCriteriaSuccessTest() {
+    void verifyRetrieveAllByPatientIdAndCriteriaSuccessfulTest() {
         final long patientId = 1L;
         final var criteria = new SearchAppointmentCriteria();
         criteria.setStatus(AppointmentStatus.FUTURE);
@@ -178,12 +140,12 @@ class AppointmentServiceTest {
 
         List<Appointment> actualAppointments = appointmentService.retrieveAllByPatientIdAndCriteria(patientId, criteria);
 
-        assertEquals(expectedAppointments, actualAppointments);
+        assertEquals(expectedAppointments, actualAppointments, "lists are not equal");
         verify(appointmentRepository, times(1)).findAllByPatientIdAndCriteria(anyLong(), any(SearchAppointmentCriteria.class));
     }
 
     @Test
-    void verifyRetrieveByIdSuccessTest() {
+    void verifyRetrieveByIdSuccessfulTest() {
         final long appointmentId = 1L;
         Appointment expectedAppointment = getAppointment();
         given(appointmentRepository.findById(anyLong())).willReturn(Optional.of(expectedAppointment));
@@ -195,7 +157,7 @@ class AppointmentServiceTest {
     }
 
     @Test
-    void verifyRetrieveThrowsResourceDoesNotExistExceptionTest() {
+    void verifyRetrieveByIdThrowsResourceDoesNotExistExceptionTest() {
         final long appointmentId = 1L;
         given(appointmentRepository.findById(anyLong())).willReturn(Optional.empty());
 
@@ -204,7 +166,7 @@ class AppointmentServiceTest {
     }
 
     @Test
-    void verifyRetrieveAllByDoctorIdAndCriteriaSuccessTest() {
+    void verifyRetrieveAllByDoctorIdAndCriteriaSuccessfulTest() {
         final long doctorId = 1L;
         final var criteria = new SearchAppointmentCriteria();
         criteria.setStatus(AppointmentStatus.FUTURE);
@@ -223,7 +185,6 @@ class AppointmentServiceTest {
         criteria.add(new SearchAppointmentCriteria(LocalDate.now().plusDays(1), AppointmentStatus.DONE));
         return criteria;
     }
-
 
     @ParameterizedTest
     @MethodSource("searchCriteriaData")
