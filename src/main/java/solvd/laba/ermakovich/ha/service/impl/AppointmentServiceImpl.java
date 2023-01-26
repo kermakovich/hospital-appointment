@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import solvd.laba.ermakovich.ha.domain.Appointment;
 import solvd.laba.ermakovich.ha.domain.AppointmentStatus;
+import solvd.laba.ermakovich.ha.domain.PatientCard;
 import solvd.laba.ermakovich.ha.domain.SearchAppointmentCriteria;
 import solvd.laba.ermakovich.ha.domain.exception.IllegalOperationException;
 import solvd.laba.ermakovich.ha.domain.exception.ResourceDoesNotExistException;
@@ -54,6 +55,9 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
 
         appointmentRepository.save(patientId, appointment);
+        PatientCard patientCard = new PatientCard();
+        patientCard.setId(patientId);
+        appointment.setPatientCard(patientCard);
         return appointment;
     }
 

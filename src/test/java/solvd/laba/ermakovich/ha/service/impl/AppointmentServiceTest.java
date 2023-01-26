@@ -75,9 +75,6 @@ class AppointmentServiceTest {
         final long appointmentId = 1L;
         Appointment expectedAppointment = getAppointment();
         expectedAppointment.setId(appointmentId);
-        PatientCard patientCard = new PatientCard();
-        patientCard.setId(patientId);
-        expectedAppointment.setPatientCard(patientCard);
         given(doctorService.isExistById(anyLong())).willReturn(true);
         given(patientService.isExistById(anyLong())).willReturn(true);
         given(openingHours.isWithinOpenHours(any(LocalTime.class))).willReturn(true);
@@ -86,9 +83,6 @@ class AppointmentServiceTest {
         doAnswer((invocation)-> {
             Appointment appointment = invocation.getArgument(1);
             appointment.setId(appointmentId);
-            PatientCard patientCardRep = new PatientCard();
-            patientCardRep.setId(patientId);
-            appointment.setPatientCard(patientCardRep);
             return null;
         }).when(appointmentRepository).save(anyLong(), any(Appointment.class));
 
@@ -190,7 +184,7 @@ class AppointmentServiceTest {
 
         List<Appointment> actualAppointments = appointmentService.retrieveAllByDoctorIdAndCriteria(doctorId, criteria);
 
-        assertEquals(expectedAppointments, actualAppointments);
+        assertEquals(expectedAppointments, actualAppointments, "lists are not equal");
         verify(appointmentRepository, times(1)).findAllByDoctorIdAndCriteria(anyLong(), any(SearchAppointmentCriteria.class));
     }
 
@@ -236,12 +230,14 @@ class AppointmentServiceTest {
 
     private Appointment getAppointment() {
         Appointment appointment = new Appointment();
-        appointment.setId(1L);
         appointment.setStart(LocalDateTime.of(LocalDate.of(2028, 1, 4),
                             LocalTime.of(12, 0)));
         Doctor doctor = new Doctor();
         doctor.setId(1L);
         appointment.setDoctor(doctor);
+        PatientCard patientCard = new PatientCard();
+        patientCard.setId(1L);
+        appointment.setPatientCard(patientCard);
         return appointment;
     }
 

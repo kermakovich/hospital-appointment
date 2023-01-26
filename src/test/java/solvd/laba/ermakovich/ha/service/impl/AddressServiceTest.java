@@ -48,7 +48,7 @@ public class AddressServiceTest {
         doAnswer((invocation)-> {
             Address address = invocation.getArgument(0);
             address.setId(addressId);
-            return address;
+            return null;
         }).when(addressRepository).save(any(Address.class));
 
         Address actualAddress = addressService.create(getAddress());

@@ -51,7 +51,7 @@ class UserInfoServiceTest {
 
         UserInfo actualUser = userInfoService.create(getUserInfo());
 
-        assertEquals(actualUser, expectedUserInfo, "users are not equal");
+        assertEquals(expectedUserInfo, actualUser, "users are not equal");
         verify(userRepository, times(1)).isExistByEmail(anyString());
         verify(userRepository, times(1)).save(any(UserInfo.class));
     }
@@ -71,7 +71,7 @@ class UserInfoServiceTest {
 
         UserInfo foundedUser = userInfoService.findByEmail(getUserInfo().getEmail());
 
-        assertEquals(foundedUser, expectedUserInfo, "users are not equal");
+        assertEquals(expectedUserInfo, foundedUser, "users are not equal");
         verify(userRepository, times(1)).findByEmail(anyString());
     }
 
@@ -84,27 +84,27 @@ class UserInfoServiceTest {
     }
 
     private UserInfo getUserInfo() {
-        return new UserInfo(
-                1L,
-                "name",
-                "surname",
-                "fatherhood",
-                LocalDate.of(2001, 1, 1),
-                "email",
-                "1234",
-                UserRole.PATIENT );
+        UserInfo userInfo = new UserInfo();
+        userInfo.setName("name");
+        userInfo.setSurname("surname");
+        userInfo.setFatherhood( "fatherhood");
+        userInfo.setBirthday(LocalDate.of(2001, 1, 1));
+        userInfo.setEmail("email");
+        userInfo.setPassword("1234");
+        userInfo.setRole(UserRole.PATIENT);
+        return userInfo;
     }
 
     private UserInfo getUserInfoWithHashedPassword() {
-        return new UserInfo(
-                1L,
-                "name",
-                "surname",
-                "fatherhood",
-                LocalDate.of(2001, 1, 1),
-                "email",
-                "$2a$10$UmzxqbNCl9aBTtmkdAKajeXFrir6AHD6I3kE/MiLWU.W1RWLMvnYq",
-                UserRole.PATIENT );
+        UserInfo userInfo = new UserInfo();
+        userInfo.setName("name");
+        userInfo.setSurname("surname");
+        userInfo.setFatherhood( "fatherhood");
+        userInfo.setBirthday(LocalDate.of(2001, 1, 1));
+        userInfo.setEmail("email");
+        userInfo.setPassword("$2a$10$UmzxqbNCl9aBTtmkdAKajeXFrir6AHD6I3kE/MiLWU.W1RWLMvnYq");
+        userInfo.setRole(UserRole.PATIENT);
+        return userInfo;
     }
 
 }
