@@ -46,10 +46,18 @@ class PatientServiceTest {
 
     @Test
     void verifyCreatePatientSuccessfulTest() {
+        final long patientId = 1L;
         Patient expectedPatient = getPatient();
+        expectedPatient.setId(patientId);
         given(userInfoService.create(any(Patient.class))).willReturn(expectedPatient);
         given(addressService.create(any(Address.class))).willReturn(expectedPatient.getAddress());
         given(patientCardService.createByPatientId(anyLong())).willReturn(getPatientCard(expectedPatient));
+        doAnswer((invocation)-> {
+            Patient patient = invocation.getArgument(0);
+            patient.setId(patientId);
+            return null;
+        }).when(patientRepository).save(any(Patient.class));
+
 
         Patient actualPatient = patientService.create(getPatient());
 
@@ -80,7 +88,6 @@ class PatientServiceTest {
 
     private Patient getPatient() {
         Patient patient = new Patient();
-        patient.setId(1L);
         patient.setName("Lera");
         patient.setSurname("Parova");
         patient.setFatherhood("Valerievna");

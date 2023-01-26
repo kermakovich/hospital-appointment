@@ -45,12 +45,20 @@ class ReviewServiceTest {
 
     @Test
     void verifyCreateSuccessfulTest() {
+        final long reviewId = 1L;
+        Review expectedReview = getReview();
+        expectedReview.setId(reviewId);
         given(reviewRepository.isExistByDoctorIdAndPatientId(anyLong(), anyLong())).willReturn(false);
         given(appointmentService.isExistPastByPatientIdAndDoctorId(anyLong(), anyLong())).willReturn(true);
+        doAnswer((invocation)-> {
+            Review review = invocation.getArgument(0);
+            review.setId(reviewId);
+            return null;
+        }).when(reviewRepository).save(any(Review.class));
 
         Review actualReview = reviewService.create(getReview());
 
-        assertNotNull(actualReview);
+        assertEquals(expectedReview, actualReview, "reviews are not equal");
         verify(reviewRepository, times(1)).save(any(Review.class));
     }
 

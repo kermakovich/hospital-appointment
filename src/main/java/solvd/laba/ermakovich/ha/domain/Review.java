@@ -1,13 +1,11 @@
 package solvd.laba.ermakovich.ha.domain;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import solvd.laba.ermakovich.ha.domain.doctor.Doctor;
 
-@Setter
-@Getter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Review {

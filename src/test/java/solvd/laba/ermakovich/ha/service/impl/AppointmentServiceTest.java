@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import solvd.laba.ermakovich.ha.domain.Appointment;
 import solvd.laba.ermakovich.ha.domain.AppointmentStatus;
+import solvd.laba.ermakovich.ha.domain.PatientCard;
 import solvd.laba.ermakovich.ha.domain.SearchAppointmentCriteria;
 import solvd.laba.ermakovich.ha.domain.doctor.Doctor;
 import solvd.laba.ermakovich.ha.domain.exception.IllegalOperationException;
@@ -71,15 +72,29 @@ class AppointmentServiceTest {
     @Test
     void verifyCreateAppointmentSuccessfulTest() {
         final long patientId = 1L;
+        final long appointmentId = 1L;
+        Appointment expectedAppointment = getAppointment();
+        expectedAppointment.setId(appointmentId);
+        PatientCard patientCard = new PatientCard();
+        patientCard.setId(patientId);
+        expectedAppointment.setPatientCard(patientCard);
         given(doctorService.isExistById(anyLong())).willReturn(true);
         given(patientService.isExistById(anyLong())).willReturn(true);
         given(openingHours.isWithinOpenHours(any(LocalTime.class))).willReturn(true);
         given(appointmentRepository.isExistByDoctorIdAndTime(any(Appointment.class))).willReturn(false);
         given(appointmentRepository.isExistByPatientIdAndTime(anyLong(), any(Appointment.class))).willReturn(false);
+        doAnswer((invocation)-> {
+            Appointment appointment = invocation.getArgument(1);
+            appointment.setId(appointmentId);
+            PatientCard patientCardRep = new PatientCard();
+            patientCardRep.setId(patientId);
+            appointment.setPatientCard(patientCardRep);
+            return null;
+        }).when(appointmentRepository).save(anyLong(), any(Appointment.class));
 
         Appointment actualAppointment = appointmentService.create(patientId, getAppointment());
 
-        assertNotNull(actualAppointment, "appointment is null");
+        assertEquals(expectedAppointment, actualAppointment, "appointments are not equal");
         verify(appointmentRepository, times(1)).save(anyLong(), any(Appointment.class));
     }
 
@@ -232,7 +247,6 @@ class AppointmentServiceTest {
 
     private Appointment getAppointment(int hour) {
         Appointment appointment = new Appointment();
-        appointment.setId(1L);
         appointment.setStart(LocalDateTime.of(LocalDate.of(2028, 1, 4),
                 LocalTime.of(hour, 0)));
         Doctor doctor = new Doctor();

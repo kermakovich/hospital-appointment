@@ -11,7 +11,7 @@ import solvd.laba.ermakovich.ha.repository.AddressRepository;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -28,37 +28,38 @@ public class AddressServiceTest {
 
     @Test
     void verifyCreateAddressAlreadyExistsTest() {
-        given(addressRepository.find(any(Address.class))).willReturn(Optional.of(getAddress()));
+        Address expectedAddress = getAddress();
+        expectedAddress.setId(1L);
+        given(addressRepository.find(any(Address.class))).willReturn(Optional.of(expectedAddress));
 
         Address actualAddress = addressService.create(getAddress());
 
-        assertNotNull(actualAddress, "address is null");
+        assertEquals(expectedAddress, actualAddress, "addresses are not equal");
         verify(addressRepository, times(1)).find(any(Address.class));
         verify(addressRepository, never()).save(any(Address.class));
     }
 
     @Test
     void verifyCreateAddressDoesNotExistTest() {
+        final long addressId = 1L;
+        Address expectedAddress = getAddress();
+        expectedAddress.setId(addressId);
         given(addressRepository.find(any(Address.class))).willReturn(Optional.empty());
+        doAnswer((invocation)-> {
+            Address address = invocation.getArgument(0);
+            address.setId(addressId);
+            return address;
+        }).when(addressRepository).save(any(Address.class));
 
-        Address actualAddress = addressService.create(getAddressWithoutId());
+        Address actualAddress = addressService.create(getAddress());
 
-        assertNotNull(actualAddress, "address is null");
+        assertEquals(expectedAddress, actualAddress, "addresses are not equal");
         verify(addressRepository, times(1)).find(any(Address.class));
         verify(addressRepository, times(1)).save(any(Address.class));
-
     }
 
-    private Address getAddressWithoutId() {
-        return new Address(
-                "minsk",
-                "bogushevicha",
-                23,
-                34);
-    }
     private Address getAddress() {
         return new Address(
-                1L,
                 "minsk",
                 "bogushevicha",
                 23,

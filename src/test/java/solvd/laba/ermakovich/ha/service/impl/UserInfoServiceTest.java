@@ -21,8 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserInfoServiceTest {
@@ -39,13 +38,20 @@ class UserInfoServiceTest {
 
     @Test
     void verifyCreateSuccessfulTest() {
-        UserInfo userInfoExpected = getUserInfoWithHashedPassword();
+        final long userInfoId = 1L;
+        UserInfo expectedUserInfo = getUserInfoWithHashedPassword();
+        expectedUserInfo.setId(userInfoId);
         given(userRepository.isExistByEmail(Mockito.anyString())).willReturn(false);
-        given(encoder.encode(anyString())).willReturn(userInfoExpected.getPassword());
+        given(encoder.encode(anyString())).willReturn(expectedUserInfo.getPassword());
+        doAnswer((invocation)-> {
+            UserInfo userInfo = invocation.getArgument(0);
+            userInfo.setId(userInfoId);
+            return null;
+        }).when(userRepository).save(any(UserInfo.class));
 
-        UserInfo foundedUser = userInfoService.create(getUserInfo());
+        UserInfo actualUser = userInfoService.create(getUserInfo());
 
-        assertEquals(foundedUser, userInfoExpected, "users are not equal");
+        assertEquals(actualUser, expectedUserInfo, "users are not equal");
         verify(userRepository, times(1)).isExistByEmail(anyString());
         verify(userRepository, times(1)).save(any(UserInfo.class));
     }
@@ -60,12 +66,12 @@ class UserInfoServiceTest {
 
     @Test
     void verifyFindByEmailSuccessfulTest() {
-        UserInfo userInfoExpected = getUserInfoWithHashedPassword();
-        given(userRepository.findByEmail(Mockito.anyString())).willReturn(Optional.of(userInfoExpected));
+        UserInfo expectedUserInfo = getUserInfoWithHashedPassword();
+        given(userRepository.findByEmail(Mockito.anyString())).willReturn(Optional.of(expectedUserInfo));
 
         UserInfo foundedUser = userInfoService.findByEmail(getUserInfo().getEmail());
 
-        assertEquals(foundedUser, userInfoExpected, "users are not equal");
+        assertEquals(foundedUser, expectedUserInfo, "users are not equal");
         verify(userRepository, times(1)).findByEmail(anyString());
     }
 

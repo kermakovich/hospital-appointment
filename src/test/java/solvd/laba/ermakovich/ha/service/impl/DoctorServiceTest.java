@@ -42,11 +42,19 @@ class DoctorServiceTest {
 
     @Test
     void verifyCreateSuccessfulTest() {
+        final long doctorId = 1L;
+        Doctor expectedDoctor = getDoctorDentistFromDental();
+        expectedDoctor.setId(doctorId);
         given(userInfoService.create(any(Doctor.class))).willReturn(getDoctorDentistFromDental());
+        doAnswer((invocation)-> {
+            Doctor doctor = invocation.getArgument(0);
+            doctor.setId(doctorId);
+            return null;
+        }).when(doctorRepository).save(any(Doctor.class));
 
         Doctor newDoctor = doctorService.create(getDoctorDentistFromDental());
 
-        assertNotNull(newDoctor, "doctor is null");
+        assertEquals(expectedDoctor, newDoctor, "doctors are not equal");
         verify(doctorRepository, times(1)).save(any(Doctor.class));
     }
 
@@ -92,7 +100,6 @@ class DoctorServiceTest {
 
     private static Doctor getDoctorDentistFromDental() {
         Doctor doctor = new Doctor();
-        doctor.setId(1L);
         doctor.setName("Lera");
         doctor.setSurname("Parova");
         doctor.setFatherhood("Valerievna");
