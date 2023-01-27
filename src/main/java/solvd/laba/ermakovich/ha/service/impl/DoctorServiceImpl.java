@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import solvd.laba.ermakovich.ha.domain.SearchDoctorCriteria;
-import solvd.laba.ermakovich.ha.domain.UserInfo;
 import solvd.laba.ermakovich.ha.domain.UserRole;
 import solvd.laba.ermakovich.ha.domain.doctor.Doctor;
 import solvd.laba.ermakovich.ha.domain.exception.IllegalOperationException;
@@ -26,12 +25,11 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     @Transactional
     public Doctor create(Doctor doctor) {
-        UserInfo userInfo = userInfoMapper.mapToUserInfo(doctor);
-        if (!userInfo.getRole().equals(UserRole.DOCTOR)) {
+        if (!UserRole.DOCTOR.equals(doctor.getRole())) {
             throw new IllegalOperationException("Doctor has wrong role");
         }
-        userInfoService.create(userInfo);
-        doctor.setId(userInfo.getId());
+        userInfoService.create(doctor);
+        doctor.setId(doctor.getId());
         doctorRepository.save(doctor);
         return doctor;
     }

@@ -12,6 +12,6 @@ public class JwtResponseDto {
     private JwtAccessDto accessDto;
 
     @Schema(description = "refresh token")
-    private String refresh;
+    private RefreshDto refreshDto;
 
 }

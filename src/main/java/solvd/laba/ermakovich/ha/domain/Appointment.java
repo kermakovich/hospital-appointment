@@ -1,13 +1,11 @@
 package solvd.laba.ermakovich.ha.domain;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import solvd.laba.ermakovich.ha.domain.doctor.Doctor;
 
 import java.time.LocalDateTime;
 
-@Setter
-@Getter
+@Data
 public class Appointment {
 
     private Long id;

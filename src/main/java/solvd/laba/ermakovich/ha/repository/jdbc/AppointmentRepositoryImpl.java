@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.logging.log4j.util.Strings;
 import solvd.laba.ermakovich.ha.domain.Appointment;
-import solvd.laba.ermakovich.ha.domain.PatientCard;
 import solvd.laba.ermakovich.ha.domain.SearchAppointmentCriteria;
 import solvd.laba.ermakovich.ha.repository.AppointmentRepository;
 import solvd.laba.ermakovich.ha.repository.jdbc.mapper.AppointmentMapper;
@@ -84,9 +83,6 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
                     appointment.setId(rs.getLong(1));
-                    PatientCard patientCard = new PatientCard();
-                    patientCard.setId(patientId);
-                    appointment.setPatientCard(patientCard);
                 }
             }
         }

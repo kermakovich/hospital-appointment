@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import solvd.laba.ermakovich.ha.domain.Appointment;
 import solvd.laba.ermakovich.ha.domain.AppointmentStatus;
+import solvd.laba.ermakovich.ha.domain.PatientCard;
 import solvd.laba.ermakovich.ha.domain.SearchAppointmentCriteria;
 import solvd.laba.ermakovich.ha.domain.exception.IllegalOperationException;
 import solvd.laba.ermakovich.ha.domain.exception.ResourceDoesNotExistException;
@@ -35,7 +36,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     @Transactional
-    public Appointment save(long patientId, Appointment appointment) {
+    public Appointment create(long patientId, Appointment appointment) {
         if (!doctorService.isExistById(appointment.getDoctor().getId())) {
             throw new ResourceDoesNotExistException("doctor with id: " + appointment.getDoctor().getId() + "doesn`t exist");
         }
@@ -54,6 +55,9 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
 
         appointmentRepository.save(patientId, appointment);
+        PatientCard patientCard = new PatientCard();
+        patientCard.setId(patientId);
+        appointment.setPatientCard(patientCard);
         return appointment;
     }
 

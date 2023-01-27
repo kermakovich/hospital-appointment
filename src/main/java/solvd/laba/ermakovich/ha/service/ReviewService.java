@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ReviewService {
 
-    void create(Review review);
+    Review create(Review review);
 
     List<Review> retrieveAllByDoctorId(long doctorId);
 

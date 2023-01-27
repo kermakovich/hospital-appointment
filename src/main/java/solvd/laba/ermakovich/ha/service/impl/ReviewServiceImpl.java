@@ -22,7 +22,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional
-    public void create(Review review) {
+    public Review create(Review review) {
         long doctorId = review.getDoctor().getId();
         long patientId = review.getPatient().getId();
 
@@ -37,6 +37,7 @@ public class ReviewServiceImpl implements ReviewService {
         } else {
             throw new IllegalOperationException("Patient (id : " + patientId + " ) has not been treated with doctor (id: " + doctorId + " )");
         }
+        return review;
     }
 
     @Override

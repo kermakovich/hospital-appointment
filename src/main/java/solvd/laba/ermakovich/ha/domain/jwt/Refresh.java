@@ -1,10 +1,10 @@
 package solvd.laba.ermakovich.ha.domain.jwt;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class Refresh {
 
     private String token;
