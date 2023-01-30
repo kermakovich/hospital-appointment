@@ -54,8 +54,8 @@ CREATE TABLE IF NOT EXISTS reviews (
     id_doctor bigint,
     id_patient bigint,
     description varchar(500),
-    constraint fk_patient foreign key(user_id) references patients(user_id),
-    constraint fk_doctor foreign key(user_id) references doctors(user_id)
+    constraint fk_patient foreign key(id_patient) references patients(user_id),
+    constraint fk_doctor foreign key(id_doctor) references doctors(user_id)
 );
 
 CREATE TABLE IF NOT EXISTS appointments (
