@@ -7,6 +7,8 @@ services:
     container_name: hospital-appointment
     ports:
       - "8080:8080"
+    networks:
+      - spring-postgres
     depends_on:
       - postgres
     env_file: ./.env
@@ -14,6 +16,15 @@ services:
     image: 'postgres:15.1-alpine'
     ports:
       - "5433:5432"
+    networks:
+      - spring-postgres
     volumes:
       - ./src/main/resources/db-init:/docker-entrypoint-initdb.d
-    env_file: ./.env
+      - db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${DATASOURCE_USERNAME}
+      - POSTGRES_PASSWORD=${DATASOURCE_PASSWORD}
+volumes:
+  db-data:
+networks:
+  spring-postgres:
