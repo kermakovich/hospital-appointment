@@ -19,7 +19,6 @@ services:
     networks:
       - spring-postgres
     volumes:
-      - ./src/main/resources/db-init:/docker-entrypoint-initdb.d
       - db-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=${DATASOURCE_USERNAME}
