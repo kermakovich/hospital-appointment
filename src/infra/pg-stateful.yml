@@ -24,12 +24,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: pg-secrets
-                  key: POSTGRES_USER
+                  key: DATASOURCE_USERNAME
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: pg-secrets
-                  key: POSTGRES_PASSWORD
+                  key: DATASOURCE_PASSWORD
       volumes:
         - name: postgres-db-disk
           hostPath:
