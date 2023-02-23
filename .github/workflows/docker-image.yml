@@ -23,7 +23,9 @@ jobs:
       - name: Build and push
         uses: mr-smithers-excellent/docker-build-push@v5
         with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/hospital-appointment:latest
+          image: ${{ secrets.DOCKERHUB_USERNAME }}/hospital-appointment
+          tags: latest
+          dockerfile: Dockerfile
+          registry: docker.io
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
