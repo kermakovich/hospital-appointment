@@ -37,7 +37,6 @@ public class SecurityConfig {
     public static final String SECURITY_SCHEME_NAME = "bearerAuth";
 
 
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
