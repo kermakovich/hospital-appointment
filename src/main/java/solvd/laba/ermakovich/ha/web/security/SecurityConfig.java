@@ -72,7 +72,8 @@ public class SecurityConfig {
                 "/api/v1/doctors",
                 "/api/v1/doctors/*/schedule",
                 "/swagger-ui/**",
-                "/v3/api-docs/**"
+                "/v3/api-docs/**",
+                "/actuator/**"
         };
         permitPostAll = new String[] {
                 "/api/v1/users/login",

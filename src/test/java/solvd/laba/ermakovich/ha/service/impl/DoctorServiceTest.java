@@ -15,6 +15,7 @@ import solvd.laba.ermakovich.ha.domain.doctor.Specialization;
 import solvd.laba.ermakovich.ha.domain.exception.IllegalOperationException;
 import solvd.laba.ermakovich.ha.domain.hospital.Department;
 import solvd.laba.ermakovich.ha.repository.DoctorRepository;
+import solvd.laba.ermakovich.ha.service.AccountClient;
 import solvd.laba.ermakovich.ha.service.UserInfoService;
 
 import java.time.LocalDate;
@@ -36,6 +37,9 @@ class DoctorServiceTest {
 
     @Mock
     private DoctorRepository doctorRepository;
+
+    @Mock
+    private AccountClient accountClient;
 
     @InjectMocks
     private DoctorServiceImpl doctorService;

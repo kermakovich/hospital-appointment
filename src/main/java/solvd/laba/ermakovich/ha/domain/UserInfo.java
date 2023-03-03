@@ -9,8 +9,7 @@ import java.util.UUID;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
-
+@EqualsAndHashCode(exclude = "externalId")
 public class UserInfo implements Cloneable {
 
     private Long id;

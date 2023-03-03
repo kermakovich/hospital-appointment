@@ -1,5 +1,6 @@
 package solvd.laba.ermakovich.ha.web.controller;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -51,10 +52,15 @@ public class DoctorController {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "adds doctor to hospital")
     @SecurityRequirement(name = SECURITY_SCHEME_NAME)
+    @CircuitBreaker(name = "doctorService", fallbackMethod = "throwError")
     public DoctorDto create(@Validated({onCreate.class, Default.class}) @RequestBody DoctorDto doctorDto) {
         Doctor doctor = doctorMapper.dtoToEntity(doctorDto);
         doctorService.create(doctor);
         return doctorMapper.entityToDto(doctor);
+    }
+
+    private DoctorDto throwError(IllegalStateException e) {
+        throw new RuntimeException ("please, try later");
     }
 
     @GetMapping
