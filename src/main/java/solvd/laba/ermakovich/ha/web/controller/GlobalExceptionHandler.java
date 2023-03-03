@@ -3,12 +3,14 @@ package solvd.laba.ermakovich.ha.web.controller;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 import solvd.laba.ermakovich.ha.domain.exception.AuthException;
 import solvd.laba.ermakovich.ha.domain.exception.IllegalOperationException;
 import solvd.laba.ermakovich.ha.domain.exception.ResourceAlreadyExistsException;
@@ -64,12 +66,20 @@ public class GlobalExceptionHandler {
         return new ErrorDto(ex.getMessage());
     }
 
+    @ExceptionHandler(HttpClientErrorException.class)
+    public ResponseEntity<ErrorDto> handleHttpClientException(HttpClientErrorException ex) {
+        if (ex.getStatusCode().is5xxServerError()) {
+            log.error("External microservice error: " + ex.getMessage(), ex.getClass());
+        }
+        return new ResponseEntity<>(new ErrorDto(ex.getMessage()), ex.getStatusCode());
+    }
 
-//    @ExceptionHandler({Exception.class})
-//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-//    public ErrorDto handleOtherException(Exception ex) {
-//        log.error(ex.getCause().getMessage(), ex.getCause());
-//        return new ErrorDto("something is wrong, please, try later");
-//    }
+
+    @ExceptionHandler({Exception.class})
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorDto handleOtherException(Exception ex) {
+        log.error(ex.getMessage(), ex.getClass());
+        return new ErrorDto("something is wrong, please, try later");
+    }
 
 }

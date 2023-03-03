@@ -20,6 +20,7 @@ import solvd.laba.ermakovich.ha.web.security.jwt.JwtUserDetails;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -99,6 +100,7 @@ class AuthServiceTest {
     private UserInfo getUserInfo() {
         return new UserInfo(
                 1L,
+                UUID.randomUUID(),
                 "name",
                 "surname",
                 "fatherhood",
