@@ -13,6 +13,7 @@ import solvd.laba.ermakovich.ha.web.dto.group.onCreateAppointment;
 import solvd.laba.ermakovich.ha.web.dto.group.onCreateReview;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 
 @Getter
@@ -24,6 +25,10 @@ public abstract class UserInfoDto {
             message = "can not be null")
     @Schema(description = "user id")
     private Long id;
+
+    @Schema(description = "user external id")
+    private UUID externalId;
+
 
     @NotBlank(groups = onCreate.class, message = "can`t be empty")
     @Size(min = 1, max = 35, message = "length should be in 1..35")

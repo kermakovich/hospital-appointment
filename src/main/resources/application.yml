@@ -1,4 +1,8 @@
+server:
+  port: 8081
 spring:
+  application:
+    name: hospital-appointment
   datasource:
     url: jdbc:postgresql://${DATASOURCE_HOST}/postgres?currentSchema=${SCHEMA}
     username: ${DATASOURCE_USERNAME}
@@ -30,4 +34,7 @@ hospital:
 mybatis:
   mapper-locations: classpath:mapper/*.xml
 
-
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER_HOST}

@@ -3,6 +3,7 @@ package solvd.laba.ermakovich.ha.domain;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Setter
 @Getter
@@ -10,9 +11,10 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @EqualsAndHashCode
 
-public class UserInfo implements Cloneable{
+public class UserInfo implements Cloneable {
 
     private Long id;
+    private UUID externalId;
     private String name;
     private String surname;
     private String fatherhood;

@@ -10,12 +10,15 @@ import solvd.laba.ermakovich.ha.domain.exception.ResourceDoesNotExistException;
 import solvd.laba.ermakovich.ha.repository.UserRepository;
 import solvd.laba.ermakovich.ha.service.UserInfoService;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class UserInfoServiceImpl implements UserInfoService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
 
     @Override
     @Transactional
@@ -24,9 +27,11 @@ public class UserInfoServiceImpl implements UserInfoService {
             throw new ResourceAlreadyExistsException(" User with this email: " + userInfo.getEmail() + " already exist");
         }
         userInfo.setPassword(hashPassword(userInfo.getPassword()));
+        userInfo.setExternalId(UUID.randomUUID());
         userRepository.save(userInfo);
         return userInfo;
     }
+
 
     private String hashPassword(String password) {
         return bCryptPasswordEncoder.encode(password);
