@@ -51,7 +51,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers(HttpMethod.GET, permitGetAll).permitAll()
                 .requestMatchers(HttpMethod.POST, permitPostAll).permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
                 .and()
                 .addFilterAfter(jwtFilter, ExceptionTranslationFilter.class)
                 .build();

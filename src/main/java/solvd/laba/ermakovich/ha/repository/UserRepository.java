@@ -14,4 +14,6 @@ public interface UserRepository {
 
     Optional<UserInfo> findByEmail(String email);
 
+    Boolean isExistByExternalId(String externalId);
+
 }

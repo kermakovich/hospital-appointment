@@ -43,4 +43,9 @@ public class UserInfoServiceImpl implements UserInfoService {
                 .orElseThrow(() -> new ResourceDoesNotExistException("user with email: " + email + "doesn`t exist"));
     }
 
+    @Override
+    public Boolean isExistByExternalId(UUID externalId) {
+        return userRepository.isExistByExternalId(externalId.toString());
+    }
+
 }
