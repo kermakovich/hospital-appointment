@@ -14,6 +14,7 @@ public class UserInfoRepositoryImpl implements UserRepository {
 
     private static final String SAVE_USER_INFO = "INSERT INTO user_info (name, surname, fatherhood, birthday, email, password) VALUES (?,?,?,?,?,?)";
     private static final String CHECK_IF_EXISTS_BY_EMAIL = "SELECT id FROM user_info WHERE email=?";
+    private static final String CHECK_IF_EXISTS_BY_EXTERNAL_ID = "SELECT EXISTS(SELECT 1 FROM user_info ui WHERE ui.external_id = ?)";
     private final DataSourceConfig dataSource;
 
     @Override
@@ -40,7 +41,6 @@ public class UserInfoRepositoryImpl implements UserRepository {
     @Override
     @SneakyThrows
     public boolean isExistByEmail(String email) {
-        System.out.println("jdbc");
         Connection con = dataSource.getConnection();
         try (PreparedStatement ps = con.prepareStatement(CHECK_IF_EXISTS_BY_EMAIL)) {
             ps.setString(1, email);
@@ -53,6 +53,18 @@ public class UserInfoRepositoryImpl implements UserRepository {
     @Override
     public Optional<UserInfo> findByEmail(String email) {
         return Optional.empty();
+    }
+
+    @Override
+    @SneakyThrows
+    public Boolean isExistByExternalId(String externalId) {
+        Connection con = dataSource.getConnection();
+        try (PreparedStatement ps = con.prepareStatement(CHECK_IF_EXISTS_BY_EXTERNAL_ID)) {
+            ps.setString(1, externalId.toString());
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
     }
 
 }
